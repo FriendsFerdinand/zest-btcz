@@ -1,0 +1,399 @@
+Jun 10 23:02:31.165 INFO Checking contracts
+Jun 10 23:02:31.180 INFO Starting Devnet
+Jun 10 23:02:31.182 INFO Listening on port 20445 for Stacks chain events
+Jun 10 23:02:31.182 INFO Observing Bitcoin chain events via Stacks node
+Jun 10 23:02:31.185 INFO Initiating Devnet boot sequence (working_dir: /Users/fernandofoy/Documents/zest-protocol-repos/zest-sbtc/./.cache/stacks-devnet-1718060550)
+Jun 10 23:02:31.188 INFO Creating network zest-sbtc.devnet
+Jun 10 23:02:31.188 INFO Starting bitcoin-node
+Jun 10 23:02:32.914 INFO Created container bitcoin-node: 684ec8a629106250404c463df9ff763c1288dd737d5ba85883640c71a9252900
+Jun 10 23:02:33.389 INFO Configuring bitcoin-node
+Jun 10 23:02:34.445 INFO Waiting for bitcoin-node
+Jun 10 23:02:34.598 INFO Registering addr(n3GRiDLKWuKLCw1DZmV75W1mE35qmW2tQm)#dm832d0a
+Jun 10 23:02:34.638 INFO Registering addr(mjSrB3wS4xab3kYqFktwBzfTdPg367ZJ2d)#kdxvqwc5
+Jun 10 23:02:34.865 INFO Registering addr(mqVnk6NPRdhntvfm4hh9vvjiRkFDUuSYsH)#ypxkdrsq
+Jun 10 23:02:34.962 INFO Registering addr(mjSrB3wS4xab3kYqFktwBzfTdPg367ZJ2d)#kdxvqwc5
+Jun 10 23:02:35.090 INFO Registering addr(mr1iPkD9N3RJZZxXRk7xF9d36gffa6exNC)#n3uhsuqz
+Jun 10 23:02:35.173 INFO Registering addr(muYdXKmX9bByAueDe6KFfHd5Ff1gdN9ErG)#0ayck9fm
+Jun 10 23:02:35.252 INFO Registering addr(mvZtbibDAAA3WLpY7zXXFqRa3T4XSknBX7)#hkf7ujwt
+Jun 10 23:02:35.329 INFO Registering addr(mg1C76bNTutiCDV3t9nWhZs3Dc8LzUufj8)#gtqjph77
+Jun 10 23:02:35.433 INFO Registering addr(mweN5WVqadScHdA81aATSdcVr4B6dNokqx)#qz3ysrq0
+Jun 10 23:02:35.501 INFO Registering addr(mzxXgV6e4BZSsz8zVHm3TmqbECt7mbuErt)#pnqz0pm8
+Jun 10 23:02:35.562 INFO Registering addr(n37mwmru2oaVosgfuvzBwgV2ysCQRrLko7)#lh2paj0q
+Jun 10 23:02:35.621 INFO Registering addr(n2v875jbJ4RjBnTjgbfikDfnwsDV5iUByw)#8606llct
+Jun 10 23:02:35.679 INFO Starting postgres
+Jun 10 23:02:36.808 INFO Created container postgres: 9718b7ef16cd7d78b0a265b2f03650f29e7a01ec3a69b626add9cd1cdf1ed21d
+Jun 10 23:02:36.983 INFO Starting stacks-api
+Jun 10 23:02:38.065 INFO Created container stacks-api: f92e8f2c662c8f5b66bf563827a0c2267b12887349d5316106fea33b42b79668
+Jun 10 23:02:38.254 INFO Starting stacks-node
+Jun 10 23:02:39.678 INFO Created container stacks-node: 9e48aa4385fd71bd4dc142b6b8805a0704fa185688abb0cc8de27bfec863998c
+Jun 10 23:02:40.129 INFO POST /
+Jun 10 23:02:40.129 DEBG Forwarding listwallets request to http://localhost:18443
+Jun 10 23:02:40.131 DEBG Responding with response Object {"result": Array [String("")], "error": Null, "id": String("stacks")}
+Jun 10 23:02:40.143 INFO POST /
+Jun 10 23:02:40.143 DEBG Forwarding getblockhash request to http://localhost:18443
+Jun 10 23:02:40.145 DEBG Responding with response Object {"result": String("0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206"), "error": Null, "id": String("stacks")}
+Jun 10 23:02:40.147 INFO POST /wallet
+Jun 10 23:02:40.588 INFO POST /new_block
+Jun 10 23:02:40.603 INFO Start processing Stacks Block #0 (0x55c9...c2ee)
+Jun 10 23:02:40.604 INFO Active fork 0: Fork [], height = 0
+Jun 10 23:02:40.604 INFO Trying to append Block #0 (0x55c9...c2ee) to Fork [], height = 0
+Jun 10 23:02:40.604 INFO Stacks Block #0 (0x55c9...c2ee) successfully appended to Fork [Block #0 (0x55c9...c2ee)], height = 1
+Jun 10 23:02:40.605 INFO Active fork: 0 - Fork [Block #0 (0x55c9...c2ee)], height = 1 / 100
+Jun 10 23:02:40.605 INFO Active fork selected as canonical: 0
+Jun 10 23:02:40.605 INFO Handling PropagateStacksChainEvent command
+Jun 10 23:02:40.605 INFO Evaluating 0 stacks chainhooks registered
+Jun 10 23:02:40.605 INFO 0 stacks chainhooks positive evaluations
+Jun 10 23:02:40.615 INFO Genesis Stacks block anchored in Bitcoin block #100 includes 7 transactions
+Jun 10 23:02:40.877 INFO Created container stacks-explorer: f26238771105c8db02594deb9e4e0e39eff6a25ca885a8787907070cc4fb4e05
+Jun 10 23:02:40.878 INFO Starting stacks-explorer
+Jun 10 23:02:42.582 INFO Created container bitcoin-explorer: 71d5d6ff2ecce26351837424d1b95f4a185621d54345c789200fe22006b16d9f
+Jun 10 23:02:42.588 INFO Starting bitcoin-explorer
+Jun 10 23:02:43.008 INFO POST /new_burn_block
+Jun 10 23:02:43.016 INFO Start processing Block #101 (0x7ffd...bc02)
+Jun 10 23:02:43.016 INFO Active fork 0: Fork [], height = 0
+Jun 10 23:02:43.016 INFO Trying to append Block #101 (0x7ffd...bc02) to Fork [], height = 0
+Jun 10 23:02:43.016 DEBG Bitcoin Block #101 (0x7ffd...bc02) successfully appended to Fork [Block #101 (0x7ffd...bc02)], height = 1
+Jun 10 23:02:43.016 INFO Active fork: 0 - Fork [Block #101 (0x7ffd...bc02)], height = 1
+Jun 10 23:02:43.016 INFO Active fork selected as canonical: 0
+Jun 10 23:02:43.016 DEBG Standardizing Bitcoin block 7ffdaa582acb3dea9e0c52c69fc86db223734c5a25046dbfb70998786debbc02
+Jun 10 23:02:43.016 INFO Handling PropagateBitcoinChainEvent command
+Jun 10 23:02:43.016 INFO Evaluating 0 bitcoin chainhooks registered
+Jun 10 23:02:43.016 INFO 0 bitcoin chainhooks positive evaluations
+Jun 10 23:02:43.016 INFO 0 bitcoin chainhooks will be triggered
+Jun 10 23:02:43.016 INFO 0 bitcoin chainhooks to deregister
+Jun 10 23:02:43.016 DEBG Bitcoin block #101 received
+Jun 10 23:02:45.061 INFO POST /
+Jun 10 23:02:45.061 DEBG Forwarding getblockhash request to http://localhost:18443
+Jun 10 23:02:45.063 DEBG Responding with response Object {"result": String("0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206"), "error": Null, "id": String("stacks")}
+Jun 10 23:02:45.065 INFO POST /wallet
+Jun 10 23:02:45.073 INFO POST /
+Jun 10 23:02:45.073 DEBG Forwarding sendrawtransaction request to http://localhost:18443
+Jun 10 23:02:45.073 DEBG Handling NotifyBitcoinTransactionProxied command
+Jun 10 23:02:45.093 DEBG Responding with response Object {"result": String("d682563ea3e67f8581e1f7291b6388c75ba6cc2feb6124e299073e55d0520449"), "error": Null, "id": String("stacks")}
+Jun 10 23:02:47.130 INFO POST /new_burn_block
+Jun 10 23:02:47.140 INFO Start processing Block #102 (0x706a...7f77)
+Jun 10 23:02:47.140 DEBG Standardizing Bitcoin block 706ab56a1aca3aaeea7c24755652292b250bd432c4a2bf6f078cb64811717f77
+Jun 10 23:02:47.140 INFO Active fork 0: Fork [Block #101 (0x7ffd...bc02)], height = 1
+Jun 10 23:02:47.140 INFO Trying to append Block #102 (0x706a...7f77) to Fork [Block #101 (0x7ffd...bc02)], height = 1
+Jun 10 23:02:47.140 INFO Comparing Block #101 (0x7ffd...bc02) with Block #102 (0x706a...7f77)
+Jun 10 23:02:47.140 DEBG Bitcoin Block #102 (0x706a...7f77) successfully appended to Fork [Block #102 (0x706a...7f77), Block #101 (0x7ffd...bc02)], height = 2
+Jun 10 23:02:47.140 INFO Active fork: 0 - Fork [Block #102 (0x706a...7f77), Block #101 (0x7ffd...bc02)], height = 2
+Jun 10 23:02:47.140 INFO Active fork selected as canonical: 0
+Jun 10 23:02:47.140 DEBG Blocks to rollback: []
+Jun 10 23:02:47.140 DEBG Blocks to apply: [BlockIdentifier { index: 102, hash: "0x706ab56a1aca3aaeea7c24755652292b250bd432c4a2bf6f078cb64811717f77" }]
+Jun 10 23:02:47.140 INFO Handling PropagateBitcoinChainEvent command
+Jun 10 23:02:47.140 INFO Evaluating 0 bitcoin chainhooks registered
+Jun 10 23:02:47.140 INFO 0 bitcoin chainhooks positive evaluations
+Jun 10 23:02:47.141 INFO 0 bitcoin chainhooks will be triggered
+Jun 10 23:02:47.141 INFO 0 bitcoin chainhooks to deregister
+Jun 10 23:02:47.141 DEBG Bitcoin block #102 received
+Jun 10 23:02:48.257 INFO POST /
+Jun 10 23:02:48.257 DEBG Forwarding getblockhash request to http://localhost:18443
+Jun 10 23:02:48.259 DEBG Responding with response Object {"result": String("0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206"), "error": Null, "id": String("stacks")}
+Jun 10 23:02:48.260 INFO POST /wallet
+Jun 10 23:02:48.267 INFO POST /
+Jun 10 23:02:48.267 DEBG Forwarding sendrawtransaction request to http://localhost:18443
+Jun 10 23:02:48.267 DEBG Handling NotifyBitcoinTransactionProxied command
+Jun 10 23:02:48.273 DEBG Responding with response Object {"result": String("9aa825f4c6098513d7dc6e187c14eeb85b12bcbcca694286961723739677f333"), "error": Null, "id": String("stacks")}
+Jun 10 23:02:50.210 INFO POST /new_burn_block
+Jun 10 23:02:50.213 INFO Start processing Block #103 (0x619c...e44a)
+Jun 10 23:02:50.213 INFO Active fork 0: Fork [Block #102 (0x706a...7f77), Block #101 (0x7ffd...bc02)], height = 2
+Jun 10 23:02:50.213 INFO Trying to append Block #103 (0x619c...e44a) to Fork [Block #102 (0x706a...7f77), Block #101 (0x7ffd...bc02)], height = 2
+Jun 10 23:02:50.213 INFO Comparing Block #102 (0x706a...7f77) with Block #103 (0x619c...e44a)
+Jun 10 23:02:50.213 DEBG Bitcoin Block #103 (0x619c...e44a) successfully appended to Fork [Block #103 (0x619c...e44a), Block #102 (0x706a...7f77), Block #101 (0x7ffd...bc02)], height = 3
+Jun 10 23:02:50.213 INFO Active fork: 0 - Fork [Block #103 (0x619c...e44a), Block #102 (0x706a...7f77), Block #101 (0x7ffd...bc02)], height = 3
+Jun 10 23:02:50.213 INFO Active fork selected as canonical: 0
+Jun 10 23:02:50.213 DEBG Blocks to rollback: []
+Jun 10 23:02:50.213 DEBG Blocks to apply: [BlockIdentifier { index: 103, hash: "0x619cce18deae6139b1a6b9550ab0f9fda66236fbcb82f27871e8ddec6eaee44a" }]
+Jun 10 23:02:50.213 DEBG Standardizing Bitcoin block 619cce18deae6139b1a6b9550ab0f9fda66236fbcb82f27871e8ddec6eaee44a
+Jun 10 23:02:50.213 INFO Handling PropagateBitcoinChainEvent command
+Jun 10 23:02:50.213 INFO Evaluating 0 bitcoin chainhooks registered
+Jun 10 23:02:50.213 INFO 0 bitcoin chainhooks positive evaluations
+Jun 10 23:02:50.214 INFO 0 bitcoin chainhooks will be triggered
+Jun 10 23:02:50.214 INFO 0 bitcoin chainhooks to deregister
+Jun 10 23:02:50.214 DEBG Bitcoin block #103 received
+Jun 10 23:02:51.359 INFO POST /new_block
+Jun 10 23:02:51.364 INFO Start processing Stacks Block #1 (0x0701...3213)
+Jun 10 23:02:51.365 INFO Active fork 0: Fork [Block #0 (0x55c9...c2ee)], height = 1
+Jun 10 23:02:51.365 INFO Trying to append Block #1 (0x0701...3213) to Fork [Block #0 (0x55c9...c2ee)], height = 1
+Jun 10 23:02:51.365 INFO Comparing Block #0 (0x55c9...c2ee) with Block #1 (0x0701...3213)
+Jun 10 23:02:51.365 INFO Stacks Block #1 (0x0701...3213) successfully appended to Fork [Block #1 (0x0701...3213), Block #0 (0x55c9...c2ee)], height = 2
+Jun 10 23:02:51.365 INFO Active fork: 0 - Fork [Block #1 (0x0701...3213), Block #0 (0x55c9...c2ee)], height = 2 / 103
+Jun 10 23:02:51.365 INFO Active fork selected as canonical: 0
+Jun 10 23:02:51.365 DEBG Blocks to rollback: []
+Jun 10 23:02:51.365 DEBG Blocks to apply: [BlockIdentifier { index: 1, hash: "0x0701c7e10c11682fd7f9c70adf3b633e49ac897723d9586bd8c202b26b1d3213" }]
+Jun 10 23:02:51.365 INFO Handling PropagateStacksChainEvent command
+Jun 10 23:02:51.365 INFO Evaluating 0 stacks chainhooks registered
+Jun 10 23:02:51.365 INFO 0 stacks chainhooks positive evaluations
+Jun 10 23:02:51.368 INFO Stacks block #1 anchored in Bitcoin block #103 includes 4 transactions
+Jun 10 23:02:51.573 INFO POST /
+Jun 10 23:02:51.573 DEBG Forwarding getblockhash request to http://localhost:18443
+Jun 10 23:02:51.575 DEBG Responding with response Object {"result": String("619cce18deae6139b1a6b9550ab0f9fda66236fbcb82f27871e8ddec6eaee44a"), "error": Null, "id": String("stacks")}
+Jun 10 23:02:51.577 INFO POST /wallet
+Jun 10 23:02:51.581 INFO POST /
+Jun 10 23:02:51.581 DEBG Forwarding sendrawtransaction request to http://localhost:18443
+Jun 10 23:02:51.581 DEBG Handling NotifyBitcoinTransactionProxied command
+Jun 10 23:02:51.585 DEBG Responding with response Object {"result": String("51d73fd0544ded355cd0bb2ee7daa003b85c892e4518bdb1f6eac8220d8df515"), "error": Null, "id": String("stacks")}
+Jun 10 23:02:53.398 INFO POST /new_burn_block
+Jun 10 23:02:53.402 INFO Start processing Block #104 (0x738f...78b3)
+Jun 10 23:02:53.402 INFO Active fork 0: Fork [Block #103 (0x619c...e44a), Block #102 (0x706a...7f77), Block #101 (0x7ffd...bc02)], height = 3
+Jun 10 23:02:53.402 INFO Trying to append Block #104 (0x738f...78b3) to Fork [Block #103 (0x619c...e44a), Block #102 (0x706a...7f77), Block #101 (0x7ffd...bc02)], height = 3
+Jun 10 23:02:53.402 INFO Comparing Block #103 (0x619c...e44a) with Block #104 (0x738f...78b3)
+Jun 10 23:02:53.402 DEBG Bitcoin Block #104 (0x738f...78b3) successfully appended to Fork [Block #104 (0x738f...78b3), Block #103 (0x619c...e44a), Block #102 (0x706a...7f77), Block #101 (0x7ffd...bc02)], height = 4
+Jun 10 23:02:53.402 INFO Active fork: 0 - Fork [Block #104 (0x738f...78b3), Block #103 (0x619c...e44a), Block #102 (0x706a...7f77), Block #101 (0x7ffd...bc02)], height = 4
+Jun 10 23:02:53.402 INFO Active fork selected as canonical: 0
+Jun 10 23:02:53.402 DEBG Blocks to rollback: []
+Jun 10 23:02:53.402 DEBG Blocks to apply: [BlockIdentifier { index: 104, hash: "0x738f2e7d729c79e51e7cdd6b8d6d7ae1c1a9788fb1cb3707effb03ce531378b3" }]
+Jun 10 23:02:53.402 DEBG Standardizing Bitcoin block 738f2e7d729c79e51e7cdd6b8d6d7ae1c1a9788fb1cb3707effb03ce531378b3
+Jun 10 23:02:53.402 INFO Handling PropagateBitcoinChainEvent command
+Jun 10 23:02:53.403 INFO Evaluating 0 bitcoin chainhooks registered
+Jun 10 23:02:53.403 INFO 0 bitcoin chainhooks positive evaluations
+Jun 10 23:02:53.403 INFO 0 bitcoin chainhooks will be triggered
+Jun 10 23:02:53.403 INFO 0 bitcoin chainhooks to deregister
+Jun 10 23:02:53.403 DEBG Bitcoin block #104 received
+Jun 10 23:02:54.505 INFO POST /new_block
+Jun 10 23:02:54.509 INFO Start processing Stacks Block #2 (0x587b...d2cd)
+Jun 10 23:02:54.510 INFO Active fork 0: Fork [Block #1 (0x0701...3213), Block #0 (0x55c9...c2ee)], height = 2
+Jun 10 23:02:54.511 INFO Trying to append Block #2 (0x587b...d2cd) to Fork [Block #1 (0x0701...3213), Block #0 (0x55c9...c2ee)], height = 2
+Jun 10 23:02:54.511 INFO Comparing Block #1 (0x0701...3213) with Block #2 (0x587b...d2cd)
+Jun 10 23:02:54.511 INFO Stacks Block #2 (0x587b...d2cd) successfully appended to Fork [Block #2 (0x587b...d2cd), Block #1 (0x0701...3213), Block #0 (0x55c9...c2ee)], height = 3
+Jun 10 23:02:54.511 INFO Active fork: 0 - Fork [Block #2 (0x587b...d2cd), Block #1 (0x0701...3213), Block #0 (0x55c9...c2ee)], height = 3 / 104
+Jun 10 23:02:54.511 INFO Active fork selected as canonical: 0
+Jun 10 23:02:54.511 DEBG Blocks to rollback: []
+Jun 10 23:02:54.511 DEBG Blocks to apply: [BlockIdentifier { index: 2, hash: "0x587bf0fa9b72374c3e6351c02b12c762f2af92f072d809c65270590d3c5dd2cd" }]
+Jun 10 23:02:54.512 INFO Handling PropagateStacksChainEvent command
+Jun 10 23:02:54.512 INFO Evaluating 0 stacks chainhooks registered
+Jun 10 23:02:54.512 INFO 0 stacks chainhooks positive evaluations
+Jun 10 23:02:54.520 INFO Stacks block #2 anchored in Bitcoin block #104 includes 2 transactions
+Jun 10 23:02:54.739 INFO POST /
+Jun 10 23:02:54.741 DEBG Forwarding getblockhash request to http://localhost:18443
+Jun 10 23:02:54.742 DEBG Responding with response Object {"result": String("738f2e7d729c79e51e7cdd6b8d6d7ae1c1a9788fb1cb3707effb03ce531378b3"), "error": Null, "id": String("stacks")}
+Jun 10 23:02:54.743 INFO POST /wallet
+Jun 10 23:02:54.746 INFO POST /
+Jun 10 23:02:54.746 DEBG Forwarding sendrawtransaction request to http://localhost:18443
+Jun 10 23:02:54.747 DEBG Handling NotifyBitcoinTransactionProxied command
+Jun 10 23:02:54.750 DEBG Responding with response Object {"result": String("6229af051a46453ed97cfa906a94a2d5041fbd7392b2f1661e5505c456f2791f"), "error": Null, "id": String("stacks")}
+Jun 10 23:02:56.640 INFO POST /new_burn_block
+Jun 10 23:02:56.650 INFO Start processing Block #105 (0x0f18...a8a3)
+Jun 10 23:02:56.651 INFO Active fork 0: Fork [Block #104 (0x738f...78b3), Block #103 (0x619c...e44a), Block #102 (0x706a...7f77), Block #101 (0x7ffd...bc02)], height = 4
+Jun 10 23:02:56.651 INFO Trying to append Block #105 (0x0f18...a8a3) to Fork [Block #104 (0x738f...78b3), Block #103 (0x619c...e44a), Block #102 (0x706a...7f77), Block #101 (0x7ffd...bc02)], height = 4
+Jun 10 23:02:56.651 INFO Comparing Block #104 (0x738f...78b3) with Block #105 (0x0f18...a8a3)
+Jun 10 23:02:56.651 DEBG Bitcoin Block #105 (0x0f18...a8a3) successfully appended to Fork [Block #105 (0x0f18...a8a3), Block #104 (0x738f...78b3), Block #103 (0x619c...e44a), Block #102 (0x706a...7f77), Block #101 (0x7ffd...bc02)], height = 5
+Jun 10 23:02:56.651 INFO Active fork: 0 - Fork [Block #105 (0x0f18...a8a3), Block #104 (0x738f...78b3), Block #103 (0x619c...e44a), Block #102 (0x706a...7f77), Block #101 (0x7ffd...bc02)], height = 5
+Jun 10 23:02:56.651 INFO Active fork selected as canonical: 0
+Jun 10 23:02:56.651 DEBG Blocks to rollback: []
+Jun 10 23:02:56.651 DEBG Standardizing Bitcoin block 0f18671dc9f0bc6c88cdc5189011f7328a2317493db630c25512ff6b51b7a8a3
+Jun 10 23:02:56.651 DEBG Blocks to apply: [BlockIdentifier { index: 105, hash: "0x0f18671dc9f0bc6c88cdc5189011f7328a2317493db630c25512ff6b51b7a8a3" }]
+Jun 10 23:02:56.651 INFO Handling PropagateBitcoinChainEvent command
+Jun 10 23:02:56.651 INFO Evaluating 0 bitcoin chainhooks registered
+Jun 10 23:02:56.651 INFO 0 bitcoin chainhooks positive evaluations
+Jun 10 23:02:56.651 INFO 0 bitcoin chainhooks will be triggered
+Jun 10 23:02:56.651 INFO 0 bitcoin chainhooks to deregister
+Jun 10 23:02:56.651 DEBG Bitcoin block #105 received
+Jun 10 23:02:57.420 INFO POST /new_mempool_tx
+Jun 10 23:02:57.421 DEBG Handling PropagateStacksMempoolEvent command
+Jun 10 23:02:57.467 INFO POST /new_mempool_tx
+Jun 10 23:02:57.467 DEBG Handling PropagateStacksMempoolEvent command
+Jun 10 23:02:57.487 INFO POST /new_mempool_tx
+Jun 10 23:02:57.487 DEBG Handling PropagateStacksMempoolEvent command
+Jun 10 23:02:57.507 INFO POST /new_mempool_tx
+Jun 10 23:02:57.508 DEBG Handling PropagateStacksMempoolEvent command
+Jun 10 23:02:57.522 INFO POST /new_mempool_tx
+Jun 10 23:02:57.523 DEBG Handling PropagateStacksMempoolEvent command
+Jun 10 23:02:57.536 INFO POST /new_mempool_tx
+Jun 10 23:02:57.539 DEBG Handling PropagateStacksMempoolEvent command
+Jun 10 23:02:57.668 INFO POST /new_block
+Jun 10 23:02:57.668 INFO Start processing Stacks Block #3 (0xb666...958a)
+Jun 10 23:02:57.668 INFO Active fork 0: Fork [Block #2 (0x587b...d2cd), Block #1 (0x0701...3213), Block #0 (0x55c9...c2ee)], height = 3
+Jun 10 23:02:57.668 INFO Trying to append Block #3 (0xb666...958a) to Fork [Block #2 (0x587b...d2cd), Block #1 (0x0701...3213), Block #0 (0x55c9...c2ee)], height = 3
+Jun 10 23:02:57.668 INFO Comparing Block #2 (0x587b...d2cd) with Block #3 (0xb666...958a)
+Jun 10 23:02:57.668 INFO Stacks Block #3 (0xb666...958a) successfully appended to Fork [Block #3 (0xb666...958a), Block #2 (0x587b...d2cd), Block #1 (0x0701...3213), Block #0 (0x55c9...c2ee)], height = 4
+Jun 10 23:02:57.668 INFO Active fork: 0 - Fork [Block #3 (0xb666...958a), Block #2 (0x587b...d2cd), Block #1 (0x0701...3213), Block #0 (0x55c9...c2ee)], height = 4 / 105
+Jun 10 23:02:57.668 INFO Active fork selected as canonical: 0
+Jun 10 23:02:57.668 DEBG Blocks to rollback: []
+Jun 10 23:02:57.668 DEBG Blocks to apply: [BlockIdentifier { index: 3, hash: "0xb6660423fbd0e4499dba387998925cb409bb8b20078448ef1e4486bcea93958a" }]
+Jun 10 23:02:57.669 INFO Handling PropagateStacksChainEvent command
+Jun 10 23:02:57.669 INFO Evaluating 0 stacks chainhooks registered
+Jun 10 23:02:57.669 INFO 0 stacks chainhooks positive evaluations
+Jun 10 23:02:57.684 INFO Stacks block #3 anchored in Bitcoin block #105 includes 1 transactions
+Jun 10 23:02:57.975 INFO POST /
+Jun 10 23:02:57.975 DEBG Forwarding getblockhash request to http://localhost:18443
+Jun 10 23:02:57.977 DEBG Responding with response Object {"result": String("0f18671dc9f0bc6c88cdc5189011f7328a2317493db630c25512ff6b51b7a8a3"), "error": Null, "id": String("stacks")}
+Jun 10 23:02:57.978 INFO POST /wallet
+Jun 10 23:02:57.982 INFO POST /
+Jun 10 23:02:57.982 DEBG Forwarding sendrawtransaction request to http://localhost:18443
+Jun 10 23:02:57.983 DEBG Handling NotifyBitcoinTransactionProxied command
+Jun 10 23:02:57.988 DEBG Responding with response Object {"result": String("6089b3409a5600b40dc4f8784474cff92437c892adc0a945f8e4ed6ffbe0f225"), "error": Null, "id": String("stacks")}
+Jun 10 23:02:59.716 INFO POST /new_burn_block
+Jun 10 23:02:59.719 INFO Start processing Block #106 (0x58fd...871c)
+Jun 10 23:02:59.719 INFO Active fork 0: Fork [Block #105 (0x0f18...a8a3), Block #104 (0x738f...78b3), Block #103 (0x619c...e44a), Block #102 (0x706a...7f77), Block #101 (0x7ffd...bc02)], height = 5
+Jun 10 23:02:59.719 INFO Trying to append Block #106 (0x58fd...871c) to Fork [Block #105 (0x0f18...a8a3), Block #104 (0x738f...78b3), Block #103 (0x619c...e44a), Block #102 (0x706a...7f77), Block #101 (0x7ffd...bc02)], height = 5
+Jun 10 23:02:59.719 INFO Comparing Block #105 (0x0f18...a8a3) with Block #106 (0x58fd...871c)
+Jun 10 23:02:59.719 DEBG Bitcoin Block #106 (0x58fd...871c) successfully appended to Fork [Block #106 (0x58fd...871c), Block #105 (0x0f18...a8a3), Block #104 (0x738f...78b3), Block #103 (0x619c...e44a), Block #102 (0x706a...7f77), Block #101 (0x7ffd...bc02)], height = 6
+Jun 10 23:02:59.719 INFO Active fork: 0 - Fork [Block #106 (0x58fd...871c), Block #105 (0x0f18...a8a3), Block #104 (0x738f...78b3), Block #103 (0x619c...e44a), Block #102 (0x706a...7f77), Block #101 (0x7ffd...bc02)], height = 6
+Jun 10 23:02:59.719 INFO Active fork selected as canonical: 0
+Jun 10 23:02:59.719 DEBG Blocks to rollback: []
+Jun 10 23:02:59.719 DEBG Blocks to apply: [BlockIdentifier { index: 106, hash: "0x58fd8d40c533a3abe6eca471359b9806f550c2a97e8baf867ed700e8b473871c" }]
+Jun 10 23:02:59.719 DEBG Standardizing Bitcoin block 58fd8d40c533a3abe6eca471359b9806f550c2a97e8baf867ed700e8b473871c
+Jun 10 23:02:59.719 INFO Handling PropagateBitcoinChainEvent command
+Jun 10 23:02:59.719 INFO Evaluating 0 bitcoin chainhooks registered
+Jun 10 23:02:59.719 INFO 0 bitcoin chainhooks positive evaluations
+Jun 10 23:02:59.719 INFO 0 bitcoin chainhooks will be triggered
+Jun 10 23:02:59.719 INFO 0 bitcoin chainhooks to deregister
+Jun 10 23:02:59.719 DEBG Bitcoin block #106 received
+Jun 10 23:03:01.076 INFO POST /new_block
+Jun 10 23:03:01.080 INFO Start processing Stacks Block #4 (0x870d...7fed)
+Jun 10 23:03:01.080 INFO Active fork 0: Fork [Block #3 (0xb666...958a), Block #2 (0x587b...d2cd), Block #1 (0x0701...3213), Block #0 (0x55c9...c2ee)], height = 4
+Jun 10 23:03:01.080 INFO Trying to append Block #4 (0x870d...7fed) to Fork [Block #3 (0xb666...958a), Block #2 (0x587b...d2cd), Block #1 (0x0701...3213), Block #0 (0x55c9...c2ee)], height = 4
+Jun 10 23:03:01.080 INFO Comparing Block #3 (0xb666...958a) with Block #4 (0x870d...7fed)
+Jun 10 23:03:01.080 INFO Stacks Block #4 (0x870d...7fed) successfully appended to Fork [Block #4 (0x870d...7fed), Block #3 (0xb666...958a), Block #2 (0x587b...d2cd), Block #1 (0x0701...3213), Block #0 (0x55c9...c2ee)], height = 5
+Jun 10 23:03:01.080 INFO Active fork: 0 - Fork [Block #4 (0x870d...7fed), Block #3 (0xb666...958a), Block #2 (0x587b...d2cd), Block #1 (0x0701...3213), Block #0 (0x55c9...c2ee)], height = 5 / 106
+Jun 10 23:03:01.080 INFO Active fork selected as canonical: 0
+Jun 10 23:03:01.080 DEBG Blocks to rollback: []
+Jun 10 23:03:01.080 DEBG Blocks to apply: [BlockIdentifier { index: 4, hash: "0x870d5d9c2347e299530d5c35ea4194e839cbb76ba7ff5c8ad4674370eab87fed" }]
+Jun 10 23:03:01.081 INFO Handling PropagateStacksChainEvent command
+Jun 10 23:03:01.081 INFO Evaluating 0 stacks chainhooks registered
+Jun 10 23:03:01.081 INFO 0 stacks chainhooks positive evaluations
+Jun 10 23:03:01.092 INFO Stacks block #4 anchored in Bitcoin block #106 includes 7 transactions
+Jun 10 23:03:01.210 INFO POST /
+Jun 10 23:03:01.210 DEBG Forwarding getblockhash request to http://localhost:18443
+Jun 10 23:03:01.212 DEBG Responding with response Object {"result": String("58fd8d40c533a3abe6eca471359b9806f550c2a97e8baf867ed700e8b473871c"), "error": Null, "id": String("stacks")}
+Jun 10 23:03:01.213 INFO POST /wallet
+Jun 10 23:03:01.218 INFO POST /
+Jun 10 23:03:01.218 DEBG Forwarding sendrawtransaction request to http://localhost:18443
+Jun 10 23:03:01.219 DEBG Handling NotifyBitcoinTransactionProxied command
+Jun 10 23:03:01.225 DEBG Responding with response Object {"result": String("e12fc7eeb3062688e09a05d2b8835d6df93e854371dcaf322f04dd35d545d6ff"), "error": Null, "id": String("stacks")}
+Jun 10 23:03:02.896 INFO POST /new_burn_block
+Jun 10 23:03:02.898 INFO Start processing Block #107 (0x3b12...bbd8)
+Jun 10 23:03:02.898 INFO Active fork 0: Fork [Block #106 (0x58fd...871c), Block #105 (0x0f18...a8a3), Block #104 (0x738f...78b3), Block #103 (0x619c...e44a), Block #102 (0x706a...7f77), Block #101 (0x7ffd...bc02)], height = 6
+Jun 10 23:03:02.898 INFO Trying to append Block #107 (0x3b12...bbd8) to Fork [Block #106 (0x58fd...871c), Block #105 (0x0f18...a8a3), Block #104 (0x738f...78b3), Block #103 (0x619c...e44a), Block #102 (0x706a...7f77), Block #101 (0x7ffd...bc02)], height = 6
+Jun 10 23:03:02.898 INFO Comparing Block #106 (0x58fd...871c) with Block #107 (0x3b12...bbd8)
+Jun 10 23:03:02.898 DEBG Bitcoin Block #107 (0x3b12...bbd8) successfully appended to Fork [Block #107 (0x3b12...bbd8), Block #106 (0x58fd...871c), Block #105 (0x0f18...a8a3), Block #104 (0x738f...78b3), Block #103 (0x619c...e44a), Block #102 (0x706a...7f77), Block #101 (0x7ffd...bc02)], height = 7
+Jun 10 23:03:02.898 INFO Active fork: 0 - Fork [Block #107 (0x3b12...bbd8), Block #106 (0x58fd...871c), Block #105 (0x0f18...a8a3), Block #104 (0x738f...78b3), Block #103 (0x619c...e44a), Block #102 (0x706a...7f77), Block #101 (0x7ffd...bc02)], height = 7
+Jun 10 23:03:02.899 INFO Active fork selected as canonical: 0
+Jun 10 23:03:02.899 DEBG Blocks to rollback: []
+Jun 10 23:03:02.899 DEBG Standardizing Bitcoin block 3b1241f0224c57dbcda76a58d6853a6ab4ad19095fcfbcb6f821c78e1bcabbd8
+Jun 10 23:03:02.899 DEBG Blocks to apply: [BlockIdentifier { index: 107, hash: "0x3b1241f0224c57dbcda76a58d6853a6ab4ad19095fcfbcb6f821c78e1bcabbd8" }]
+Jun 10 23:03:02.899 INFO Handling PropagateBitcoinChainEvent command
+Jun 10 23:03:02.899 INFO Evaluating 0 bitcoin chainhooks registered
+Jun 10 23:03:02.899 INFO 0 bitcoin chainhooks positive evaluations
+Jun 10 23:03:02.899 INFO 0 bitcoin chainhooks will be triggered
+Jun 10 23:03:02.899 INFO 0 bitcoin chainhooks to deregister
+Jun 10 23:03:02.899 DEBG Bitcoin block #107 received
+Jun 10 23:03:03.542 INFO POST /new_mempool_tx
+Jun 10 23:03:03.542 DEBG Handling PropagateStacksMempoolEvent command
+Jun 10 23:03:03.923 INFO POST /new_block
+Jun 10 23:03:03.923 INFO Start processing Stacks Block #5 (0xc449...4778)
+Jun 10 23:03:03.923 INFO Active fork 0: Fork [Block #4 (0x870d...7fed), Block #3 (0xb666...958a), Block #2 (0x587b...d2cd), Block #1 (0x0701...3213), Block #0 (0x55c9...c2ee)], height = 5
+Jun 10 23:03:03.923 INFO Trying to append Block #5 (0xc449...4778) to Fork [Block #4 (0x870d...7fed), Block #3 (0xb666...958a), Block #2 (0x587b...d2cd), Block #1 (0x0701...3213), Block #0 (0x55c9...c2ee)], height = 5
+Jun 10 23:03:03.924 INFO Comparing Block #4 (0x870d...7fed) with Block #5 (0xc449...4778)
+Jun 10 23:03:03.924 INFO Stacks Block #5 (0xc449...4778) successfully appended to Fork [Block #5 (0xc449...4778), Block #4 (0x870d...7fed), Block #3 (0xb666...958a), Block #2 (0x587b...d2cd), Block #1 (0x0701...3213), Block #0 (0x55c9...c2ee)], height = 6
+Jun 10 23:03:03.924 INFO Active fork: 0 - Fork [Block #5 (0xc449...4778), Block #4 (0x870d...7fed), Block #3 (0xb666...958a), Block #2 (0x587b...d2cd), Block #1 (0x0701...3213), Block #0 (0x55c9...c2ee)], height = 6 / 107
+Jun 10 23:03:03.924 INFO Active fork selected as canonical: 0
+Jun 10 23:03:03.924 DEBG Blocks to rollback: []
+Jun 10 23:03:03.924 DEBG Blocks to apply: [BlockIdentifier { index: 5, hash: "0xc44958b589f05c5d3c17b1c2d26d1fd1c3e49d04ed2e6d9815e1d64c9a534778" }]
+Jun 10 23:03:03.924 INFO No block to confirm
+Jun 10 23:03:03.924 INFO Handling PropagateStacksChainEvent command
+Jun 10 23:03:03.924 INFO Evaluating 0 stacks chainhooks registered
+Jun 10 23:03:03.924 INFO 0 stacks chainhooks positive evaluations
+Jun 10 23:03:03.928 INFO Stacks block #5 anchored in Bitcoin block #107 includes 1 transactions
+Jun 10 23:03:04.041 INFO POST /
+Jun 10 23:03:04.042 DEBG Forwarding getblockhash request to http://localhost:18443
+Jun 10 23:03:04.050 DEBG Responding with response Object {"result": String("3b1241f0224c57dbcda76a58d6853a6ab4ad19095fcfbcb6f821c78e1bcabbd8"), "error": Null, "id": String("stacks")}
+Jun 10 23:03:04.050 INFO POST /wallet
+Jun 10 23:03:04.052 INFO POST /
+Jun 10 23:03:04.052 DEBG Forwarding sendrawtransaction request to http://localhost:18443
+Jun 10 23:03:04.052 DEBG Handling NotifyBitcoinTransactionProxied command
+Jun 10 23:03:04.056 DEBG Responding with response Object {"result": String("5dc3f390263038d09ec53ca49c98aec11402cca680d394eedb7fb3372d8a4582"), "error": Null, "id": String("stacks")}
+Jun 10 23:03:06.022 INFO POST /new_burn_block
+Jun 10 23:03:06.025 INFO Start processing Block #108 (0x6d81...1718)
+Jun 10 23:03:06.025 DEBG Standardizing Bitcoin block 6d811f18b6c0df8f88e210b18b605638b5e820557b5690c21dfbf43ffdc61718
+Jun 10 23:03:06.026 INFO Active fork 0: Fork [Block #107 (0x3b12...bbd8), Block #106 (0x58fd...871c), Block #105 (0x0f18...a8a3), Block #104 (0x738f...78b3), Block #103 (0x619c...e44a), Block #102 (0x706a...7f77)], height = 6
+Jun 10 23:03:06.026 INFO Trying to append Block #108 (0x6d81...1718) to Fork [Block #107 (0x3b12...bbd8), Block #106 (0x58fd...871c), Block #105 (0x0f18...a8a3), Block #104 (0x738f...78b3), Block #103 (0x619c...e44a), Block #102 (0x706a...7f77)], height = 6
+Jun 10 23:03:06.026 INFO Comparing Block #107 (0x3b12...bbd8) with Block #108 (0x6d81...1718)
+Jun 10 23:03:06.026 DEBG Bitcoin Block #108 (0x6d81...1718) successfully appended to Fork [Block #108 (0x6d81...1718), Block #107 (0x3b12...bbd8), Block #106 (0x58fd...871c), Block #105 (0x0f18...a8a3), Block #104 (0x738f...78b3), Block #103 (0x619c...e44a), Block #102 (0x706a...7f77)], height = 7
+Jun 10 23:03:06.026 INFO Active fork: 0 - Fork [Block #108 (0x6d81...1718), Block #107 (0x3b12...bbd8), Block #106 (0x58fd...871c), Block #105 (0x0f18...a8a3), Block #104 (0x738f...78b3), Block #103 (0x619c...e44a), Block #102 (0x706a...7f77)], height = 7
+Jun 10 23:03:06.026 INFO Active fork selected as canonical: 0
+Jun 10 23:03:06.026 DEBG Blocks to rollback: []
+Jun 10 23:03:06.026 DEBG Blocks to apply: [BlockIdentifier { index: 108, hash: "0x6d811f18b6c0df8f88e210b18b605638b5e820557b5690c21dfbf43ffdc61718" }]
+Jun 10 23:03:06.026 INFO Handling PropagateBitcoinChainEvent command
+Jun 10 23:03:06.026 INFO Evaluating 0 bitcoin chainhooks registered
+Jun 10 23:03:06.026 INFO 0 bitcoin chainhooks positive evaluations
+Jun 10 23:03:06.026 INFO 0 bitcoin chainhooks will be triggered
+Jun 10 23:03:06.026 INFO 0 bitcoin chainhooks to deregister
+Jun 10 23:03:06.027 DEBG Bitcoin block #108 received
+Jun 10 23:03:07.071 INFO POST /new_block
+Jun 10 23:03:07.071 INFO Start processing Stacks Block #6 (0xdbf4...cd91)
+Jun 10 23:03:07.071 INFO Active fork 0: Fork [Block #5 (0xc449...4778), Block #4 (0x870d...7fed), Block #3 (0xb666...958a), Block #2 (0x587b...d2cd), Block #1 (0x0701...3213), Block #0 (0x55c9...c2ee)], height = 6
+Jun 10 23:03:07.071 INFO Trying to append Block #6 (0xdbf4...cd91) to Fork [Block #5 (0xc449...4778), Block #4 (0x870d...7fed), Block #3 (0xb666...958a), Block #2 (0x587b...d2cd), Block #1 (0x0701...3213), Block #0 (0x55c9...c2ee)], height = 6
+Jun 10 23:03:07.071 INFO Comparing Block #5 (0xc449...4778) with Block #6 (0xdbf4...cd91)
+Jun 10 23:03:07.071 INFO Stacks Block #6 (0xdbf4...cd91) successfully appended to Fork [Block #6 (0xdbf4...cd91), Block #5 (0xc449...4778), Block #4 (0x870d...7fed), Block #3 (0xb666...958a), Block #2 (0x587b...d2cd), Block #1 (0x0701...3213), Block #0 (0x55c9...c2ee)], height = 7
+Jun 10 23:03:07.071 INFO Active fork: 0 - Fork [Block #6 (0xdbf4...cd91), Block #5 (0xc449...4778), Block #4 (0x870d...7fed), Block #3 (0xb666...958a), Block #2 (0x587b...d2cd), Block #1 (0x0701...3213), Block #0 (0x55c9...c2ee)], height = 7 / 108
+Jun 10 23:03:07.071 INFO Active fork selected as canonical: 0
+Jun 10 23:03:07.071 DEBG Blocks to rollback: []
+Jun 10 23:03:07.071 DEBG Blocks to apply: [BlockIdentifier { index: 6, hash: "0xdbf48c3a18b28a85a3139e60b3266760cc6417df4321af870c3e5fac23bfcd91" }]
+Jun 10 23:03:07.071 DEBG AFTER: 1
+Jun 10 23:03:07.071 INFO Handling PropagateStacksChainEvent command
+Jun 10 23:03:07.071 INFO Evaluating 0 stacks chainhooks registered
+Jun 10 23:03:07.071 INFO 0 stacks chainhooks positive evaluations
+Jun 10 23:03:07.075 INFO Stacks block #6 anchored in Bitcoin block #108 includes 2 transactions
+Jun 10 23:03:07.173 INFO POST /
+Jun 10 23:03:07.173 DEBG Forwarding getblockhash request to http://localhost:18443
+Jun 10 23:03:07.175 DEBG Responding with response Object {"result": String("6d811f18b6c0df8f88e210b18b605638b5e820557b5690c21dfbf43ffdc61718"), "error": Null, "id": String("stacks")}
+Jun 10 23:03:07.176 INFO POST /wallet
+Jun 10 23:03:07.185 INFO POST /
+Jun 10 23:03:07.185 DEBG Forwarding sendrawtransaction request to http://localhost:18443
+Jun 10 23:03:07.185 DEBG Handling NotifyBitcoinTransactionProxied command
+Jun 10 23:03:07.186 DEBG Responding with response Object {"result": String("a50a6b6b62ddf9aec70e5840d23b52f68142ee59789e3ea4ea9719ba525fbb4c"), "error": Null, "id": String("stacks")}
+Jun 10 23:03:09.193 INFO POST /new_burn_block
+Jun 10 23:03:09.196 INFO Start processing Block #109 (0x33c8...8696)
+Jun 10 23:03:09.196 DEBG Standardizing Bitcoin block 33c813345d4103c2db9e8709b4377d1af88cb03864380651db82af8c34b98696
+Jun 10 23:03:09.196 INFO Active fork 0: Fork [Block #108 (0x6d81...1718), Block #107 (0x3b12...bbd8), Block #106 (0x58fd...871c), Block #105 (0x0f18...a8a3), Block #104 (0x738f...78b3), Block #103 (0x619c...e44a)], height = 6
+Jun 10 23:03:09.196 INFO Trying to append Block #109 (0x33c8...8696) to Fork [Block #108 (0x6d81...1718), Block #107 (0x3b12...bbd8), Block #106 (0x58fd...871c), Block #105 (0x0f18...a8a3), Block #104 (0x738f...78b3), Block #103 (0x619c...e44a)], height = 6
+Jun 10 23:03:09.196 INFO Comparing Block #108 (0x6d81...1718) with Block #109 (0x33c8...8696)
+Jun 10 23:03:09.196 DEBG Bitcoin Block #109 (0x33c8...8696) successfully appended to Fork [Block #109 (0x33c8...8696), Block #108 (0x6d81...1718), Block #107 (0x3b12...bbd8), Block #106 (0x58fd...871c), Block #105 (0x0f18...a8a3), Block #104 (0x738f...78b3), Block #103 (0x619c...e44a)], height = 7
+Jun 10 23:03:09.196 INFO Active fork: 0 - Fork [Block #109 (0x33c8...8696), Block #108 (0x6d81...1718), Block #107 (0x3b12...bbd8), Block #106 (0x58fd...871c), Block #105 (0x0f18...a8a3), Block #104 (0x738f...78b3), Block #103 (0x619c...e44a)], height = 7
+Jun 10 23:03:09.196 INFO Active fork selected as canonical: 0
+Jun 10 23:03:09.196 DEBG Blocks to rollback: []
+Jun 10 23:03:09.196 DEBG Blocks to apply: [BlockIdentifier { index: 109, hash: "0x33c813345d4103c2db9e8709b4377d1af88cb03864380651db82af8c34b98696" }]
+Jun 10 23:03:09.196 INFO Handling PropagateBitcoinChainEvent command
+Jun 10 23:03:09.196 INFO Evaluating 0 bitcoin chainhooks registered
+Jun 10 23:03:09.196 INFO 0 bitcoin chainhooks positive evaluations
+Jun 10 23:03:09.196 INFO 0 bitcoin chainhooks will be triggered
+Jun 10 23:03:09.197 INFO 0 bitcoin chainhooks to deregister
+Jun 10 23:03:09.197 DEBG Bitcoin block #109 received
+Jun 10 23:03:09.661 INFO Local Devnet network ready
+Jun 10 23:03:10.241 INFO POST /new_block
+Jun 10 23:03:10.241 INFO Start processing Stacks Block #7 (0xc65e...d2ca)
+Jun 10 23:03:10.241 INFO Active fork 0: Fork [Block #6 (0xdbf4...cd91), Block #5 (0xc449...4778), Block #4 (0x870d...7fed), Block #3 (0xb666...958a), Block #2 (0x587b...d2cd), Block #1 (0x0701...3213)], height = 6
+Jun 10 23:03:10.241 INFO Trying to append Block #7 (0xc65e...d2ca) to Fork [Block #6 (0xdbf4...cd91), Block #5 (0xc449...4778), Block #4 (0x870d...7fed), Block #3 (0xb666...958a), Block #2 (0x587b...d2cd), Block #1 (0x0701...3213)], height = 6
+Jun 10 23:03:10.241 INFO Comparing Block #6 (0xdbf4...cd91) with Block #7 (0xc65e...d2ca)
+Jun 10 23:03:10.241 INFO Stacks Block #7 (0xc65e...d2ca) successfully appended to Fork [Block #7 (0xc65e...d2ca), Block #6 (0xdbf4...cd91), Block #5 (0xc449...4778), Block #4 (0x870d...7fed), Block #3 (0xb666...958a), Block #2 (0x587b...d2cd), Block #1 (0x0701...3213)], height = 7
+Jun 10 23:03:10.241 INFO Active fork: 0 - Fork [Block #7 (0xc65e...d2ca), Block #6 (0xdbf4...cd91), Block #5 (0xc449...4778), Block #4 (0x870d...7fed), Block #3 (0xb666...958a), Block #2 (0x587b...d2cd), Block #1 (0x0701...3213)], height = 7 / 109
+Jun 10 23:03:10.241 INFO Active fork selected as canonical: 0
+Jun 10 23:03:10.242 DEBG Blocks to rollback: []
+Jun 10 23:03:10.242 DEBG Blocks to apply: [BlockIdentifier { index: 7, hash: "0xc65e9f240286b61aedccb1fc5cb5eba6f8659e724060bda4b1d23c43c853d2ca" }]
+Jun 10 23:03:10.242 DEBG AFTER: 1
+Jun 10 23:03:10.242 INFO Handling PropagateStacksChainEvent command
+Jun 10 23:03:10.243 INFO Evaluating 0 stacks chainhooks registered
+Jun 10 23:03:10.243 INFO 0 stacks chainhooks positive evaluations
+Jun 10 23:03:10.248 INFO Stacks block #7 anchored in Bitcoin block #109 includes 1 transactions
+Jun 10 23:03:10.350 INFO POST /
+Jun 10 23:03:10.350 DEBG Forwarding getblockhash request to http://localhost:18443
+Jun 10 23:03:10.352 DEBG Responding with response Object {"result": String("33c813345d4103c2db9e8709b4377d1af88cb03864380651db82af8c34b98696"), "error": Null, "id": String("stacks")}
+Jun 10 23:03:10.354 INFO POST /wallet
+Jun 10 23:03:10.358 INFO POST /
+Jun 10 23:03:10.358 DEBG Forwarding sendrawtransaction request to http://localhost:18443
+Jun 10 23:03:10.359 DEBG Handling NotifyBitcoinTransactionProxied command
+Jun 10 23:03:10.366 DEBG Responding with response Object {"result": String("638f63c47a928d315407acbfa4b1a3d02cb2b0844682d3baf717b9c589515bbf"), "error": Null, "id": String("stacks")}
+Jun 10 23:03:17.246 WARN Ctrl+C received, initiating termination sequence.
+Jun 10 23:03:17.247 INFO Handling Termination command
+Jun 10 23:03:17.391 INFO Terminating container: 71d5d6ff2ecce26351837424d1b95f4a185621d54345c789200fe22006b16d9f
+Jun 10 23:03:17.491 INFO Terminating container: f26238771105c8db02594deb9e4e0e39eff6a25ca885a8787907070cc4fb4e05
+Jun 10 23:03:17.595 INFO Terminating container: 684ec8a629106250404c463df9ff763c1288dd737d5ba85883640c71a9252900
+Jun 10 23:03:17.717 INFO Terminating container: f92e8f2c662c8f5b66bf563827a0c2267b12887349d5316106fea33b42b79668
+Jun 10 23:03:17.832 INFO Terminating container: 9718b7ef16cd7d78b0a265b2f03650f29e7a01ec3a69b626add9cd1cdf1ed21d
+Jun 10 23:03:17.970 INFO Terminating container: 9e48aa4385fd71bd4dc142b6b8805a0704fa185688abb0cc8de27bfec863998c
+Jun 10 23:03:18.008 INFO Pruning network and containers
+Jun 10 23:03:18.011 INFO Artifacts (logs, conf, chainstates) available here: /Users/fernandofoy/Documents/zest-protocol-repos/zest-sbtc/./.cache/stacks-devnet-1718060550
+Jun 10 23:03:18.011 INFO ✌️
