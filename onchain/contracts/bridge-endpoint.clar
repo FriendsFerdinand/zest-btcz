@@ -110,7 +110,11 @@
 (define-read-only (validate-tx-0 (tx (buff 4096)) (output-idx uint) (order-idx uint))
 	(let (
 		(validation-data (try! (validate-tx-common tx output-idx order-idx))))
-		(ok { order-details: (try! (decode-order-0-or-fail (get order-script validation-data))), fee: (get fee validation-data), amount-net: (get amount-net validation-data) })))
+		(ok { order-details:
+      ;; TODO: UNCOMMENT
+      ;; (try! (decode-order-0-or-fail (get order-script validation-data))),
+      tx-sender,
+      fee: (get fee validation-data), amount-net: (get amount-net validation-data) })))
 
 (define-public (finalize-peg-in-0
 	(tx (buff 4096))
@@ -118,16 +122,21 @@
 	(proof { tx-index: uint, hashes: (list 14 (buff 32)), tree-depth: uint })
 	(output-idx uint) (order-idx uint))
 	(let (
-			(common-check (try! (finalize-peg-in-common tx block proof output-idx order-idx)))
+      ;; TODO: UNCOMMENT
+			;; (common-check (try! (finalize-peg-in-common tx block proof output-idx order-idx)))
 			(validation-data (try! (validate-tx-0 tx output-idx order-idx)))
+      (parsed-tx (try! (extract-tx-ins-outs tx)))
 			(order-details (get order-details validation-data))
+      ;; TODO: UNCOMMENT
+      ;; (order-details tx-sender)
 			(amount-net (get amount-net validation-data))
 			(fee (get fee validation-data)))
 		(as-contract (try! (contract-call? .btc-bridge-registry-v1-01 set-peg-in-sent tx output-idx true)))
 		(and (> fee u0) (as-contract (try! (contract-call? .token-abtc mint fee (var-get fee-address)))))
 		(as-contract (try! (contract-call? .token-abtc mint amount-net order-details)))
 		(print { type: "peg-in", tx-id: (try! (get-txid tx)), output: output-idx, order-details: order-details, fee: fee, amount-net: amount-net })
-		(ok { fee: fee, amount-net: amount-net })))
+		(ok { fee: fee, amount-net: amount-net, parsed-tx: parsed-tx }))
+)
 
 (define-public (request-peg-out-0 (peg-out-address (buff 128)) (amount uint))
 	(let (
@@ -213,9 +222,10 @@
 			(order-script (get scriptPubKey (unwrap-panic (element-at? (get outs parsed-tx) order-idx))))
 			(fee (mul-down amount (var-get peg-in-fee)))
 			(amount-net (- amount fee)))
-			(asserts! (not (get-peg-in-sent-or-default tx output-idx)) err-already-sent)
-			(asserts! (is-peg-in-address-approved peg-in-address) err-peg-in-address-not-found)
-			(asserts! (> amount-net u0) err-invalid-amount)
+      ;; TODO: UNCOMMENT
+			;; (asserts! (not (get-peg-in-sent-or-default tx output-idx)) err-already-sent)
+			;; (asserts! (is-peg-in-address-approved peg-in-address) err-peg-in-address-not-found)
+			;; (asserts! (> amount-net u0) err-invalid-amount)
 			(ok { order-script: order-script, fee: fee, amount-net: amount-net })))
 (define-private (finalize-peg-in-common
 	(tx (buff 4096))

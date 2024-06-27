@@ -39,14 +39,14 @@ plan:
         - contract-publish:
             contract-name: bridge-endpoint
             expected-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            cost: 133140
+            cost: 135250
             path: contracts/bridge-endpoint.clar
             anchor-block-only: true
             clarity-version: 2
         - contract-publish:
             contract-name: stacking-btc
             expected-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            cost: 4360
+            cost: 22620
             path: contracts/stacking-btc.clar
             anchor-block-only: true
             clarity-version: 2
@@ -54,11 +54,33 @@ plan:
     - id: 1
       transactions:
         - contract-call:
-            contract-id: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.stacking-btc
+            contract-id: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.bridge-endpoint
             expected-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            method: do-this
+            method: pause-peg-in
             parameters:
-              - "{ hashes: u0 }"
+              - false
             cost: 5960
-            clarity-version: 2
+        - contract-call:
+            contract-id: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.token-abtc
+            expected-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            method: add-approved-contract
+            parameters:
+              - "'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.bridge-endpoint"
+            cost: 5960
+        - contract-call:
+            contract-id: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.btc-bridge-registry-v1-01
+            expected-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            method: approve-operator
+            parameters:
+              - "'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.bridge-endpoint"
+              - true
+            cost: 5960
       epoch: "2.4"
+    # - id: 2
+    #   transactions:
+    #     - btc-transfer:
+    #         expected-sender: n3GRiDLKWuKLCw1DZmV75W1mE35qmW2tQm
+    #         recipient: mr1iPkD9N3RJZZxXRk7xF9d36gffa6exNC
+    #         sats-amount: 100000000
+    #         sats-per-byte: 10
+    #   epoch: "2.4"

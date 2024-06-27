@@ -67,7 +67,8 @@
 		(ft-mint? bridged-btc amount recipient)))
 (define-public (burn (amount uint) (sender principal))
 	(begin
-		(asserts! (or (is-ok (check-is-approved)) (is-ok (check-is-owner))) ERR-NOT-AUTHORIZED)
+		;; (asserts! (or (is-ok (check-is-approved)) (is-ok (check-is-owner))) ERR-NOT-AUTHORIZED)
+		(asserts! (is-ok (check-is-approved)) ERR-NOT-AUTHORIZED)
 		(ft-burn? bridged-btc amount sender)))
 (define-private (pow-decimals)
 	(pow u10 (unwrap-panic (get-decimals))))
