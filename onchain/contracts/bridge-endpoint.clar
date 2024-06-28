@@ -125,7 +125,7 @@
       ;; TODO: UNCOMMENT
 			;; (common-check (try! (finalize-peg-in-common tx block proof output-idx order-idx)))
 			(validation-data (try! (validate-tx-0 tx output-idx order-idx)))
-      (parsed-tx (try! (extract-tx-ins-outs tx)))
+      		(parsed-tx (try! (extract-tx-ins-outs tx)))
 			(order-details (get order-details validation-data))
       ;; TODO: UNCOMMENT
       ;; (order-details tx-sender)
@@ -133,7 +133,7 @@
 			(fee (get fee validation-data)))
 		(as-contract (try! (contract-call? .btc-bridge-registry-v1-01 set-peg-in-sent tx output-idx true)))
 		(and (> fee u0) (as-contract (try! (contract-call? .token-abtc mint fee (var-get fee-address)))))
-		(as-contract (try! (contract-call? .token-abtc mint amount-net order-details)))
+		;; (as-contract (try! (contract-call? .token-abtc mint amount-net order-details)))
 		(print { type: "peg-in", tx-id: (try! (get-txid tx)), output: output-idx, order-details: order-details, fee: fee, amount-net: amount-net })
 		(ok { fee: fee, amount-net: amount-net, parsed-tx: parsed-tx }))
 )

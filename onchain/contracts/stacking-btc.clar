@@ -14,8 +14,10 @@
     ;; (peg-in-data { fee: u100, amount-net: u10000 })
     (btc-to-sbtc-ratio (get-btc-to-sbtc-ratio))
     (peg-in-data (try! (contract-call? .bridge-endpoint finalize-peg-in-0 tx block proof output-idx order-idx)))
-    (redeemeable-btc (/ (* (get amount-net peg-in-data) btc-to-sbtc-ratio) u100000000))
+    (redeemeable-btc (/ (* (get amount-net peg-in-data) u100000000) btc-to-sbtc-ratio))
+    (sender tx-sender)
   )
+    (as-contract (try! (contract-call? .token-abtc mint redeemeable-btc sender)))
     (var-set total-btc (+ (var-get total-btc) (get amount-net peg-in-data)))
     (ok true)
   )
@@ -34,7 +36,7 @@
     (map-set withdrawal-by-id current-id { btc-amount: redeemeable-btc, sbtc-amount: sbtc-amount, cycle-id: u0, peg-out-address: peg-out-address })
 
     (var-set withdraw-id (+ current-id u1))
-    (ok true)
+    (ok redeemeable-btc)
   )
 )
 

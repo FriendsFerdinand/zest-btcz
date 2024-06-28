@@ -1,13 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { showConnect, openContractCall } from '@stacks/connect';
 import { StacksTestnet, StacksDevnet } from '@stacks/network';
 import { hexToBytes } from '@stacks/common';
-import { AnchorMode, PostConditionMode, stringUtf8CV, bufferCVFromString, tupleCV, uintCV, listCV, bufferCV } from '@stacks/transactions';
+import {
+  AnchorMode,
+  PostConditionMode,
+  stringUtf8CV,
+  bufferCVFromString,
+  tupleCV,
+  uintCV,
+  listCV,
+  bufferCV,
+  callReadOnlyFunction,
+  cvToValue,
+  principalCV,
+} from '@stacks/transactions';
 import { userSession } from './userSession';
+import { AppBar, Tabs, Tab, Typography, Box, TextField, Grid } from '@mui/material';
 
 import './App.css';
 
-import { AppBar, Tabs, Tab, Typography, Box } from '@mui/material';
+const network = new StacksDevnet();
+const contractAddress = 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM';
+// const network = new StacksTestnet();
+// const contractAddress = 'ST3FSKZQ5YKPXYB5PKTYFVW13D732S7N7GNQ1MQJB';
+
+const walletResponse = await (window as any).LeatherProvider?.request("getAddresses");
+console.log(walletResponse.result.addresses[2]);
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -63,6 +82,127 @@ function a11yProps(index: number) {
   };
 }
 
+const QueryFields: React.FC = () => {
+  const [field1, setField1] = useState<string>('');
+  const [field2, setField2] = useState<string>('');
+  const [field3, setField3] = useState<string>('');
+
+  useEffect(() => {
+    async function fetchsBtcBalance() {
+      const contractName = 'token-abtc';
+      const functionName = 'get-balance';
+      const senderAddress = walletResponse.result.addresses[2].address;
+
+      const options = {
+        contractAddress,
+        contractName,
+        functionName,
+        functionArgs: [
+          principalCV(senderAddress)
+        ],
+        network,
+        senderAddress,
+      };
+      try {
+        callReadOnlyFunction(options).then((result) => {
+          // console.log(cvToValue(result));
+          const sBTCBalance = Number(cvToValue((result as any).value)) / 100_000_000;
+          setField1(`sBTC balance: ${sBTCBalance}`);
+          
+        }).catch((err) => {
+          console.log(err);
+          setField1(`Error Oops!`);
+        })
+      } catch (e) {
+          console.error(e);
+      }
+    };
+    async function fetchRedeemableBTC() {
+      const contractName = 'stacking-btc';
+      const functionName = 'get-redeemable-btc';
+      // const buffer = bufferCVFromString('foo');
+      const senderAddress = walletResponse.result.addresses[2].address;
+
+      const options = {
+        contractAddress,
+        contractName,
+        functionName,
+        functionArgs: [
+          principalCV(senderAddress)
+        ],
+        network,
+        senderAddress,
+      };
+      try {
+        callReadOnlyFunction(options).then((result) => {
+          console.log(cvToValue(result));
+          const redeemeableBtcBalance = Number(cvToValue(result as any)) / 100_000_000;
+          setField2(`Redeeamable BTC ${redeemeableBtcBalance}`);
+          
+        }).catch((err) => {
+          console.log(err);
+          setField1(`Error Oops!`);
+        })
+      } catch (e) {
+          console.error(e);
+      }
+    };
+
+    const interval = setInterval(() => {
+      // Replace these with actual queries
+      fetchsBtcBalance();
+      fetchRedeemableBTC();
+      
+      setField3(`Value 3 at ${new Date().toLocaleTimeString()}`);
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <Box mt={2}>
+      <Grid container spacing={2}>
+        <Grid item xs={4}>
+          <TextField
+            label="Field 1"
+            value={field1}
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            InputProps={{
+              readOnly: true,
+            }}
+          />
+        </Grid>
+        <Grid item xs={4}>
+          <TextField
+            label="Field 2"
+            value={field2}
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            InputProps={{
+              readOnly: true,
+            }}
+          />
+        </Grid>
+        <Grid item xs={4}>
+          <TextField
+            label="Field 3"
+            value={field3}
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            InputProps={{
+              readOnly: true,
+            }}
+          />
+        </Grid>
+      </Grid>
+    </Box>
+  );
+};
+
 const myAppName = 'My Stacks Web-App';
 const myAppIcon = window.location.origin + '/my_logo.png';
 // const custodianExampleAddr = "mysp14yWFpyacRFp9YCQSH9LTm2P2pPXJ3";
@@ -75,7 +215,9 @@ const App: React.FC = () => {
   const [reward, setRewardValue] = useState<number>(0);
   const [tabValue, setTabValue] = useState(0);
   const [withdrawAmount, setWithdrawAmount] = useState(0);
+  const [redeemableAmount, setRedeemableAmount] = useState(0);
   const [pegoutAddress, setPegoutAddress] = useState('');
+  const [txId, setTxId] = useState('');
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -98,6 +240,33 @@ const App: React.FC = () => {
   const handlewithdrawAmountChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const value = event.target.value;
     setWithdrawAmount(value === '' ? 0 : Number(value));
+
+    const contractName = 'stacking-btc';
+    const functionName = 'get-redeemable-btc-by-amount';
+    const senderAddress = walletResponse.result.addresses[2].address;
+    const withdrawnAmount = Number(value) * 100_000_000;
+
+    const options = {
+      contractAddress,
+      contractName,
+      functionName,
+      functionArgs: [
+        uintCV(withdrawnAmount)
+      ],
+      network,
+      senderAddress,
+    };
+    try {
+      callReadOnlyFunction(options).then((result) => {
+        // console.log(cvToValue(result));
+        const redeemeableBtcBalance = Number(cvToValue(result)) / 100_000_000;
+        setRedeemableAmount(redeemeableBtcBalance);
+      }).catch((err) => {
+        console.log(err);
+      })
+    } catch (e) {
+        console.error(e);
+    }
   };
 
   const handlePegoutAddressChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -110,29 +279,46 @@ const App: React.FC = () => {
       // const response = await (window as any).LeatherProvider?.request("sendTransfer", {
       //   recipients: [
       //     {
-      //       address: "bcrt1qs758ursh4q9z627kt3pp5yysm78ddny6txaqgw",
+      //       address: "mxFySYdWBfAoByU2VxKEubZpVVa1f2LHeo",
+      //       // address: "bcrt1qs758ursh4q9z627kt3pp5yysm78ddny6txaqgw",
       //       amount: btcAmount,
       //     },
-      //     // {
-      //     //   // testnet addres
-      //     //   // address: "6a1605169381b04d6167c1b37bfe811f181ede41134b56b9",
-      //     //   address: "bcrt1q3zl64vadtuh3vnsuhdgv6pm93n82ye8q6cr4ch",
-      //     //   amount: 0,
-      //     // },
       //   ],
       //   network: "testnet",
       // });
-      const valueHex = padTo(numberToHex(btcAmount), 8);
-      // "02000000000101cce8782b81f27651c6c72d7670f70e444d1cee04a4a87ebe0afc61916686e79e0600000000fdffffff03a08601000000000022512027c78da89b2c03d8088370af71614049f11303549236d3f1a05b680f47aa4f3fffbc010000000000160014da166c580df1eafcbb4152faa033e7173c6a95f40000000000000000186a16051a7321b74e2b6a7e949e6c4ad313035b166509501702473044022063d68bc905edf6a73b70811cfb3d400ba2bc0e6fc67bedea2ba5a476a9b202860220475185f87f553f812a072bfd7e3f0d51bb9178e20349179eff7188a60c5266ac012102a9794ecf17a4bc0e2df9e83b58f600291018c1d84423d4fb62ae8d1f439fc78600000000"
-      const txHex = `02000000000101cce8782b81f27651c6c72d7670f70e444d1cee04a4a87ebe0afc61916686e79e0600000000fdffffff03${toLittleEndian(valueHex)}22512027c78da89b2c03d8088370af71614049f11303549236d3f1a05b680f47aa4f3fffbc010000000000160014da166c580df1eafcbb4152faa033e7173c6a95f40000000000000000186a16051a7321b74e2b6a7e949e6c4ad313035b166509501702473044022063d68bc905edf6a73b70811cfb3d400ba2bc0e6fc67bedea2ba5a476a9b202860220475185f87f553f812a072bfd7e3f0d51bb9178e20349179eff7188a60c5266ac012102a9794ecf17a4bc0e2df9e83b58f600291018c1d84423d4fb62ae8d1f439fc78600000000`;
+      // console.log(`Deposit txid: ${response.result.txid}`);
+      // setTxId(response.result.txid);
 
-      setTx(txHex);
-      // console.log(hexToBytes(sats.toString()));
+
+    await openContractCall({
+      network,
+      anchorMode: AnchorMode.Any, // which type of block the tx should be mined in
     
-      // console.log("Response:", response);
-      // console.log("Transaction ID:", response.result.txid);
+      contractAddress,
+      contractName: 'stacking-btc',
+      functionName: 'add-rewards',
+      functionArgs: [
+        uintCV(1)
+      ],
+      postConditionMode: PostConditionMode.Allow,
+      postConditions: [],
+      onFinish: response => {
+        // WHEN user confirms pop-up
+      },
+      onCancel: () => {
+        // WHEN user cancels/closes pop-up
+      },
+    });
+
+      const txid = "14bc6a7cf0985e3a7aad4d5cabc2907ab04d02f3bc11fff3ff4fd11ea6ab4f11";
+      setTxId(txid);
+
+      // const valueHex = padTo(numberToHex(btcAmount), 8);
+      // "02000000000101cce8782b81f27651c6c72d7670f70e444d1cee04a4a87ebe0afc61916686e79e0600000000fdffffff03a08601000000000022512027c78da89b2c03d8088370af71614049f11303549236d3f1a05b680f47aa4f3fffbc010000000000160014da166c580df1eafcbb4152faa033e7173c6a95f40000000000000000186a16051a7321b74e2b6a7e949e6c4ad313035b166509501702473044022063d68bc905edf6a73b70811cfb3d400ba2bc0e6fc67bedea2ba5a476a9b202860220475185f87f553f812a072bfd7e3f0d51bb9178e20349179eff7188a60c5266ac012102a9794ecf17a4bc0e2df9e83b58f600291018c1d84423d4fb62ae8d1f439fc78600000000"
+      // const txHex = `02000000000101cce8782b81f27651c6c72d7670f70e444d1cee04a4a87ebe0afc61916686e79e0600000000fdffffff03${toLittleEndian(valueHex)}22512027c78da89b2c03d8088370af71614049f11303549236d3f1a05b680f47aa4f3fffbc010000000000160014da166c580df1eafcbb4152faa033e7173c6a95f40000000000000000186a16051a7321b74e2b6a7e949e6c4ad313035b166509501702473044022063d68bc905edf6a73b70811cfb3d400ba2bc0e6fc67bedea2ba5a476a9b202860220475185f87f553f812a072bfd7e3f0d51bb9178e20349179eff7188a60c5266ac012102a9794ecf17a4bc0e2df9e83b58f600291018c1d84423d4fb62ae8d1f439fc78600000000`;
+
     } catch (error: any) {
-      console.log("Request error:", error.error.code, error.error.message);
+      console.log(error);
     }
   };
 
@@ -143,10 +329,10 @@ const App: React.FC = () => {
   const handleAddRewardsClick = async (rewards: number): Promise<void> => {
     const btcAmount = rewards * 100_000_000;
     await openContractCall({
-      network: new StacksDevnet(),
+      network,
       anchorMode: AnchorMode.Any, // which type of block the tx should be mined in
     
-      contractAddress: 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM',
+      contractAddress,
       contractName: 'stacking-btc',
       functionName: 'add-rewards',
       functionArgs: [
@@ -163,17 +349,20 @@ const App: React.FC = () => {
     });
   };
 
-  const handleDeposit = async (txHex: string): Promise<void> => {
+  const handleDeposit = async (txId: string): Promise<void> => {
+    const url = `https://mempool.space/testnet/api/tx/${txId}/hex`;
+    // const response = await (await fetch(url)).text();
+    const response = "02000000000101cce8782b81f27651c6c72d7670f70e444d1cee04a4a87ebe0afc61916686e79e0600000000fdffffff03a08601000000000022512027c78da89b2c03d8088370af71614049f11303549236d3f1a05b680f47aa4f3fffbc010000000000160014da166c580df1eafcbb4152faa033e7173c6a95f40000000000000000186a16051a7321b74e2b6a7e949e6c4ad313035b166509501702473044022063d68bc905edf6a73b70811cfb3d400ba2bc0e6fc67bedea2ba5a476a9b202860220475185f87f553f812a072bfd7e3f0d51bb9178e20349179eff7188a60c5266ac012102a9794ecf17a4bc0e2df9e83b58f600291018c1d84423d4fb62ae8d1f439fc78600000000"
+
     await openContractCall({
-      network: new StacksDevnet(),
+      network,
       anchorMode: AnchorMode.Any, // which type of block the tx should be mined in
     
-      contractAddress: 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM',
+      contractAddress,
       contractName: 'stacking-btc',
       functionName: 'deposit',
       functionArgs: [
-        bufferCV(hexToBytes(txHex)),
-        // bufferCV(),
+        bufferCV(hexToBytes(response)),
         tupleCV({
           header: bufferCV(hexToBytes("")),
           height: uintCV(0),
@@ -200,15 +389,16 @@ const App: React.FC = () => {
 
   const handleWithdrawClick = async (withdrawAmount: number, pegoutAddress: string): Promise<void> => {
     const btcAmount = withdrawAmount * 100_000_000;
+    const tempAddr = "8782b81f27651c6c72d7670f70e444d1ce";
     await openContractCall({
-      network: new StacksDevnet(),
+      network,
       anchorMode: AnchorMode.Any, // which type of block the tx should be mined in
     
-      contractAddress: 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM',
+      contractAddress,
       contractName: 'stacking-btc',
       functionName: 'init-withdraw',
       functionArgs: [
-        bufferCV(hexToBytes(pegoutAddress)),
+        bufferCV(hexToBytes(tempAddr)),
         uintCV(btcAmount),
       ],
       postConditionMode: PostConditionMode.Allow,
@@ -283,23 +473,34 @@ const App: React.FC = () => {
           onChange={handleDepositChange}
           placeholder="Enter Raw transaction HEX"
         /> */}
-        <button onClick={() => handleDeposit(tx)}>Deposit</button>
+        <button onClick={() => handleDeposit(txId)}>Deposit</button>
       </TabPanel>
 
       <TabPanel value={tabValue} index={2}>
+        {"sBTC amount: "}
         <input
           type="number" 
           value={withdrawAmount}
           onChange={handlewithdrawAmountChange}
           placeholder="Type something..."
         />
+        <br></br>
+        {"withdrawal BTC address: "}
         <input
           type="string" 
           value={pegoutAddress}
           onChange={handlePegoutAddressChange}
           placeholder="Enter Raw transaction HEX"
         />
+        <br></br>
         <button onClick={() => handleWithdrawClick(withdrawAmount, pegoutAddress)}>Withdraw</button>
+        <br></br>
+
+        {"BTC amount to redeem: "}
+        <input
+          value={redeemableAmount}
+          readOnly={true}
+        />
       </TabPanel>
       <TabPanel value={tabValue} index={3}>
         <input 
@@ -310,6 +511,7 @@ const App: React.FC = () => {
         />
         <button onClick={() => handleAddRewardsClick(reward)}>Add Rewards</button>
       </TabPanel>
+      <QueryFields />
     </div>
   );
 }

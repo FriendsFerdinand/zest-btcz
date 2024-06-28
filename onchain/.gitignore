@@ -4,6 +4,9 @@
 .cache/**
 history.txt
 
+
+onchain/settings
+
 logs
 *.log
 npm-debug.log*
