@@ -20,8 +20,8 @@ path = 'contracts/clarity-bitcoin-v1-02.clar'
 clarity_version = 2
 epoch = 2.4
 
-[contracts.token-abtc]
-path = 'contracts/token-abtc.clar'
+[contracts.token-btc]
+path = 'contracts/token-btc.clar'
 clarity_version = 2
 epoch = 2.4
 

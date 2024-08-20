@@ -65,9 +65,9 @@ plan:
             path: contracts/clarity-bitcoin-v1-02.clar
             clarity-version: 2
         - emulated-contract-publish:
-            contract-name: token-abtc
+            contract-name: token-btc
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/token-abtc.clar
+            path: contracts/token-btc.clar
             clarity-version: 2
         - emulated-contract-publish:
             contract-name: bridge-endpoint

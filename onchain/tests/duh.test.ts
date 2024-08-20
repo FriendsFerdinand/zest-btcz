@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { Cl, cvToJSON, cvToString, cvToValue } from "@stacks/transactions";
+import { generatePegInTx } from "./bitcoin";
+import * as btc from '@scure/btc-signer';
+import { hex } from '@scure/base';
 
 const accounts = simnet.getAccounts();
 const deployerAddress = accounts.get("deployer")!;
@@ -21,13 +24,19 @@ describe("example tests", () => {
       deployerAddress
     );
     callResponse = simnet.callPublicFn(
-      "token-abtc",
+      "bridge-endpoint",
+      "pause-peg-out",
+      [Cl.bool(false)],
+      deployerAddress
+    );
+    callResponse = simnet.callPublicFn(
+      "token-btc",
       "add-approved-contract",
       [Cl.contractPrincipal(deployerAddress, "bridge-endpoint")],
       deployerAddress
     );
     callResponse = simnet.callPublicFn(
-      "token-abtc",
+      "token-btc",
       "add-approved-contract",
       [Cl.contractPrincipal(deployerAddress, "stacking-btc")],
       deployerAddress
@@ -70,6 +79,7 @@ describe("example tests", () => {
       ],
       address1
     );
+    console.log(Cl.prettyPrint(callResponse.result));
     callResponse = simnet.callPublicFn(
       "stacking-btc",
       "add-rewards",
@@ -119,11 +129,10 @@ describe("example tests", () => {
       [],
       deployerAddress
     );
-    console.log(simnet.getAssetsMap().get(".token-abtc.sbtc"));
+    console.log(simnet.getAssetsMap().get(".token-btc.token-btcz"));
     console.log(Cl.prettyPrint(callResponse.result));
   });
   it("shows an example", () => {
-    console.log(address1);
     let callResponse = simnet.callPublicFn(
       "bridge-endpoint",
       "pause-peg-in",
@@ -131,13 +140,19 @@ describe("example tests", () => {
       deployerAddress
     );
     callResponse = simnet.callPublicFn(
-      "token-abtc",
+      "bridge-endpoint",
+      "pause-peg-out",
+      [Cl.bool(false)],
+      deployerAddress
+    );
+    callResponse = simnet.callPublicFn(
+      "token-btc",
       "add-approved-contract",
       [Cl.contractPrincipal(deployerAddress, "bridge-endpoint")],
       deployerAddress
     );
     callResponse = simnet.callPublicFn(
-      "token-abtc",
+      "token-btc",
       "add-approved-contract",
       [Cl.contractPrincipal(deployerAddress, "stacking-btc")],
       deployerAddress
@@ -180,6 +195,7 @@ describe("example tests", () => {
       ],
       address1
     );
+    console.log(Cl.prettyPrint(callResponse.result));
     callResponse = simnet.callPublicFn(
       "stacking-btc",
       "add-rewards",
@@ -197,7 +213,7 @@ describe("example tests", () => {
       "deposit",
       [
         Cl.bufferFromHex(
-          "02000000000101cce8782b81f27651c6c72d7670f70e444d1cee04a4a87ebe0afc61916686e79e0600000000fdffffff03a08601000000000022512027c78da89b2c03d8088370af71614049f11303549236d3f1a05b680f47aa4f3fffbc010000000000160014da166c580df1eafcbb4152faa033e7173c6a95f40000000000000000186a16051a7321b74e2b6a7e949e6c4ad313035b166509501702473044022063d68bc905edf6a73b70811cfb3d400ba2bc0e6fc67bedea2ba5a476a9b202860220475185f87f553f812a072bfd7e3f0d51bb9178e20349179eff7188a60c5266ac012102a9794ecf17a4bc0e2df9e83b58f600291018c1d84423d4fb62ae8d1f439fc78600000000"
+          `02000000000101cce8782b81f27651c6c72d7670f70e444d1cee04a4a87ebe0afc61916686e79e0600000000fdffffff03a08601000000000022512027c78da89b2c03d8088370af71614049f11303549236d3f1a05b680f47aa4f3fffbc010000000000160014da166c580df1eafcbb4152faa033e7173c6a95f4000000000000000018${'6a16'}${'051a99e2ec69ac5b6e67b4e26edd0e2c1c1a6b9bbd23'}02473044022063d68bc905edf6a73b70811cfb3d400ba2bc0e6fc67bedea2ba5a476a9b202860220475185f87f553f812a072bfd7e3f0d51bb9178e20349179eff7188a60c5266ac012102a9794ecf17a4bc0e2df9e83b58f600291018c1d84423d4fb62ae8d1f439fc78600000000`
         ),
         Cl.tuple({
           header: Cl.bufferFromHex(""),
@@ -213,6 +229,7 @@ describe("example tests", () => {
       ],
       address2
     );
+    // console.log(Cl.prettyPrint(callResponse.result));
     callResponse = simnet.callReadOnlyFn(
       "stacking-btc",
       "get-total-btc",
@@ -220,7 +237,7 @@ describe("example tests", () => {
       deployerAddress
     );
     // console.log(Cl.prettyPrint(callResponse.result));
-    // console.log(simnet.getAssetsMap().get(".token-abtc.sbtc"));
+    // console.log(simnet.getAssetsMap().get(".token-btc.token-btcz"));
     callResponse = simnet.callPublicFn(
       "stacking-btc",
       "init-withdraw",
@@ -230,7 +247,6 @@ describe("example tests", () => {
       ],
       address1
     );
-    // console.log(Cl.prettyPrint(callResponse.result));
     callResponse = simnet.callPublicFn(
       "stacking-btc",
       "withdraw",
@@ -251,6 +267,8 @@ describe("example tests", () => {
       ],
       address1
     );
+    // console.log('geee');
+    // console.log(Cl.prettyPrint(callResponse.result));
     callResponse = simnet.callPublicFn(
       "stacking-btc",
       "init-withdraw",
@@ -260,7 +278,7 @@ describe("example tests", () => {
       ],
       address2
     );
-    console.log(Cl.prettyPrint(callResponse.result));
+    // console.log(Cl.prettyPrint(callResponse.result));
     callResponse = simnet.callPublicFn(
       "stacking-btc",
       "withdraw",
@@ -293,7 +311,7 @@ describe("example tests", () => {
       [],
       deployerAddress
     );
-    console.log(Cl.prettyPrint(callResponse.result));
+    // console.log(Cl.prettyPrint(callResponse.result));
     callResponse = simnet.callReadOnlyFn(
       "stacking-btc",
       "get-redeemable-btc",
@@ -302,8 +320,8 @@ describe("example tests", () => {
       ],
       deployerAddress
     );
-    console.log(Cl.prettyPrint(callResponse.result));
-    console.log(simnet.getAssetsMap().get(".token-abtc.sbtc"));
+    // console.log(Cl.prettyPrint(callResponse.result));
+    // console.log(simnet.getAssetsMap().get(".token-btc.token-btcz"));
     callResponse = simnet.callPublicFn(
       "stacking-btc",
       "init-withdraw",
@@ -313,7 +331,7 @@ describe("example tests", () => {
       ],
       address2
     );
-    console.log(Cl.prettyPrint(callResponse.result));
+    // console.log(Cl.prettyPrint(callResponse.result));
     callResponse = simnet.callPublicFn(
       "stacking-btc",
       "withdraw",
@@ -340,7 +358,24 @@ describe("example tests", () => {
       [],
       deployerAddress
     );
-    console.log(Cl.prettyPrint(callResponse.result));
-    console.log(simnet.getAssetsMap().get(".token-abtc.sbtc"));
+    // console.log(Cl.prettyPrint(callResponse.result));
+    // console.log(simnet.getAssetsMap().get(".token-btc.token-btcz"));
+    expect(simnet.getAssetsMap().get(".token-btc.token-btcz")!.get("ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.stacking-btc")).toBe(BigInt(0));
+    expect(simnet.getAssetsMap().get(".token-btc.token-btcz")!.get("ST1SJ3DTE5DN7X54YDH5D64R3BCB6A2AG2ZQ8YPD5")).toBe(BigInt(0));
+    expect(simnet.getAssetsMap().get(".token-btc.token-btcz")!.get("ST2CY5V39NHDPWSXMW9QDT3HC3GD6Q6XX4CFRK9AG")).toBe(BigInt(0));
+
+    const script = btc.Address().decode("bc1q0xcqpzrky6eff2g52qdye53xkk9jxkvrh6yhyw");
+    console.log(script);
+    const outscript = btc.OutScript.encode(script)
+    // console.log(btc.OutScript.encode(script));
+    // const string = new TextDecoder().decode(outscript);
+    // console.log(string)
+    // console.log(btc.Script.encode(btc.OutScript.encode(script)).toString())
+    // console.log(hex.encode(outscript));
+    
+    // const tx = generatePegInTx(BigInt(100000), "0014da166c580df1eafcbb4152faa033e7173c6a95f4", address1);
+    const tx = generatePegInTx(BigInt(100000), hex.encode(outscript), address1);
+    
+    console.log(tx);
   });
 });

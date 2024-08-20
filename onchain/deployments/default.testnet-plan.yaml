@@ -10,42 +10,42 @@ plan:
       transactions:
         - contract-publish:
             contract-name: trait-sip-010
-            expected-sender: STDMY4JTAY93C60B3PAXRBT4QTFVK86GC7YF6G6Z
+            expected-sender: ST3YB79H73P7JBVMK354P7YA2T71DQ936FB584Z44
             cost: 138003
             path: contracts/trait-sip-010.clar
             anchor-block-only: true
             clarity-version: 2
         - contract-publish:
             contract-name: btc-bridge-registry-v1-01
-            expected-sender: STDMY4JTAY93C60B3PAXRBT4QTFVK86GC7YF6G6Z
+            expected-sender: ST3YB79H73P7JBVMK354P7YA2T71DQ936FB584Z44
             cost: 142236
             path: contracts/btc-bridge-registry-v1-01.clar
             anchor-block-only: true
             clarity-version: 2
         - contract-publish:
             contract-name: clarity-bitcoin-v1-02
-            expected-sender: STDMY4JTAY93C60B3PAXRBT4QTFVK86GC7YF6G6Z
+            expected-sender: ST3YB79H73P7JBVMK354P7YA2T71DQ936FB584Z44
             cost: 167636
             path: contracts/clarity-bitcoin-v1-02.clar
             anchor-block-only: true
             clarity-version: 2
         - contract-publish:
-            contract-name: token-abtc
-            expected-sender: STDMY4JTAY93C60B3PAXRBT4QTFVK86GC7YF6G6Z
+            contract-name: token-btc
+            expected-sender: ST3YB79H73P7JBVMK354P7YA2T71DQ936FB584Z44
             cost: 141390
-            path: contracts/token-abtc.clar
+            path: contracts/token-btc.clar
             anchor-block-only: true
             clarity-version: 2
         - contract-publish:
             contract-name: bridge-endpoint
-            expected-sender: STDMY4JTAY93C60B3PAXRBT4QTFVK86GC7YF6G6Z
+            expected-sender: ST3YB79H73P7JBVMK354P7YA2T71DQ936FB584Z44
             cost: 162556
             path: contracts/bridge-endpoint.clar
             anchor-block-only: true
             clarity-version: 2
         - contract-publish:
             contract-name: stacking-btc
-            expected-sender: STDMY4JTAY93C60B3PAXRBT4QTFVK86GC7YF6G6Z
+            expected-sender: ST3YB79H73P7JBVMK354P7YA2T71DQ936FB584Z44
             cost: 141390
             path: contracts/stacking-btc.clar
             anchor-block-only: true
@@ -53,32 +53,39 @@ plan:
     - id: 1
       transactions:
         - contract-call:
-            contract-id: STDMY4JTAY93C60B3PAXRBT4QTFVK86GC7YF6G6Z.bridge-endpoint
-            expected-sender: STDMY4JTAY93C60B3PAXRBT4QTFVK86GC7YF6G6Z
+            contract-id: ST3YB79H73P7JBVMK354P7YA2T71DQ936FB584Z44.bridge-endpoint
+            expected-sender: ST3YB79H73P7JBVMK354P7YA2T71DQ936FB584Z44
             method: pause-peg-in
             parameters:
                 - false
             cost: 5960
         - contract-call:
-            contract-id: STDMY4JTAY93C60B3PAXRBT4QTFVK86GC7YF6G6Z.token-abtc
-            expected-sender: STDMY4JTAY93C60B3PAXRBT4QTFVK86GC7YF6G6Z
-            method: add-approved-contract
+            contract-id: ST3YB79H73P7JBVMK354P7YA2T71DQ936FB584Z44.bridge-endpoint
+            expected-sender: ST3YB79H73P7JBVMK354P7YA2T71DQ936FB584Z44
+            method: pause-peg-out
             parameters:
-                - "'STDMY4JTAY93C60B3PAXRBT4QTFVK86GC7YF6G6Z.bridge-endpoint"
+                - false
             cost: 5960
         - contract-call:
-            contract-id: STDMY4JTAY93C60B3PAXRBT4QTFVK86GC7YF6G6Z.token-abtc
-            expected-sender: STDMY4JTAY93C60B3PAXRBT4QTFVK86GC7YF6G6Z
+            contract-id: ST3YB79H73P7JBVMK354P7YA2T71DQ936FB584Z44.token-btc
+            expected-sender: ST3YB79H73P7JBVMK354P7YA2T71DQ936FB584Z44
             method: add-approved-contract
             parameters:
-              - "'STDMY4JTAY93C60B3PAXRBT4QTFVK86GC7YF6G6Z.stacking-btc"
+                - "'ST3YB79H73P7JBVMK354P7YA2T71DQ936FB584Z44.bridge-endpoint"
             cost: 5960
         - contract-call:
-            contract-id: STDMY4JTAY93C60B3PAXRBT4QTFVK86GC7YF6G6Z.btc-bridge-registry-v1-01
-            expected-sender: STDMY4JTAY93C60B3PAXRBT4QTFVK86GC7YF6G6Z
+            contract-id: ST3YB79H73P7JBVMK354P7YA2T71DQ936FB584Z44.token-btc
+            expected-sender: ST3YB79H73P7JBVMK354P7YA2T71DQ936FB584Z44
+            method: add-approved-contract
+            parameters:
+              - "'ST3YB79H73P7JBVMK354P7YA2T71DQ936FB584Z44.stacking-btc"
+            cost: 5960
+        - contract-call:
+            contract-id: ST3YB79H73P7JBVMK354P7YA2T71DQ936FB584Z44.btc-bridge-registry-v1-01
+            expected-sender: ST3YB79H73P7JBVMK354P7YA2T71DQ936FB584Z44
             method: approve-operator
             parameters:
-                - "'STDMY4JTAY93C60B3PAXRBT4QTFVK86GC7YF6G6Z.bridge-endpoint"
+                - "'ST3YB79H73P7JBVMK354P7YA2T71DQ936FB584Z44.bridge-endpoint"
                 - true
             cost: 5960
 # - id: 2

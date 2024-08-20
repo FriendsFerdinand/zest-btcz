@@ -110,11 +110,9 @@
 (define-read-only (validate-tx-0 (tx (buff 4096)) (output-idx uint) (order-idx uint))
 	(let (
 		(validation-data (try! (validate-tx-common tx output-idx order-idx))))
-		(ok { order-details:
-      ;; TODO: UNCOMMENT
-      ;; (try! (decode-order-0-or-fail (get order-script validation-data))),
-      tx-sender,
-      fee: (get fee validation-data), amount-net: (get amount-net validation-data) })))
+		(ok { 
+			order-details: (try! (decode-order-0-or-fail (get order-script validation-data))),
+      		fee: (get fee validation-data), amount-net: (get amount-net validation-data) })))
 
 (define-public (finalize-peg-in-0
 	(tx (buff 4096))
@@ -122,20 +120,17 @@
 	(proof { tx-index: uint, hashes: (list 14 (buff 32)), tree-depth: uint })
 	(output-idx uint) (order-idx uint))
 	(let (
-      ;; TODO: UNCOMMENT
-			;; (common-check (try! (finalize-peg-in-common tx block proof output-idx order-idx)))
-			(validation-data (try! (validate-tx-0 tx output-idx order-idx)))
-      		(parsed-tx (try! (extract-tx-ins-outs tx)))
-			(order-details (get order-details validation-data))
-      ;; TODO: UNCOMMENT
-      ;; (order-details tx-sender)
-			(amount-net (get amount-net validation-data))
-			(fee (get fee validation-data)))
+		(common-check (try! (finalize-peg-in-common tx block proof output-idx order-idx)))
+		(validation-data (try! (validate-tx-0 tx output-idx order-idx)))
+		(parsed-tx (try! (extract-tx-ins-outs tx)))
+		(order-details (get order-details validation-data))
+		(amount-net (get amount-net validation-data))
+		(fee (get fee validation-data)))
 		(as-contract (try! (contract-call? .btc-bridge-registry-v1-01 set-peg-in-sent tx output-idx true)))
-		(and (> fee u0) (as-contract (try! (contract-call? .token-abtc mint fee (var-get fee-address)))))
-		;; (as-contract (try! (contract-call? .token-abtc mint amount-net order-details)))
+		;; (and (> fee u0) (as-contract (try! (contract-call? .token-btc mint fee (var-get fee-address)))))
+		;; (as-contract (try! (contract-call? .token-btc mint amount-net order-details)))
 		(print { type: "peg-in", tx-id: (try! (get-txid tx)), output: output-idx, order-details: order-details, fee: fee, amount-net: amount-net })
-		(ok { fee: fee, amount-net: amount-net, parsed-tx: parsed-tx }))
+		(ok { fee: fee, amount-net: amount-net, recipient: order-details, parsed-tx: parsed-tx }))
 )
 
 (define-public (request-peg-out-0 (peg-out-address (buff 128)) (amount uint))
@@ -147,9 +142,11 @@
 			(request-details { requested-by: tx-sender, peg-out-address: peg-out-address, amount-net: amount-net, fee: fee, gas-fee: gas-fee, claimed: u0, claimed-by: tx-sender, fulfilled-by: 0x, revoked: false, finalized: false, requested-at: block-height, requested-at-burn-height: burn-block-height })
 			(request-id (as-contract (try! (contract-call? .btc-bridge-registry-v1-01 set-request u0 request-details)))))
 		(asserts! (not (var-get peg-out-paused)) err-paused)
-		(try! (contract-call? .token-abtc transfer amount tx-sender (as-contract tx-sender) none))
+		;; (try! (contract-call? .token-btc transfer amount tx-sender (as-contract tx-sender) none))
 		(print (merge request-details { type: "request-peg-out", request-id: request-id }))
-		(ok request-id)))
+		(ok request-id)
+	)
+)
 
 (define-public (claim-peg-out (request-id uint) (fulfilled-by (buff 128)))
 	(let (
@@ -191,11 +188,11 @@
 		(asserts! (not (get finalized request-details)) err-request-already-finalized)
 		(as-contract (try! (contract-call? .btc-bridge-registry-v1-01 set-peg-in-sent tx output-idx true)))
 		(as-contract (try! (contract-call? .btc-bridge-registry-v1-01 set-request request-id (merge request-details { finalized: true }))))
-		(and (> (get fee request-details) u0) (as-contract (try! (contract-call? .token-abtc transfer (get fee request-details) tx-sender (var-get fee-address) none))))
-		(and (> (get gas-fee request-details) u0) (as-contract (try! (contract-call? .token-abtc transfer (get gas-fee request-details) tx-sender (if is-fulfilled-by-peg-in (var-get fee-address) (get claimed-by request-details)) none))))
+		(and (> (get fee request-details) u0) (as-contract (try! (contract-call? .token-btc transfer (get fee request-details) tx-sender (var-get fee-address) none))))
+		(and (> (get gas-fee request-details) u0) (as-contract (try! (contract-call? .token-btc transfer (get gas-fee request-details) tx-sender (if is-fulfilled-by-peg-in (var-get fee-address) (get claimed-by request-details)) none))))
 		(if is-fulfilled-by-peg-in
-			(as-contract (try! (contract-call? .token-abtc burn (get amount-net request-details) tx-sender)))
-			(as-contract (try! (contract-call? .token-abtc transfer (get amount-net request-details) tx-sender (get claimed-by request-details) none)))
+			(as-contract (try! (contract-call? .token-btc burn (get amount-net request-details) tx-sender)))
+			(as-contract (try! (contract-call? .token-btc transfer (get amount-net request-details) tx-sender (get claimed-by request-details) none)))
 		)
 		(print { type: "finalize-peg-out", request-id: request-id, tx: tx })
 		(ok true)))
@@ -207,13 +204,13 @@
 		(asserts! (not (get revoked request-details)) err-request-already-revoked)
 		(asserts! (not (get finalized request-details)) err-request-already-finalized)
 		(as-contract (try! (contract-call? .btc-bridge-registry-v1-01 set-request request-id (merge request-details { revoked: true }))))
-		(and (> (get fee request-details) u0) (as-contract (try! (contract-call? .token-abtc transfer (get fee request-details) tx-sender (get requested-by request-details) none))))
-		(and (> (get gas-fee request-details) u0) (as-contract (try! (contract-call? .token-abtc transfer (get gas-fee request-details) tx-sender (get requested-by request-details) none))))
-		(as-contract (try! (contract-call? .token-abtc transfer (get amount-net request-details) tx-sender (get requested-by request-details) none)))
+		(and (> (get fee request-details) u0) (as-contract (try! (contract-call? .token-btc transfer (get fee request-details) tx-sender (get requested-by request-details) none))))
+		(and (> (get gas-fee request-details) u0) (as-contract (try! (contract-call? .token-btc transfer (get gas-fee request-details) tx-sender (get requested-by request-details) none))))
+		(as-contract (try! (contract-call? .token-btc transfer (get amount-net request-details) tx-sender (get requested-by request-details) none)))
 		(print { type: "revoke-peg-out", request-id: request-id })
 		(ok true)))
 
-(define-private (validate-tx-common (tx (buff 4096)) (output-idx uint) (order-idx uint))
+(define-read-only (validate-tx-common (tx (buff 4096)) (output-idx uint) (order-idx uint))
 	(let (
 			(parsed-tx (try! (extract-tx-ins-outs tx)))
 			(output (unwrap! (element-at (get outs parsed-tx) output-idx) err-invalid-tx))
