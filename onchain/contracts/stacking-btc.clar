@@ -3,9 +3,27 @@
 (define-data-var withdraw-id uint u0)
 (define-data-var commission uint u0)
 
+(define-data-var peg-in-fee uint u0)
+(define-data-var peg-out-fee uint u0)
+(define-data-var peg-out-gas-fee uint u0)
+
 (define-constant err-withdrawal-does-not-exist (err u500))
 
-(define-map withdrawal-by-id uint { btc-amount: uint, sbtc-amount: uint, cycle-id: uint, peg-out-address: (buff 128) })
+(define-map withdrawal-by-id uint {
+  btc-amount: uint,
+  sbtc-amount: uint,
+  cycle-id: uint,
+  peg-out-address: (buff 128),
+  requested-by: principal,
+  fee: uint,
+  gas-fee: uint
+})
+
+(define-data-var request-nonce uint u0)
+
+
+
+
 
 (define-public (deposit
   (tx (buff 4096))
@@ -43,11 +61,16 @@
   )
     (try! (contract-call? .bridge-endpoint request-peg-out-0 peg-out-address redeemeable-btc))
     (try! (contract-call? .token-btc transfer sbtc-amount sender (as-contract tx-sender) none))
-    (map-set withdrawal-by-id current-id {
+
+    (map-set withdrawal-by-id (begin (var-set request-nonce (+ (var-get request-nonce) u1)) (var-get request-nonce)) {
       btc-amount: redeemeable-btc,
       sbtc-amount: sbtc-amount,
       cycle-id: current-cycle,
-      peg-out-address: peg-out-address })
+      peg-out-address: peg-out-address,
+      requested-by: sender,
+      fee: u0,
+      gas-fee: u0,
+    })
 
     (var-set withdraw-id (+ current-id u1))
     (ok redeemeable-btc)
@@ -82,6 +105,7 @@
   (let (
     (commission-amount (/ (* btc-amount (var-get commission)) u10000))
     (rewards (- btc-amount commission-amount))
+    (rewards-left (- rewards commission-amount))
   )
     (asserts! (is-eq tx-sender (var-get contract-owner)) (err u2312412))
     
@@ -91,13 +115,15 @@
   )
 )
 
-(define-public (claim-rewards)
+(define-public (claim-commission)
   (let (
     (rewards (var-get commission-total))
-    (btc-to-sbtc-ratio (get-btc-to-sbtc-ratio))
-    (redeemeable-btc (/ (* rewards btc-to-sbtc-ratio) u100000000))
   )
-    (ok u0)
+    (begin
+      (asserts! (is-eq tx-sender (var-get contract-owner)) (err u2312412))
+      (var-set commission-total u0)
+      (ok true)
+    )
   )
 )
 

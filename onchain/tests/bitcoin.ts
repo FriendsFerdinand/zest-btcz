@@ -1,48 +1,62 @@
-import * as btc from '@scure/btc-signer';
-import { hex } from '@scure/base';
-import { deepStrictEqual, throws } from 'assert';
-import * as secp from '@noble/secp256k1';
-import { cvToHex, principalCV } from '@stacks/transactions';
+import * as btc from "@scure/btc-signer";
+import { hex } from "@scure/base";
+import { deepStrictEqual, throws } from "assert";
+import * as secp from "@noble/secp256k1";
+import { cvToHex, principalCV } from "@stacks/transactions";
 
-const PubKey = hex.decode('030000000000000000000000000000000000000000000000000000000000000001');
-const privKey = hex.decode('0101010101010101010101010101010101010101010101010101010101010101');
+const PubKey = hex.decode(
+  "030000000000000000000000000000000000000000000000000000000000000001"
+);
+const privKey = hex.decode(
+  "0101010101010101010101010101010101010101010101010101010101010101"
+);
 
-export const generatePegInTx = (pegInAmount: bigint, scriptAddress: string, stxAddress: string) => {
-    // increase by arbitrary amount for fees
-    const amount = (pegInAmount * BigInt(110000)) / BigInt(100000);
-    const tx = new btc.Transaction({
-        allowUnknownOutputs: true,
-    });
-    tx.addInput({
-        txid: "0000000000000000000000000000000000000000000000000000000000000000",
-        index: 0,
-        witnessUtxo: {
-            amount,
-            script: btc.p2wpkh(secp.getPublicKey(privKey, true)).script,
-        }
-    });
+export const generateRandomHex = (length: number = 64): string => {
+  let result = "";
+  const characters = "0123456789abcdef";
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+};
 
-    tx.addOutput(
-        // "bc1q0xcqpzrky6eff2g52qdye53xkk9jxkvrh6yhyw",
-        {
-            script: scriptAddress,
-            amount: pegInAmount
-        }
-    );
+export const generatePegInTx = (
+  pegInAmount: bigint,
+  bridgeScriptAddress: string,
+  stxAddress: string,
+  txid?: string
+) => {
+  // increase by arbitrary amount for fees
+  const amount = (pegInAmount * BigInt(110000)) / BigInt(100000);
+  const tx = new btc.Transaction({
+    allowUnknownOutputs: true,
+  });
+  tx.addInput({
+    txid: txid ? txid : generateRandomHex(),
+    index: 0,
+    witnessUtxo: {
+      amount,
+      script: btc.p2wpkh(secp.getPublicKey(privKey, true)).script,
+    },
+  });
 
-    const data = `${cvToHex(principalCV(stxAddress)).slice(2)}`;
-    // add data output
-    tx.addOutput(
-        {
-            script: `6a16${data}`,
-            amount: BigInt(0),
-        }
-    );
+  tx.addOutput({
+    script: bridgeScriptAddress,
+    amount: pegInAmount,
+  });
 
-    tx.sign(privKey);
-    tx.finalize();
-    return tx.hex;
-}
+  const data = `${cvToHex(principalCV(stxAddress)).slice(2)}`;
+  // add data output
+  tx.addOutput({
+    script: `6a16${data}`,
+    amount: BigInt(0),
+  });
+
+  tx.sign(privKey);
+  tx.finalize();
+  return tx.hex;
+};
 
 // deepStrictEqual(btc.p2wsh(btc.p2pkh(PubKey)), {
 //   type: 'wsh',
