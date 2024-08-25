@@ -2,7 +2,11 @@ import * as btc from "@scure/btc-signer";
 import { hex } from "@scure/base";
 import { deepStrictEqual, throws } from "assert";
 import * as secp from "@noble/secp256k1";
-import { cvToHex, principalCV } from "@stacks/transactions";
+import {
+  contractPrincipalCV,
+  cvToHex,
+  principalCV,
+} from "@stacks/transactions";
 
 const PubKey = hex.decode(
   "030000000000000000000000000000000000000000000000000000000000000001"
@@ -25,6 +29,7 @@ export const generatePegInTx = (
   pegInAmount: bigint,
   bridgeScriptAddress: string,
   stxAddress: string,
+  recipientContractName?: string,
   txid?: string
 ) => {
   // increase by arbitrary amount for fees
@@ -46,10 +51,17 @@ export const generatePegInTx = (
     amount: pegInAmount,
   });
 
-  const data = `${cvToHex(principalCV(stxAddress)).slice(2)}`;
+  let data = "";
+  if (recipientContractName) {
+    data = cvToHex(
+      contractPrincipalCV(stxAddress, recipientContractName)
+    ).slice(2);
+  } else {
+    data = cvToHex(principalCV(stxAddress)).slice(2);
+  }
   // add data output
   tx.addOutput({
-    script: `6a16${data}`,
+    script: `6a${(data.length / 2).toString(16)}${data}`,
     amount: BigInt(0),
   });
 
