@@ -53,6 +53,12 @@ describe("Complete a deposit", () => {
       deployerAddress
     );
     callResponse = simnet.callPublicFn(
+      "stacking-vault",
+      "set-approved-contract",
+      [Cl.contractPrincipal(deployerAddress, "stacking-btc"), Cl.bool(true)],
+      deployerAddress
+    );
+    callResponse = simnet.callPublicFn(
       "btc-bridge-registry-v1-01",
       "approve-peg-in-address",
       [Cl.bufferFromHex(pegInOutscript), Cl.bool(true)],

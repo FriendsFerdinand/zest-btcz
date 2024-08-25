@@ -25,6 +25,11 @@ path = 'contracts/clarity-bitcoin-v1-02.clar'
 clarity_version = 2
 epoch = 2.5
 
+[contracts.ft-trait]
+path = 'contracts/ft-trait.clar'
+clarity_version = 2
+epoch = 2.5
+
 [contracts.stacking-btc]
 path = 'contracts/stacking-btc.clar'
 clarity_version = 2
@@ -32,6 +37,11 @@ epoch = 2.5
 
 [contracts.stacking-data]
 path = 'contracts/stacking-data.clar'
+clarity_version = 2
+epoch = 2.5
+
+[contracts.stacking-vault]
+path = 'contracts/stacking-vault.clar'
 clarity_version = 2
 epoch = 2.5
 

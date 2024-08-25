@@ -50,11 +50,6 @@ plan:
     - id: 0
       transactions:
         - emulated-contract-publish:
-            contract-name: trait-sip-010
-            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/trait-sip-010.clar
-            clarity-version: 2
-        - emulated-contract-publish:
             contract-name: btc-bridge-registry-v1-01
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
             path: contracts/btc-bridge-registry-v1-01.clar
@@ -63,6 +58,11 @@ plan:
             contract-name: clarity-bitcoin-v1-02
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
             path: contracts/clarity-bitcoin-v1-02.clar
+            clarity-version: 2
+        - emulated-contract-publish:
+            contract-name: trait-sip-010
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/trait-sip-010.clar
             clarity-version: 2
         - emulated-contract-publish:
             contract-name: bridge-endpoint
@@ -75,9 +75,19 @@ plan:
             path: contracts/btc-data.clar
             clarity-version: 2
         - emulated-contract-publish:
+            contract-name: ft-trait
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/ft-trait.clar
+            clarity-version: 2
+        - emulated-contract-publish:
             contract-name: stacking-data
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
             path: contracts/stacking-data.clar
+            clarity-version: 2
+        - emulated-contract-publish:
+            contract-name: stacking-vault
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/stacking-vault.clar
             clarity-version: 2
         - emulated-contract-publish:
             contract-name: token-btc

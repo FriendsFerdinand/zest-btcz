@@ -6,6 +6,7 @@ history.txt
 
 
 onchain/settings
+onchain/deployments
 
 logs
 *.log

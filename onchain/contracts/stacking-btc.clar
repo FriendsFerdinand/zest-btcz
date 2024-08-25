@@ -87,7 +87,7 @@
     (next-nonce (get-next-request-nonce))
   )
 		(asserts! (not (is-peg-out-paused)) err-paused)
-    (try! (contract-call? .token-btc transfer sbtc-amount sender (as-contract tx-sender) none))
+    (try! (contract-call? .token-btc transfer sbtc-amount sender .stacking-vault none))
 
     (try! (set-withdrawal next-nonce {
       btc-amount: amount-net,
@@ -122,7 +122,7 @@
   )
     (try! (is-contract-owner))
     
-    (as-contract (try! (contract-call? .token-btc burn (get sbtc-amount withdraw-data) tx-sender)))
+    (as-contract (try! (contract-call? .stacking-vault burn (get sbtc-amount withdraw-data) .token-btc)))
     (try! (set-total-btc (- (get-total-btc) withdrawn-btc)))
     (try! (delete-withdrawal request-id))
     ;; (print { action: "withdraw", data: { sender: tx-sender, amount: (get sbtc-amount withdraw-data), block-height: burn-block-height } })
