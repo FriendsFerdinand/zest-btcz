@@ -64,9 +64,8 @@
 
     (try! (set-total-btc (+ (get-total-btc) amount-net)))
 
-		(as-contract (try! (contract-call? .btc-bridge-registry-v1-01 set-peg-in-sent tx output-idx true)))
-
-    (as-contract (try! (contract-call? .token-btc mint sbtc-to-receive sender)))
+		(try! (contract-call? .btc-bridge-registry-v1-01 set-peg-in-sent tx output-idx true))
+    (try! (contract-call? .token-btc mint sbtc-to-receive sender))
 
     (ok { fee: fee, amount-net: amount-net, recipient: recipient, sbtc-to-receive: sbtc-to-receive })
   )

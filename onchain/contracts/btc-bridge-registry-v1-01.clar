@@ -1,4 +1,3 @@
-;; (use-trait sip010-trait .trait-sip-010.sip-010-trait)
 (define-constant err-unauthorised (err u5000))
 (define-constant err-request-not-found (err u1002))
 (define-constant err-invalid-input (err u1003))

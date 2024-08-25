@@ -15,7 +15,7 @@
 (define-private (check-is-owner)
 	(ok (asserts! (is-eq tx-sender (var-get contract-owner)) ERR-NOT-AUTHORIZED)))
 (define-private (check-is-approved)
-	(ok (asserts! (default-to false (map-get? approved-contracts tx-sender)) ERR-NOT-AUTHORIZED)))
+	(ok (asserts! (default-to false (map-get? approved-contracts contract-caller)) ERR-NOT-AUTHORIZED)))
 (define-public (set-name (new-name (string-ascii 32)))
 	(begin
 		(try! (check-is-owner))
@@ -63,7 +63,7 @@
 (define-constant ONE_8 u100000000)
 (define-public (mint (amount uint) (recipient principal))
 	(begin
-		;; (asserts! (or (is-ok (check-is-approved)) (is-ok (check-is-owner))) ERR-NOT-AUTHORIZED)
+		(asserts! (is-ok (check-is-approved)) ERR-NOT-AUTHORIZED)
 		(ft-mint? token-btcz amount recipient)))
 (define-public (burn (amount uint) (sender principal))
 	(begin
