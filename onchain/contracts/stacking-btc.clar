@@ -119,15 +119,6 @@
   )
 )
 
-(define-public (claim-commission)
-  (begin
-    (try! (is-contract-owner))
-    (try! (set-commission-total u0))
-    (print { action: "claim-commission", data: { commission-total: u0 } })
-    (ok true)
-  )
-)
-
 (define-read-only (get-btc-to-sbtc-ratio)
   (let (
     (btc-amount (get-total-btc))
