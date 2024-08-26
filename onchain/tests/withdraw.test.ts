@@ -15,6 +15,7 @@ import {
   stackingLogicContractName,
   stackingVaultContractName,
 } from "./config";
+import { mulBps } from "./utils";
 
 const accounts = simnet.getAccounts();
 const deployerAddress = accounts.get("deployer")!;
@@ -64,15 +65,6 @@ describe("Complete a deposit", () => {
       deployerAddress
     );
     callResponse = simnet.callPublicFn(
-      "stacking-vault",
-      "set-approved-contract",
-      [
-        Cl.contractPrincipal(deployerAddress, stackingLogicContractName),
-        Cl.bool(true),
-      ],
-      deployerAddress
-    );
-    callResponse = simnet.callPublicFn(
       "token-btc",
       "set-approved-contract",
       [
@@ -97,7 +89,7 @@ describe("Complete a deposit", () => {
       deployerAddress
     );
   });
-  it("Withdraw with not rewards", () => {
+  it("Withdraw with no rewards", () => {
     let tx = generatePegInTx(BigInt(100000), pegInOutscript, address1);
     let callResponse = simnet.callPublicFn(
       stackingLogicContractName,
@@ -143,12 +135,6 @@ describe("Complete a deposit", () => {
         .get(`.${lstTokenContractName}.${lstTokenName}`)!
         .get(`${address1}`)
     ).toBe(0n);
-    // expect(
-    //   simnet
-    //     .getAssetsMap()
-    //     .get(`.${lstTokenContractName}.${lstTokenName}`)!
-    //     .get(`${deployerAddress}.${stackingVaultContractName}`)
-    // ).toBe(100000n);
 
     callResponse = simnet.callReadOnlyFn(
       "stacking-btc",
@@ -233,12 +219,6 @@ describe("Complete a deposit", () => {
         .get(`.${lstTokenContractName}.${lstTokenName}`)!
         .get(`${address1}`)
     ).toBe(0n);
-    // expect(
-    //   simnet
-    //     .getAssetsMap()
-    //     .get(`.${lstTokenContractName}.${lstTokenName}`)!
-    //     .get(`${deployerAddress}.${stackingVaultContractName}`)
-    // ).toBe(100000n);
 
     callResponse = simnet.callReadOnlyFn(
       "stacking-btc",
@@ -411,12 +391,6 @@ describe("Complete a deposit", () => {
       deployerAddress
     );
     expect(callResponse.result).toBeUint(0);
-    // expect(
-    //   simnet
-    //     .getAssetsMap()
-    //     .get(`.${lstTokenContractName}.${lstTokenName}`)!
-    //     .get(`${deployerAddress}.${stackingVaultContractName}`)
-    // ).toBe(0n);
   });
 
   it("Withdraw with 2 users, add rewards after, 1st user does not get diluted after 2nd deposit. 2nd user gets the same amount", () => {
@@ -616,9 +590,6 @@ describe("Complete a deposit", () => {
     expect(cvToValue(callResponse.result).value["fee"].value).toBe("0");
     expect(cvToValue(callResponse.result).value["gas-fee"].value).toBe("0");
 
-    // console.log(
-    //   simnet.getAssetsMap().get(`.${lstTokenContractName}.${lstTokenName}`)!
-    // );
     callResponse = simnet.callReadOnlyFn(
       "stacking-btc",
       "get-redeemable-btc-by-amount",
@@ -668,25 +639,195 @@ describe("Complete a deposit", () => {
     );
     expect(cvToValue(callResponse.result).value["fee"].value).toBe("0");
     expect(cvToValue(callResponse.result).value["gas-fee"].value).toBe("0");
-    // callResponse = simnet.callPublicFn(
-    //   stackingLogicContractName,
-    //   "finalize-withdraw",
-    //   [Cl.uint(1)],
-    //   deployerAddress
-    // );
-    // expect(callResponse.result).toHaveClarityType(ClarityType.ResponseOk);
-    // callResponse = simnet.callReadOnlyFn(
-    //   "stacking-btc",
-    //   "get-total-btc",
-    //   [],
-    //   deployerAddress
-    // );
-    // expect(callResponse.result).toBeUint(0);
-    // expect(
-    //   simnet
-    //     .getAssetsMap()
-    //     .get(`.${lstTokenContractName}.${lstTokenName}`)!
-    //     .get(`${deployerAddress}.${stackingVaultContractName}`)
-    // ).toBe(0n);
+  });
+  it("Withdraw, with peg-out-fees", () => {
+    const pegOutAmount = 100000n;
+    // const rewards = 10000n;
+    const pegOutFees = 500_000n;
+    const pegOutWOFees = BigInt(
+      pegOutAmount - mulBps(pegOutAmount, pegOutFees)
+    );
+
+    let callResponse = simnet.callPublicFn(
+      "btc-data",
+      "set-peg-out-fee",
+      [Cl.uint(500_000n)],
+      deployerAddress
+    );
+
+    let tx = generatePegInTx(BigInt(100000), pegInOutscript, address1);
+    callResponse = simnet.callPublicFn(
+      stackingLogicContractName,
+      "deposit",
+      [
+        Cl.bufferFromHex(tx),
+        Cl.tuple({
+          header: Cl.bufferFromHex(""),
+          height: Cl.uint(0),
+        }),
+        Cl.tuple({
+          "tx-index": Cl.uint(0),
+          hashes: Cl.list([]),
+          "tree-depth": Cl.uint(0),
+        }),
+        Cl.uint(0),
+        Cl.uint(1),
+      ],
+      address1
+    );
+    expect(
+      simnet
+        .getAssetsMap()
+        .get(`.${lstTokenContractName}.${lstTokenName}`)!
+        .get(address1)
+    ).toBe(100000n);
+    callResponse = simnet.callPublicFn(
+      stackingLogicContractName,
+      "init-withdraw",
+      [
+        Cl.bufferFromHex(
+          "0000000000000000000000000000000000000000000000000000000000000000"
+        ),
+        Cl.uint(100000),
+      ],
+      address1
+    );
+
+    // console.log(Cl.prettyPrint(callResponse.result));
+    expect(
+      simnet
+        .getAssetsMap()
+        .get(`.${lstTokenContractName}.${lstTokenName}`)!
+        .get(`${address1}`)
+    ).toBe(0n);
+
+    callResponse = simnet.callReadOnlyFn(
+      "stacking-btc",
+      "get-withdrawal-or-fail",
+      [Cl.uint(1)],
+      deployerAddress
+    );
+    expect(cvToValue(callResponse.result).value["btc-amount"].value).toBe(
+      `${pegOutWOFees}`
+    );
+    expect(cvToValue(callResponse.result).value["fee"].value).toBe(
+      `${mulBps(pegOutAmount, pegOutFees)}`
+    );
+    expect(cvToValue(callResponse.result).value["gas-fee"].value).toBe("0");
+
+    callResponse = simnet.callPublicFn(
+      stackingLogicContractName,
+      "finalize-withdraw",
+      [Cl.uint(1)],
+      deployerAddress
+    );
+    callResponse = simnet.callReadOnlyFn(
+      "stacking-btc",
+      "get-withdrawal-or-fail",
+      [Cl.uint(1)],
+      deployerAddress
+    );
+    expect(cvToValue(callResponse.result).value["finalized"].value).toBe(true);
+    callResponse = simnet.callReadOnlyFn(
+      "stacking-btc",
+      "get-total-btc",
+      [],
+      deployerAddress
+    );
+    expect(callResponse.result).toBeUint(0);
+  });
+  it("Withdraw, with peg-out-gas-fees", () => {
+    const pegOutAmount = 100000n;
+    const pegOutFees = 10000n;
+    // const rewards = 10000n;
+    const pegOutWOFees = pegOutAmount - pegOutFees;
+
+    let callResponse = simnet.callPublicFn(
+      "btc-data",
+      "set-peg-out-gas-fee",
+      [Cl.uint(pegOutFees)],
+      deployerAddress
+    );
+
+    let tx = generatePegInTx(BigInt(100000), pegInOutscript, address1);
+    callResponse = simnet.callPublicFn(
+      stackingLogicContractName,
+      "deposit",
+      [
+        Cl.bufferFromHex(tx),
+        Cl.tuple({
+          header: Cl.bufferFromHex(""),
+          height: Cl.uint(0),
+        }),
+        Cl.tuple({
+          "tx-index": Cl.uint(0),
+          hashes: Cl.list([]),
+          "tree-depth": Cl.uint(0),
+        }),
+        Cl.uint(0),
+        Cl.uint(1),
+      ],
+      address1
+    );
+    expect(
+      simnet
+        .getAssetsMap()
+        .get(`.${lstTokenContractName}.${lstTokenName}`)!
+        .get(address1)
+    ).toBe(100000n);
+    callResponse = simnet.callPublicFn(
+      stackingLogicContractName,
+      "init-withdraw",
+      [
+        Cl.bufferFromHex(
+          "0000000000000000000000000000000000000000000000000000000000000000"
+        ),
+        Cl.uint(100000),
+      ],
+      address1
+    );
+
+    // console.log(Cl.prettyPrint(callResponse.result));
+    expect(
+      simnet
+        .getAssetsMap()
+        .get(`.${lstTokenContractName}.${lstTokenName}`)!
+        .get(`${address1}`)
+    ).toBe(0n);
+
+    callResponse = simnet.callReadOnlyFn(
+      "stacking-btc",
+      "get-withdrawal-or-fail",
+      [Cl.uint(1)],
+      deployerAddress
+    );
+    expect(cvToValue(callResponse.result).value["btc-amount"].value).toBe(
+      `${pegOutWOFees}`
+    );
+    expect(cvToValue(callResponse.result).value["fee"].value).toBe(`0`);
+    expect(cvToValue(callResponse.result).value["gas-fee"].value).toBe(
+      `${pegOutFees}`
+    );
+
+    callResponse = simnet.callPublicFn(
+      stackingLogicContractName,
+      "finalize-withdraw",
+      [Cl.uint(1)],
+      deployerAddress
+    );
+    callResponse = simnet.callReadOnlyFn(
+      "stacking-btc",
+      "get-withdrawal-or-fail",
+      [Cl.uint(1)],
+      deployerAddress
+    );
+    expect(cvToValue(callResponse.result).value["finalized"].value).toBe(true);
+    callResponse = simnet.callReadOnlyFn(
+      "stacking-btc",
+      "get-total-btc",
+      [],
+      deployerAddress
+    );
+    expect(callResponse.result).toBeUint(0);
   });
 });

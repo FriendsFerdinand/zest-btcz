@@ -85,11 +85,6 @@ plan:
             path: contracts/stacking-data.clar
             clarity-version: 2
         - emulated-contract-publish:
-            contract-name: stacking-vault
-            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/stacking-vault.clar
-            clarity-version: 2
-        - emulated-contract-publish:
             contract-name: token-btc
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
             path: contracts/token-btc.clar

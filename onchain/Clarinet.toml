@@ -40,11 +40,6 @@ path = 'contracts/stacking-data.clar'
 clarity_version = 2
 epoch = 2.5
 
-[contracts.stacking-vault]
-path = 'contracts/stacking-vault.clar'
-clarity_version = 2
-epoch = 2.5
-
 [contracts.token-btc]
 path = 'contracts/token-btc.clar'
 clarity_version = 2

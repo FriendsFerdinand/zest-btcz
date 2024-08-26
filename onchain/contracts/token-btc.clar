@@ -67,7 +67,6 @@
 		(ft-mint? token-btcz amount recipient)))
 (define-public (burn (amount uint) (sender principal))
 	(begin
-		;; (asserts! (or (is-ok (check-is-approved)) (is-ok (check-is-owner))) ERR-NOT-AUTHORIZED)
 		(asserts! (is-ok (check-is-approved)) ERR-NOT-AUTHORIZED)
 		(ft-burn? token-btcz amount sender)))
 (define-private (pow-decimals)

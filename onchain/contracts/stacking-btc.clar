@@ -88,7 +88,6 @@
 		(asserts! (not (is-peg-out-paused)) err-paused)
     (try! (contract-call? .token-btc burn btcz-amount sender))
     (try! (set-total-btc (- (get-total-btc) redeemeable-btc)))
-    ;; (try! (contract-call? .token-btc transfer btcz-amount sender .stacking-vault none))
 
     (try! (set-withdrawal next-nonce {
       btc-amount: amount-net,
@@ -117,7 +116,6 @@
     (try! (is-contract-owner))
     (asserts! (not (get finalized withdraw-data)) err-already-sent)
     
-    ;; (as-contract (try! (contract-call? .stacking-vault burn (get btcz-amount withdraw-data) .token-btc)))
     (try! (set-withdrawal request-id (merge withdraw-data { finalized: true })))
     ;; (print { action: "withdraw", data: { sender: tx-sender, amount: (get sbtc-amount withdraw-data), block-height: burn-block-height } })
     (ok true)
@@ -244,9 +242,6 @@
   }))
 	(contract-call? .stacking-data set-withdrawal withdrawal-id new-withdrawal)
 )
-
-(define-public (delete-withdrawal (withdrawal-id uint))
-	(contract-call? .stacking-data delete-withdrawal withdrawal-id))
 
 (define-read-only (extract-tx-ins-outs (tx (buff 4096)))
 	(if (try! (contract-call? .clarity-bitcoin-v1-02 is-segwit-tx tx))
