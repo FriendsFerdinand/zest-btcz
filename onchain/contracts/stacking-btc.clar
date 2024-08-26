@@ -73,12 +73,12 @@
 
 (define-public (init-withdraw
   (peg-out-address (buff 128))
-  (sbtc-amount uint)
+  (btcz-amount uint)
   )
   (let (
     (sender tx-sender)
     (btc-to-sbtc-ratio (get-btc-to-sbtc-ratio))
-    (redeemeable-btc (mul-down sbtc-amount btc-to-sbtc-ratio))
+    (redeemeable-btc (mul-down btcz-amount btc-to-sbtc-ratio))
     (fee (mul-down redeemeable-btc (get-peg-out-fee)))
     (gas-fee (get-peg-out-gas-fee))
     (check-amount (asserts! (> redeemeable-btc (+ fee gas-fee)) err-invalid-amount))
@@ -86,11 +86,13 @@
     (next-nonce (get-next-request-nonce))
   )
 		(asserts! (not (is-peg-out-paused)) err-paused)
-    (try! (contract-call? .token-btc transfer sbtc-amount sender .stacking-vault none))
+    (try! (contract-call? .token-btc burn btcz-amount sender))
+    (try! (set-total-btc (- (get-total-btc) redeemeable-btc)))
+    ;; (try! (contract-call? .token-btc transfer btcz-amount sender .stacking-vault none))
 
     (try! (set-withdrawal next-nonce {
       btc-amount: amount-net,
-      sbtc-amount: sbtc-amount,
+      btcz-amount: btcz-amount,
       peg-out-address: peg-out-address,
       requested-by: sender,
       fee: fee,
@@ -102,28 +104,21 @@
     }))
     (try! (set-request-nonce next-nonce))
 
-    (ok amount-net)
+    (ok { redeemeable-btc: redeemeable-btc, amount-net: amount-net })
   )
 )
 
 ;; called by protocol
-(define-public (finalize-withdraw
-  (request-id uint)
-	(tx (buff 4096))
-	(block { header: (buff 80), height: uint })
-	(proof { tx-index: uint, hashes: (list 14 (buff 32)), tree-depth: uint })
-	(output-idx uint)
-  (fulfilled-by-idx uint)
-  )
+(define-public (finalize-withdraw (request-id uint))
   (let (
     (withdraw-data (unwrap! (get-withdrawal-or-fail request-id) err-withdrawal-does-not-exist))
     (withdrawn-btc (+ (get btc-amount withdraw-data) (get fee withdraw-data) (get gas-fee withdraw-data)))
   )
     (try! (is-contract-owner))
+    (asserts! (not (get finalized withdraw-data)) err-already-sent)
     
-    (as-contract (try! (contract-call? .stacking-vault burn (get sbtc-amount withdraw-data) .token-btc)))
-    (try! (set-total-btc (- (get-total-btc) withdrawn-btc)))
-    (try! (delete-withdrawal request-id))
+    ;; (as-contract (try! (contract-call? .stacking-vault burn (get btcz-amount withdraw-data) .token-btc)))
+    (try! (set-withdrawal request-id (merge withdraw-data { finalized: true })))
     ;; (print { action: "withdraw", data: { sender: tx-sender, amount: (get sbtc-amount withdraw-data), block-height: burn-block-height } })
     (ok true)
   )
@@ -237,7 +232,7 @@
   (withdrawal-id uint)
   (new-withdrawal {
     btc-amount: uint,
-    sbtc-amount: uint,
+    btcz-amount: uint,
     peg-out-address: (buff 128),
     requested-by: principal,
     fee: uint,

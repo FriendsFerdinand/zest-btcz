@@ -4,6 +4,7 @@
 (define-data-var fee-address principal tx-sender)
 (define-data-var peg-in-paused bool true)
 (define-data-var peg-out-paused bool true)
+;; 8 decimals
 (define-data-var peg-in-fee uint u0)
 (define-data-var peg-out-fee uint u0)
 (define-data-var peg-out-gas-fee uint u0)

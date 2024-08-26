@@ -14,7 +14,7 @@
 (define-data-var request-nonce uint u0)
 (define-map withdrawals uint {
   btc-amount: uint,
-  sbtc-amount: uint,
+  btcz-amount: uint,
   peg-out-address: (buff 128),
   requested-by: principal,
   fee: uint,
@@ -54,7 +54,7 @@
   (withdrawal-id uint)
   (new-withdrawal {
     btc-amount: uint,
-    sbtc-amount: uint,
+    btcz-amount: uint,
     peg-out-address: (buff 128),
     requested-by: principal,
     fee: uint,
