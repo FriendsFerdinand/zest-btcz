@@ -5,35 +5,14 @@
 (define-constant err-invalid-tx (err u1004))
 (define-constant err-already-sent (err u1005))
 (define-constant err-address-mismatch (err u1006))
-;; (define-constant err-request-already-revoked (err u1007))
-;; (define-constant err-request-already-finalized (err u1008))
-;; (define-constant err-revoke-grace-period (err u1009))
-;; (define-constant err-request-already-claimed (err u1010))
-(define-constant err-bitcoin-tx-not-mined (err u1011))
-(define-constant err-invalid-input (err u1012))
-(define-constant err-tx-mined-before-request (err u1013))
-;; (define-constant err-dest-mismatch (err u1014))
-;; (define-constant err-token-mismatch (err u1015))
-;; (define-constant err-slippage (err u1016))
-(define-constant err-withdrawal-does-not-exist (err u1017))
+(define-constant err-bitcoin-tx-not-mined (err u1007))
+(define-constant err-invalid-input (err u1008))
+(define-constant err-tx-mined-before-request (err u1009))
+(define-constant err-withdrawal-does-not-exist (err u1010))
 
 (define-constant ONE_8 u100000000)
 
-;; bitcoin verification
 (define-data-var contract-owner principal tx-sender)
-
-(define-map withdrawal-by-id uint {
-  btc-amount: uint,
-  sbtc-amount: uint,
-  peg-out-address: (buff 128),
-  requested-by: principal,
-  fee: uint,
-  gas-fee: uint,
-	revoked: bool,
-	finalized: bool,
-	requested-at: uint,
-	requested-at-burn-height: uint
-})
 
 (define-public (deposit
   (tx (buff 4096))
@@ -63,11 +42,11 @@
 
     (try! (set-total-btc (+ (get-total-btc) amount-net)))
 
-		(try! (contract-call? .btc-bridge-registry-v1-01 set-peg-in-sent tx output-idx true))
+		(try! (contract-call? .btc-registry set-peg-in-sent tx output-idx true))
     (try! (contract-call? .token-btc mint btcz-to-receive sender))
 
     (print { action: "deposit", data: { tx-id: (get-txid tx), tx: tx, btcz-to-receive: btcz-to-receive } })
-    (ok true)
+    (ok { order-script: order-script })
   )
 )
 
@@ -83,7 +62,7 @@
     (gas-fee (get-peg-out-gas-fee))
     (check-amount (asserts! (> redeemeable-btc (+ fee gas-fee)) err-invalid-amount))
     (amount-net (- redeemeable-btc fee gas-fee))
-    (next-nonce (get-next-request-nonce))
+    (next-nonce (get-next-withdrawal-nonce))
     (withdraw-data {
       btc-amount: amount-net,
       btcz-amount: btcz-amount,
@@ -102,7 +81,7 @@
     (try! (set-total-btc (- (get-total-btc) redeemeable-btc)))
 
     (try! (set-withdrawal next-nonce withdraw-data))
-    (try! (set-request-nonce next-nonce))
+    (try! (set-withdrawal-nonce next-nonce))
 
     (print { action: "init-withdraw", data: { withdraw-data: withdraw-data } })
     (ok next-nonce)
@@ -110,15 +89,14 @@
 )
 
 ;; called by protocol
-(define-public (finalize-withdraw (request-id uint))
+(define-public (finalize-withdraw (withdrawal-id uint))
   (let (
-    (withdraw-data (unwrap! (get-withdrawal-or-fail request-id) err-withdrawal-does-not-exist))
-    (withdrawn-btc (+ (get btc-amount withdraw-data) (get fee withdraw-data) (get gas-fee withdraw-data)))
+    (withdraw-data (unwrap! (get-withdrawal-or-fail withdrawal-id) err-withdrawal-does-not-exist))
   )
     (try! (is-contract-owner))
     (asserts! (not (get finalized withdraw-data)) err-already-sent)
     
-    (try! (set-withdrawal request-id (merge withdraw-data { finalized: true })))
+    (try! (set-withdrawal withdrawal-id (merge withdraw-data { finalized: true })))
     (print { action: "finalize-withdraw", data: { withdraw-data: withdraw-data, finalize-height: burn-block-height } })
     (ok true)
   )
@@ -145,7 +123,7 @@
   (begin
     (try! (is-contract-owner))
     (try! (set-commission-total u0))
-    (print { action: "claim-commission", data: { final-commission: u0 } })
+    (print { action: "claim-commission", data: { commission-total: u0 } })
     (ok true)
   )
 )
@@ -162,8 +140,8 @@
   )
 )
 
-(define-read-only (get-next-request-nonce)
-  (+ (get-request-nonce) u1))
+(define-read-only (get-next-withdrawal-nonce)
+  (+ (get-withdrawal-nonce) u1))
 
 (define-read-only (get-redeemable-btc-by-amount (btc-amount uint))
   (mul-down btc-amount (get-btc-to-sbtc-ratio)))
@@ -171,7 +149,7 @@
 (define-read-only (get-redeemable-btc (user principal))
   (mul-down (unwrap-panic (contract-call? .token-btc get-balance user)) (get-btc-to-sbtc-ratio)))
 
-(define-private (is-contract-owner)
+(define-read-only (is-contract-owner)
 	(ok (asserts! (is-eq (var-get contract-owner) tx-sender) err-unauthorised)))
 
 (define-public (set-contract-owner (new-contract-owner principal))
@@ -179,9 +157,9 @@
 		(try! (is-contract-owner))
 		(ok (var-set contract-owner new-contract-owner))))
 
-(define-private (mul-down (a uint) (b uint))
+(define-read-only (mul-down (a uint) (b uint))
 	(/ (* a b) ONE_8))
-(define-private (div-down (a uint) (b uint))
+(define-read-only (div-down (a uint) (b uint))
 	(if (is-eq a u0)
 		u0
 		(/ (* a ONE_8) b)))
@@ -202,9 +180,9 @@
 	(contract-call? .btc-data get-fee-address))
 
 (define-read-only (is-peg-in-address-approved (address (buff 128)))
-	(contract-call? .btc-bridge-registry-v1-01 is-peg-in-address-approved address))
+	(contract-call? .btc-registry is-peg-in-address-approved address))
 (define-read-only (get-peg-in-sent-or-default (tx (buff 4096)) (output uint))
-	(contract-call? .btc-bridge-registry-v1-01 get-peg-in-sent-or-default tx output))
+	(contract-call? .btc-registry get-peg-in-sent-or-default tx output))
 
 (define-read-only (get-withdrawal-or-fail (id uint))
   (contract-call? .stacking-data get-withdrawal-or-fail id))
@@ -212,25 +190,21 @@
 ;; btc data
 (define-read-only (get-total-btc)
 	(contract-call? .stacking-data get-total-btc))
-(define-read-only (get-withdraw-id)
-	(contract-call? .stacking-data get-withdraw-id))
 (define-read-only (get-commission)
 	(contract-call? .stacking-data get-commission))
 (define-read-only (get-commission-total)
 	(contract-call? .stacking-data get-commission-total))
-(define-read-only (get-request-nonce)
-	(contract-call? .stacking-data get-request-nonce))
+(define-read-only (get-withdrawal-nonce)
+	(contract-call? .stacking-data get-withdrawal-nonce))
 
-(define-public (set-withdraw-id (withdraw-id uint))
-	(contract-call? .stacking-data set-withdraw-id withdraw-id))
-(define-public (set-commission-total (commission-total uint))
+(define-private (set-commission-total (commission-total uint))
 	(contract-call? .stacking-data set-commission-total commission-total))
-(define-public (set-total-btc (total-btc uint))
+(define-private (set-total-btc (total-btc uint))
 	(contract-call? .stacking-data set-total-btc total-btc))
-(define-public (set-request-nonce (request-nonce uint))
-	(contract-call? .stacking-data set-request-nonce request-nonce))
+(define-private (set-withdrawal-nonce (withdrawal-nonce uint))
+	(contract-call? .stacking-data set-withdrawal-nonce withdrawal-nonce))
 
-(define-public (set-withdrawal
+(define-private (set-withdrawal
   (withdrawal-id uint)
   (new-withdrawal {
     btc-amount: uint,
@@ -247,6 +221,7 @@
 	(contract-call? .stacking-data set-withdrawal withdrawal-id new-withdrawal)
 )
 
+;; bitcoin parsing functions
 (define-read-only (extract-tx-ins-outs (tx (buff 4096)))
 	(if (try! (contract-call? .clarity-bitcoin-v1-02 is-segwit-tx tx))
 		(let (
@@ -276,10 +251,11 @@
 			))
 		(ok true))) ;; if not mainnet, assume verified
 
-(define-read-only (create-order-0-or-fail (order principal))
-	(ok (unwrap! (to-consensus-buff? order) err-invalid-input)))
-
+;; data output parse helpers
 (define-read-only (decode-order-0-or-fail (order-script (buff 128)))
 	(let (
-			(op-code (unwrap-panic (slice? order-script u1 u2))))
-			(ok (unwrap! (from-consensus-buff? principal (unwrap-panic (slice? order-script (if (< op-code 0x4c) u2 u3) (len order-script)))) err-invalid-input))))
+    (op-code (unwrap-panic (slice? order-script u1 u2))))
+    (ok (unwrap! (from-consensus-buff? principal (unwrap-panic (slice? order-script (if (< op-code 0x4c) u2 u3) (len order-script)))) err-invalid-input))))
+
+(define-read-only (create-order-0-or-fail (order principal))
+	(ok (unwrap! (to-consensus-buff? order) err-invalid-input)))

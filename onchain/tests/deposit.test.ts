@@ -1,5 +1,11 @@
 import { describe, expect, it, beforeEach } from "vitest";
-import { Cl, cvToJSON, cvToString, cvToValue } from "@stacks/transactions";
+import {
+  Cl,
+  ClarityType,
+  cvToJSON,
+  cvToString,
+  cvToValue,
+} from "@stacks/transactions";
 import { generatePegInTx } from "./bitcoin";
 import * as btc from "@scure/btc-signer";
 import { hex } from "@scure/base";
@@ -35,12 +41,15 @@ describe("Deposits", () => {
     );
     callResponse = simnet.callPublicFn(
       "token-btc",
-      "add-approved-contract",
-      [Cl.contractPrincipal(deployerAddress, stackingLogicContractName)],
+      "set-approved-contract",
+      [
+        Cl.contractPrincipal(deployerAddress, stackingLogicContractName),
+        Cl.bool(true),
+      ],
       deployerAddress
     );
     callResponse = simnet.callPublicFn(
-      "btc-bridge-registry-v1-01",
+      "btc-registry",
       "approve-operator",
       [
         Cl.contractPrincipal(deployerAddress, stackingLogicContractName),
@@ -67,7 +76,7 @@ describe("Deposits", () => {
       deployerAddress
     );
     callResponse = simnet.callPublicFn(
-      "btc-bridge-registry-v1-01",
+      "btc-registry",
       "approve-peg-in-address",
       [Cl.bufferFromHex(pegInOutscript), Cl.bool(true)],
       deployerAddress
@@ -133,8 +142,13 @@ describe("Deposits", () => {
         .get(`${address1}.owner-contract`)
     ).toBe(100000n);
   });
-  it("Deposit and mint into standard principal and contract principal", () => {
-    let tx = generatePegInTx(BigInt(100000), pegInOutscript, address1);
+  it("Deposit to wrong address", () => {
+    const wrongOutscript = hex.encode(
+      btc.OutScript.encode(
+        btc.Address().decode("bc1qtj7um0a0lsf6p7cd0yhlh8lylhsmn5vl8v4fun")
+      )
+    );
+    let tx = generatePegInTx(BigInt(100000), wrongOutscript, address1);
     let callResponse = simnet.callPublicFn(
       stackingLogicContractName,
       "deposit",
@@ -154,53 +168,7 @@ describe("Deposits", () => {
       ],
       address1
     );
-    expect(
-      simnet
-        .getAssetsMap()
-        .get(`.${lstTokenContractName}.${lstTokenName}`)!
-        .get(address1)
-    ).toBe(100000n);
-
-    callResponse = simnet.callPublicFn(
-      "stacking-btc",
-      "add-rewards",
-      [Cl.uint(10000)],
-      deployerAddress
-    );
-    tx = generatePegInTx(
-      BigInt(100000n),
-      pegInOutscript,
-      address1,
-      "owner-contract"
-    );
-    callResponse = simnet.callPublicFn(
-      stackingLogicContractName,
-      "deposit",
-      [
-        Cl.bufferFromHex(tx),
-        Cl.tuple({
-          header: Cl.bufferFromHex(""),
-          height: Cl.uint(0),
-        }),
-        Cl.tuple({
-          "tx-index": Cl.uint(0),
-          hashes: Cl.list([]),
-          "tree-depth": Cl.uint(0),
-        }),
-        Cl.uint(0),
-        Cl.uint(1),
-      ],
-      address1
-    );
-    // console.log(
-    //   simnet.getAssetsMap().get(`.${lstTokenContractName}.${lstTokenName}`)
-    // );
-    expect(
-      simnet
-        .getAssetsMap()
-        .get(`.${lstTokenContractName}.${lstTokenName}`)!
-        .get(`${address1}.owner-contract`)
-    ).toBe(90909n);
+    expect(callResponse.result).toBeErr(Cl.uint(1002));
   });
   it("Deposit and account peg in fees", () => {
     const pegInAmount = 100000n;
@@ -434,5 +402,33 @@ describe("Deposits", () => {
       deployerAddress
     );
     expect(callResponse.result).toBeUint(pegInAmount * 2n + commissionWOFees);
+  });
+  it("Deposit to address with a maximum contract name of 54", () => {
+    let tx = generatePegInTx(
+      BigInt(100000),
+      pegInOutscript,
+      address1,
+      "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    );
+    let callResponse = simnet.callPublicFn(
+      stackingLogicContractName,
+      "deposit",
+      [
+        Cl.bufferFromHex(tx),
+        Cl.tuple({
+          header: Cl.bufferFromHex(""),
+          height: Cl.uint(0),
+        }),
+        Cl.tuple({
+          "tx-index": Cl.uint(0),
+          hashes: Cl.list([]),
+          "tree-depth": Cl.uint(0),
+        }),
+        Cl.uint(0),
+        Cl.uint(1),
+      ],
+      address1
+    );
+    expect(callResponse.result).toHaveClarityType(ClarityType.ResponseOk);
   });
 });

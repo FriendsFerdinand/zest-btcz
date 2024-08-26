@@ -42,12 +42,15 @@ describe("Withdrawals", () => {
     );
     callResponse = simnet.callPublicFn(
       "token-btc",
-      "add-approved-contract",
-      [Cl.contractPrincipal(deployerAddress, stackingLogicContractName)],
+      "set-approved-contract",
+      [
+        Cl.contractPrincipal(deployerAddress, stackingLogicContractName),
+        Cl.bool(true),
+      ],
       deployerAddress
     );
     callResponse = simnet.callPublicFn(
-      "btc-bridge-registry-v1-01",
+      "btc-registry",
       "approve-operator",
       [
         Cl.contractPrincipal(deployerAddress, stackingLogicContractName),
@@ -83,7 +86,7 @@ describe("Withdrawals", () => {
       deployerAddress
     );
     callResponse = simnet.callPublicFn(
-      "btc-bridge-registry-v1-01",
+      "btc-registry",
       "approve-peg-in-address",
       [Cl.bufferFromHex(pegInOutscript), Cl.bool(true)],
       deployerAddress
