@@ -11,8 +11,8 @@ path = 'contracts/btc-registry.clar'
 clarity_version = 2
 epoch = 2.5
 
-[contracts.btc-data]
-path = 'contracts/btc-data.clar'
+[contracts.fee-data]
+path = 'contracts/fee-data.clar'
 clarity_version = 2
 epoch = 2.5
 
@@ -36,8 +36,8 @@ path = 'contracts/token-btc.clar'
 clarity_version = 2
 epoch = 2.5
 
-[contracts.trait-sip-010]
-path = 'contracts/trait-sip-010.clar'
+[contracts.ft-trait]
+path = 'contracts/ft-trait.clar'
 clarity_version = 2
 epoch = 2.5
 

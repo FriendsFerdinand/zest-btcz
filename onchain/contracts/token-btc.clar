@@ -2,6 +2,7 @@
 
 (define-constant ONE_8 u100000000)
 
+(impl-trait .ft-trait.ft-trait)
 (define-fungible-token token-btcz)
 (define-data-var contract-owner principal tx-sender)
 (define-map approved-contracts principal bool)

@@ -157,18 +157,18 @@
 
 ;; stacking data
 (define-read-only (is-peg-in-paused)
-	(contract-call? .btc-data is-peg-in-paused))
+	(contract-call? .fee-data is-peg-in-paused))
 (define-read-only (is-peg-out-paused)
-	(contract-call? .btc-data is-peg-out-paused))
+	(contract-call? .fee-data is-peg-out-paused))
 
 (define-read-only (get-peg-in-fee)
-	(contract-call? .btc-data get-peg-in-fee))
+	(contract-call? .fee-data get-peg-in-fee))
 (define-read-only (get-peg-out-fee)
-	(contract-call? .btc-data get-peg-out-fee))
+	(contract-call? .fee-data get-peg-out-fee))
 (define-read-only (get-peg-out-gas-fee)
-	(contract-call? .btc-data get-peg-out-gas-fee))
+	(contract-call? .fee-data get-peg-out-gas-fee))
 (define-read-only (get-fee-address)
-	(contract-call? .btc-data get-fee-address))
+	(contract-call? .fee-data get-fee-address))
 
 (define-read-only (is-peg-in-address-approved (address (buff 128)))
 	(contract-call? .btc-registry is-peg-in-address-approved address))
@@ -194,7 +194,6 @@
 	(contract-call? .stacking-data set-total-btc total-btc))
 (define-private (set-withdrawal-nonce (withdrawal-nonce uint))
 	(contract-call? .stacking-data set-withdrawal-nonce withdrawal-nonce))
-
 (define-private (set-withdrawal
   (withdrawal-id uint)
   (new-withdrawal {
