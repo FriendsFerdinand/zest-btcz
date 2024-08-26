@@ -52,9 +52,8 @@
     (fee (mul-down amount (get-peg-in-fee)))
     (amount-net (- amount fee))
     (recipient (try! (decode-order-0-or-fail order-script)))
-
     (btc-to-sbtc-ratio (get-btc-to-sbtc-ratio))
-    (sbtc-to-receive (div-down amount-net btc-to-sbtc-ratio))
+    (btcz-to-receive (div-down amount-net btc-to-sbtc-ratio))
     (sender recipient)
   )
 		(asserts! (not (is-peg-in-paused)) err-paused)
@@ -65,9 +64,10 @@
     (try! (set-total-btc (+ (get-total-btc) amount-net)))
 
 		(try! (contract-call? .btc-bridge-registry-v1-01 set-peg-in-sent tx output-idx true))
-    (try! (contract-call? .token-btc mint sbtc-to-receive sender))
+    (try! (contract-call? .token-btc mint btcz-to-receive sender))
 
-    (ok { fee: fee, amount-net: amount-net, recipient: recipient, sbtc-to-receive: sbtc-to-receive })
+    (print { action: "deposit", data: { tx-id: (get-txid tx), tx: tx, btcz-to-receive: btcz-to-receive } })
+    (ok true)
   )
 )
 
@@ -84,12 +84,7 @@
     (check-amount (asserts! (> redeemeable-btc (+ fee gas-fee)) err-invalid-amount))
     (amount-net (- redeemeable-btc fee gas-fee))
     (next-nonce (get-next-request-nonce))
-  )
-		(asserts! (not (is-peg-out-paused)) err-paused)
-    (try! (contract-call? .token-btc burn btcz-amount sender))
-    (try! (set-total-btc (- (get-total-btc) redeemeable-btc)))
-
-    (try! (set-withdrawal next-nonce {
+    (withdraw-data {
       btc-amount: amount-net,
       btcz-amount: btcz-amount,
       peg-out-address: peg-out-address,
@@ -100,10 +95,17 @@
       finalized: false,
       requested-at: block-height,
       requested-at-burn-height: burn-block-height,
-    }))
+    })
+  )
+		(asserts! (not (is-peg-out-paused)) err-paused)
+    (try! (contract-call? .token-btc burn btcz-amount sender))
+    (try! (set-total-btc (- (get-total-btc) redeemeable-btc)))
+
+    (try! (set-withdrawal next-nonce withdraw-data))
     (try! (set-request-nonce next-nonce))
 
-    (ok { redeemeable-btc: redeemeable-btc, amount-net: amount-net })
+    (print { action: "init-withdraw", data: { withdraw-data: withdraw-data } })
+    (ok next-nonce)
   )
 )
 
@@ -117,7 +119,7 @@
     (asserts! (not (get finalized withdraw-data)) err-already-sent)
     
     (try! (set-withdrawal request-id (merge withdraw-data { finalized: true })))
-    ;; (print { action: "withdraw", data: { sender: tx-sender, amount: (get sbtc-amount withdraw-data), block-height: burn-block-height } })
+    (print { action: "finalize-withdraw", data: { withdraw-data: withdraw-data, finalize-height: burn-block-height } })
     (ok true)
   )
 )
@@ -127,22 +129,24 @@
     (commission-amount (mul-down btc-amount (get-commission)))
     (rewards (- btc-amount commission-amount))
     (rewards-left (- rewards commission-amount))
+    (total-rewards (+ (get-total-btc) rewards))
+    (final-commission (+ commission-amount (get-commission-total)))
   )
     (try! (is-contract-owner))
     
-    (and (> commission-amount u0) (try! (set-commission-total (+ commission-amount (get-commission-total)))))
-    (try! (set-total-btc (+ (get-total-btc) rewards)))
+    (and (> commission-amount u0) (try! (set-commission-total final-commission)))
+    (try! (set-total-btc total-rewards))
+    (print { action: "add-rewards", data: { final-commission: final-commission, total-rewards: total-rewards } })
     (ok true)
   )
 )
 
 (define-public (claim-commission)
-  (let ((rewards (get-commission-total)))
-    (begin
-      (try! (is-contract-owner))
-      (try! (set-commission-total u0))
-      (ok true)
-    )
+  (begin
+    (try! (is-contract-owner))
+    (try! (set-commission-total u0))
+    (print { action: "claim-commission", data: { final-commission: u0 } })
+    (ok true)
   )
 )
 

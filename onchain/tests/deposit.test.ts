@@ -19,7 +19,7 @@ const btcAddress1 = "bc1q0xcqpzrky6eff2g52qdye53xkk9jxkvrh6yhyw";
 const pegInScript = btc.Address().decode(btcAddress1);
 const pegInOutscript = hex.encode(btc.OutScript.encode(pegInScript));
 
-describe("Complete a deposit", () => {
+describe("Deposits", () => {
   beforeEach(() => {
     let callResponse = simnet.callPublicFn(
       "btc-data",
