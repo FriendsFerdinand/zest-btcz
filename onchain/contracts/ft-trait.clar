@@ -1,7 +1,4 @@
-;; trait-sip-010
-
-;; sip-010-trait
-(define-trait sip-010-trait
+(define-trait ft-trait
   (
     ;; Transfer from the caller to a new principal
     (transfer (uint principal principal (optional (buff 34))) (response bool uint))
@@ -24,15 +21,7 @@
     ;; an optional URI that represents metadata of this token
     (get-token-uri () (response (optional (string-utf8 256)) uint))
 
-    ;; helper functions for 8-digit fixed notation
-    (transfer-fixed (uint principal principal (optional (buff 34))) (response bool uint))
-    (get-balance-fixed (principal) (response uint uint))
-    (get-total-supply-fixed () (response uint uint))    
-
-
     (mint (uint principal) (response bool uint))
-    (burn (uint principal) (response bool uint))  
-    (mint-fixed (uint principal) (response bool uint))
-		(burn-fixed (uint principal) (response bool uint))      
- )
+    (burn (uint principal) (response bool uint))
+  )
 )

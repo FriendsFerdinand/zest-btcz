@@ -5,42 +5,44 @@ authors = []
 telemetry = false
 cache_dir = './.cache'
 requirements = []
-[contracts.bridge-endpoint]
-path = 'contracts/bridge-endpoint.clar'
-clarity_version = 2
-epoch = 2.4
 
-[contracts.btc-bridge-registry-v1-01]
-path = 'contracts/btc-bridge-registry-v1-01.clar'
+[contracts.btc-registry]
+path = 'contracts/btc-registry.clar'
 clarity_version = 2
-epoch = 2.4
+epoch = 2.5
+
+[contracts.fee-data]
+path = 'contracts/fee-data.clar'
+clarity_version = 2
+epoch = 2.5
+
+[contracts.stacking-data]
+path = 'contracts/stacking-data.clar'
+clarity_version = 2
+epoch = 2.5
 
 [contracts.clarity-bitcoin-v1-02]
 path = 'contracts/clarity-bitcoin-v1-02.clar'
 clarity_version = 2
-epoch = 2.4
-
-[contracts.token-btc]
-path = 'contracts/token-btc.clar'
-clarity_version = 2
-epoch = 2.4
-
-[contracts.trait-sip-010]
-path = 'contracts/trait-sip-010.clar'
-clarity_version = 2
-epoch = 2.4
+epoch = 2.5
 
 [contracts.stacking-btc]
 path = 'contracts/stacking-btc.clar'
 clarity_version = 2
-epoch = 2.4
+epoch = 2.5
 
-[repl]
-clarity_wasm_mode = false
-show_timings = false
+[contracts.token-btc]
+path = 'contracts/token-btc.clar'
+clarity_version = 2
+epoch = 2.5
 
-# [repl.analysis]
-# passes = ['check_checker']
+[contracts.ft-trait]
+path = 'contracts/ft-trait.clar'
+clarity_version = 2
+epoch = 2.5
+
+[repl.analysis]
+passes = []
 
 [repl.analysis.check_checker]
 strict = false

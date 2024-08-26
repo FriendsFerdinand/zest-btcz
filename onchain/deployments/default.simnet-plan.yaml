@@ -50,14 +50,9 @@ plan:
     - id: 0
       transactions:
         - emulated-contract-publish:
-            contract-name: trait-sip-010
+            contract-name: btc-registry
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/trait-sip-010.clar
-            clarity-version: 2
-        - emulated-contract-publish:
-            contract-name: btc-bridge-registry-v1-01
-            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/btc-bridge-registry-v1-01.clar
+            path: contracts/btc-registry.clar
             clarity-version: 2
         - emulated-contract-publish:
             contract-name: clarity-bitcoin-v1-02
@@ -65,18 +60,28 @@ plan:
             path: contracts/clarity-bitcoin-v1-02.clar
             clarity-version: 2
         - emulated-contract-publish:
+            contract-name: fee-data
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/fee-data.clar
+            clarity-version: 2
+        - emulated-contract-publish:
+            contract-name: ft-trait
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/ft-trait.clar
+            clarity-version: 2
+        - emulated-contract-publish:
+            contract-name: stacking-data
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/stacking-data.clar
+            clarity-version: 2
+        - emulated-contract-publish:
             contract-name: token-btc
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
             path: contracts/token-btc.clar
-            clarity-version: 2
-        - emulated-contract-publish:
-            contract-name: bridge-endpoint
-            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/bridge-endpoint.clar
             clarity-version: 2
         - emulated-contract-publish:
             contract-name: stacking-btc
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
             path: contracts/stacking-btc.clar
             clarity-version: 2
-      epoch: "2.4"
+      epoch: "2.5"
