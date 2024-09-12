@@ -12,6 +12,7 @@ import { hex } from "@scure/base";
 import {
   lstTokenContractName,
   lstTokenName,
+  stackingDataContractName,
   stackingLogicContractName,
   stackingVaultContractName,
 } from "./config";
@@ -140,7 +141,7 @@ describe("Withdrawals", () => {
     ).toBe(0n);
 
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
+      stackingDataContractName,
       "get-withdrawal-or-fail",
       [Cl.uint(1)],
       deployerAddress
@@ -158,14 +159,14 @@ describe("Withdrawals", () => {
       deployerAddress
     );
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
+      stackingDataContractName,
       "get-withdrawal-or-fail",
       [Cl.uint(1)],
       deployerAddress
     );
     expect(cvToValue(callResponse.result).value["finalized"].value).toBe(true);
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
+      stackingDataContractName,
       "get-total-btc",
       [],
       deployerAddress
@@ -224,7 +225,7 @@ describe("Withdrawals", () => {
     ).toBe(0n);
 
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
+      stackingDataContractName,
       "get-withdrawal-or-fail",
       [Cl.uint(1)],
       deployerAddress
@@ -251,14 +252,14 @@ describe("Withdrawals", () => {
     expect(callResponse.result).toBeErr(Cl.uint(6005));
     // check withdrawal request is deleted
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
+      stackingDataContractName,
       "get-withdrawal-or-fail",
       [Cl.uint(1)],
       deployerAddress
     );
     expect(cvToValue(callResponse.result).value["finalized"].value).toBe(true);
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
+      stackingDataContractName,
       "get-total-btc",
       [],
       deployerAddress
@@ -346,7 +347,7 @@ describe("Withdrawals", () => {
     //   simnet.getAssetsMap().get(`.${lstTokenContractName}.${lstTokenName}`)!
     // );
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
+      stackingDataContractName,
       "get-withdrawal-or-fail",
       [Cl.uint(1)],
       deployerAddress
@@ -358,7 +359,7 @@ describe("Withdrawals", () => {
     expect(cvToValue(callResponse.result).value["gas-fee"].value).toBe("0");
     // check second withdrawal
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
+      stackingDataContractName,
       "get-withdrawal-or-fail",
       [Cl.uint(2)],
       deployerAddress
@@ -383,7 +384,7 @@ describe("Withdrawals", () => {
     );
     expect(callResponse.result).toHaveClarityType(ClarityType.ResponseOk);
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
+      stackingDataContractName,
       "get-total-btc",
       [],
       deployerAddress
@@ -466,7 +467,7 @@ describe("Withdrawals", () => {
       address2
     );
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
+      stackingDataContractName,
       "get-withdrawal-or-fail",
       [Cl.uint(1)],
       deployerAddress
@@ -478,7 +479,7 @@ describe("Withdrawals", () => {
     expect(cvToValue(callResponse.result).value["gas-fee"].value).toBe("0");
     // check second withdrawal
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
+      stackingDataContractName,
       "get-withdrawal-or-fail",
       [Cl.uint(2)],
       deployerAddress
@@ -503,7 +504,7 @@ describe("Withdrawals", () => {
     );
     expect(callResponse.result).toHaveClarityType(ClarityType.ResponseOk);
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
+      stackingDataContractName,
       "get-total-btc",
       [],
       deployerAddress
@@ -577,7 +578,7 @@ describe("Withdrawals", () => {
       address1
     );
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
+      stackingDataContractName,
       "get-withdrawal-or-fail",
       [Cl.uint(1)],
       deployerAddress
@@ -622,12 +623,8 @@ describe("Withdrawals", () => {
       ],
       address2
     );
-    // console.log(Cl.prettyPrint(callResponse.result));
-    // console.log(
-    //   simnet.getAssetsMap().get(`.${lstTokenContractName}.${lstTokenName}`)!
-    // );
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
+      stackingDataContractName,
       "get-withdrawal-or-fail",
       [Cl.uint(2)],
       deployerAddress
@@ -717,7 +714,7 @@ describe("Withdrawals", () => {
     ).toBe(0n);
 
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
+      stackingDataContractName,
       "get-withdrawal-or-fail",
       [Cl.uint(1)],
       deployerAddress
@@ -737,14 +734,14 @@ describe("Withdrawals", () => {
       deployerAddress
     );
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
+      stackingDataContractName,
       "get-withdrawal-or-fail",
       [Cl.uint(1)],
       deployerAddress
     );
     expect(cvToValue(callResponse.result).value["finalized"].value).toBe(true);
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
+      stackingDataContractName,
       "get-total-btc",
       [],
       deployerAddress
@@ -811,7 +808,7 @@ describe("Withdrawals", () => {
     ).toBe(0n);
 
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
+      stackingDataContractName,
       "get-withdrawal-or-fail",
       [Cl.uint(1)],
       deployerAddress
@@ -831,14 +828,14 @@ describe("Withdrawals", () => {
       deployerAddress
     );
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
+      stackingDataContractName,
       "get-withdrawal-or-fail",
       [Cl.uint(1)],
       deployerAddress
     );
     expect(cvToValue(callResponse.result).value["finalized"].value).toBe(true);
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
+      stackingDataContractName,
       "get-total-btc",
       [],
       deployerAddress
