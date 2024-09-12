@@ -1,6 +1,4 @@
-(define-constant ERR-NOT-AUTHORIZED (err u5000))
-
-(define-constant ONE_8 u100000000)
+(define-constant err-not-authorized (err u5000))
 
 (impl-trait .ft-trait.ft-trait)
 (define-fungible-token token-btcz)
@@ -41,10 +39,10 @@
   (ok (var-get contract-owner)))
 
 (define-private (check-is-owner)
-  (ok (asserts! (is-eq tx-sender (var-get contract-owner)) ERR-NOT-AUTHORIZED)))
+  (ok (asserts! (is-eq tx-sender (var-get contract-owner)) err-not-authorized)))
 
 (define-private (check-is-approved)
-  (ok (asserts! (default-to false (map-get? approved-contracts contract-caller)) ERR-NOT-AUTHORIZED)))
+  (ok (asserts! (default-to false (map-get? approved-contracts contract-caller)) err-not-authorized)))
 
 ;; permission data setter
 (define-public (set-contract-owner (owner principal))
@@ -62,17 +60,17 @@
 ;; token actions
 (define-public (transfer (amount uint) (sender principal) (recipient principal) (memo (optional (buff 34))))
   (begin
-    (asserts! (is-eq sender tx-sender) ERR-NOT-AUTHORIZED)
+    (asserts! (is-eq sender tx-sender) err-not-authorized)
     (try! (ft-transfer? token-btcz amount sender recipient))
     (match memo to-print (print to-print) 0x)
     (ok true)))
 
 (define-public (mint (amount uint) (recipient principal))
   (begin
-    (asserts! (is-ok (check-is-approved)) ERR-NOT-AUTHORIZED)
+    (asserts! (is-ok (check-is-approved)) err-not-authorized)
     (ft-mint? token-btcz amount recipient)))
 
 (define-public (burn (amount uint) (sender principal))
   (begin
-    (asserts! (is-ok (check-is-approved)) ERR-NOT-AUTHORIZED)
+    (asserts! (is-ok (check-is-approved)) err-not-authorized)
     (ft-burn? token-btcz amount sender)))

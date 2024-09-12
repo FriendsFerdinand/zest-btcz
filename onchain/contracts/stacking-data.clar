@@ -2,8 +2,6 @@
 (define-constant err-withdrawal-not-found (err u4001))
 (define-constant err-invalid-fee (err u4002))
 
-(define-constant ONE_8 u100000000)
-
 (define-data-var contract-owner principal tx-sender)
 (define-map approved-operators principal bool)
 
