@@ -29,6 +29,7 @@
 (define-public (set-token-uri (new-uri (optional (string-utf8 256))))
 	(begin
 		(try! (check-is-owner))
+    (print { action: "set-token-uri", data: { new-uri: new-uri } })
 		(ok (var-set token-uri new-uri))))
 
 ;; permission data
@@ -44,10 +45,12 @@
 (define-public (set-contract-owner (owner principal))
 	(begin
 		(try! (check-is-owner))
+    (print { action: "set-contract-owner", data: { owner: owner } })
 		(ok (var-set contract-owner owner))))
 (define-public (set-approved-contract (owner principal) (approved bool))
 	(begin
 		(try! (check-is-owner))
+    (print { action: "set-approved-contract", data: { owner: owner, approved: approved } })
 		(ok (map-set approved-contracts owner approved))))
 
 ;; token actions

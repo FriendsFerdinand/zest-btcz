@@ -48,7 +48,7 @@
 		(try! (contract-call? .btc-registry set-peg-in-sent tx output-idx true))
     (try! (contract-call? .token-btc mint btcz-to-receive sender))
 
-    (print { action: "deposit", data: { tx-id: (get-txid tx), tx: tx, btcz-to-receive: btcz-to-receive, fee: fee, amount-net: amount-net, recipient: recipient } })
+    (print { action: "deposit", data: { tx-id: (get-txid tx), tx: tx, btcz-to-receive: btcz-to-receive, fee: fee, amount-net: amount-net, recipient: recipient, peg-in-address: peg-in-address, amount: amount } })
     (ok { order-script: order-script })
   )
 )
@@ -85,7 +85,7 @@
     (try! (set-withdrawal next-nonce withdraw-data))
     (try! (set-withdrawal-nonce next-nonce))
 
-    (print { action: "init-withdraw", data: { withdraw-data: withdraw-data } })
+    (print { action: "init-withdraw", data: { withdraw-data: withdraw-data, nonce: next-nonce } })
     (ok next-nonce)
   )
 )
@@ -99,7 +99,7 @@
     (asserts! (not (get finalized withdraw-data)) err-already-sent)
     
     (try! (set-withdrawal withdrawal-id (merge withdraw-data { finalized: true })))
-    (print { action: "finalize-withdraw", data: { withdraw-data: withdraw-data, finalize-height: burn-block-height } })
+    (print { action: "finalize-withdraw", data: { withdraw-data: withdraw-data, withdrawal-id: withdrawal-id, finalize-height: burn-block-height } })
     (ok true)
   )
 )
@@ -165,6 +165,7 @@
 (define-public (set-contract-owner (new-contract-owner principal))
 	(begin
 		(try! (is-contract-owner))
+    (print { action: "set-contract-owner", data: { new-contract-owner: new-contract-owner } })
 		(ok (var-set contract-owner new-contract-owner))))
 
 (define-read-only (mul-down (a uint) (b uint))
