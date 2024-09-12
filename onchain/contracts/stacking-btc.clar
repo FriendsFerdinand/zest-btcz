@@ -70,7 +70,6 @@
       requested-by: sender,
       fee: fee,
       gas-fee: gas-fee,
-      revoked: false,
       finalized: false,
       requested-at: block-height,
       requested-at-burn-height: burn-block-height,
@@ -212,7 +211,6 @@
     requested-by: principal,
     fee: uint,
     gas-fee: uint,
-    revoked: bool,
     finalized: bool,
     requested-at: uint,
     requested-at-burn-height: uint

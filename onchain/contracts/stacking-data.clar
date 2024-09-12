@@ -22,7 +22,6 @@
   requested-by: principal,
   fee: uint,
   gas-fee: uint,
-	revoked: bool,
 	finalized: bool,
 	requested-at: uint,
 	requested-at-burn-height: uint
@@ -74,7 +73,6 @@
     requested-by: principal,
     fee: uint,
     gas-fee: uint,
-    revoked: bool,
     finalized: bool,
     requested-at: uint,
     requested-at-burn-height: uint }))
