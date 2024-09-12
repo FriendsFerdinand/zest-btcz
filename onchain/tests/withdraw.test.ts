@@ -29,13 +29,13 @@ const pegInOutscript = hex.encode(btc.OutScript.encode(pegInScript));
 describe("Withdrawals", () => {
   beforeEach(() => {
     let callResponse = simnet.callPublicFn(
-      "fee-data",
+      "peg-data",
       "pause-peg-in",
       [Cl.bool(false)],
       deployerAddress
     );
     callResponse = simnet.callPublicFn(
-      "fee-data",
+      "peg-data",
       "pause-peg-out",
       [Cl.bool(false)],
       deployerAddress
@@ -652,7 +652,7 @@ describe("Withdrawals", () => {
     );
 
     let callResponse = simnet.callPublicFn(
-      "fee-data",
+      "peg-data",
       "set-peg-out-fee",
       [Cl.uint(500_000n)],
       deployerAddress
@@ -763,7 +763,7 @@ describe("Withdrawals", () => {
     const pegOutWOFees = pegOutAmount - pegOutFees;
 
     let callResponse = simnet.callPublicFn(
-      "fee-data",
+      "peg-data",
       "set-peg-out-gas-fee",
       [Cl.uint(pegOutFees)],
       deployerAddress

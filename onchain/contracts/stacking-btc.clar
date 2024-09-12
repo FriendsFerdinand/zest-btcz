@@ -174,16 +174,16 @@
 
 ;; stacking data
 (define-read-only (is-peg-in-paused)
-	(contract-call? .fee-data is-peg-in-paused))
+	(contract-call? .peg-data is-peg-in-paused))
 (define-read-only (is-peg-out-paused)
-	(contract-call? .fee-data is-peg-out-paused))
+	(contract-call? .peg-data is-peg-out-paused))
 
 (define-read-only (get-peg-in-fee)
-	(contract-call? .fee-data get-peg-in-fee))
+	(contract-call? .peg-data get-peg-in-fee))
 (define-read-only (get-peg-out-fee)
-	(contract-call? .fee-data get-peg-out-fee))
+	(contract-call? .peg-data get-peg-out-fee))
 (define-read-only (get-peg-out-gas-fee)
-	(contract-call? .fee-data get-peg-out-gas-fee))
+	(contract-call? .peg-data get-peg-out-gas-fee))
 
 (define-read-only (is-peg-in-address-approved (address (buff 128)))
 	(contract-call? .btc-registry is-peg-in-address-approved address))

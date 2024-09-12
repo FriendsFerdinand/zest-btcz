@@ -11,8 +11,8 @@ path = 'contracts/btc-registry.clar'
 clarity_version = 2
 epoch = 2.5
 
-[contracts.fee-data]
-path = 'contracts/fee-data.clar'
+[contracts.peg-data]
+path = 'contracts/peg-data.clar'
 clarity_version = 2
 epoch = 2.5
 

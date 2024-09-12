@@ -32,13 +32,13 @@ const ONE = 100000000;
 describe("Setting params", () => {
   beforeEach(() => {
     let callResponse = simnet.callPublicFn(
-      "fee-data",
+      feeDataContractName,
       "pause-peg-in",
       [Cl.bool(false)],
       deployerAddress
     );
     callResponse = simnet.callPublicFn(
-      "fee-data",
+      feeDataContractName,
       "pause-peg-out",
       [Cl.bool(false)],
       deployerAddress
