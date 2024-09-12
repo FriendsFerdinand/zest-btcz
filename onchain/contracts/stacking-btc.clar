@@ -36,7 +36,6 @@
     (recipient (try! (decode-order-0-or-fail order-script)))
     (btc-to-btcz-ratio (get-btc-to-btcz-ratio))
     (btcz-to-receive (div-down amount-net btc-to-btcz-ratio))
-    (sender recipient)
   )
 		(asserts! (not (is-peg-in-paused)) err-paused)
     (asserts! (not (get-peg-in-sent-or-default tx output-idx)) err-already-sent)
@@ -46,7 +45,7 @@
     (try! (set-total-btc (+ (get-total-btc) amount-net)))
 
 		(try! (contract-call? .btc-registry set-peg-in-sent tx output-idx true))
-    (try! (contract-call? .token-btc mint btcz-to-receive sender))
+    (try! (contract-call? .token-btc mint btcz-to-receive recipient))
 
     (print { action: "deposit", data: { tx-id: (get-txid tx), tx: tx, btcz-to-receive: btcz-to-receive, fee: fee, amount-net: amount-net, recipient: recipient, peg-in-address: peg-in-address, amount: amount } })
     (ok { order-script: order-script })
