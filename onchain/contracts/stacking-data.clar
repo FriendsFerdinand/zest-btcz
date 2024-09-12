@@ -33,15 +33,15 @@
 (define-read-only (get-withdrawal-nonce)
 	(var-get withdrawal-nonce))
 
-(define-read-only (get-withdrawal-or-fail (withdrawal-id uint))
+(define-read-only (get-withdrawal (withdrawal-id uint))
 	(ok (unwrap! (map-get? withdrawals withdrawal-id) err-withdrawal-not-found)))
 
 (define-read-only (is-contract-owner)
 	(ok (asserts! (is-eq (var-get contract-owner) tx-sender) err-unauthorised)))
-(define-read-only (get-approved-operator-or-default (operator principal))
+(define-read-only (get-approved-operator (operator principal))
 	(default-to false (map-get? approved-operators operator)))
 (define-read-only (is-approved-operator)
-	(ok (asserts! (or (get-approved-operator-or-default contract-caller) (is-ok (is-contract-owner))) err-unauthorised)))
+	(ok (asserts! (or (get-approved-operator contract-caller) (is-ok (is-contract-owner))) err-unauthorised)))
 
 
 (define-public (set-contract-owner (new-contract-owner principal))
