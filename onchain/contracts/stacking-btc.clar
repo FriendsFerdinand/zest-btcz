@@ -29,15 +29,15 @@
     (amount (get value output))
     (peg-in-address (get scriptPubKey output))
     (order-script (get scriptPubKey (unwrap! (element-at? (get outs parsed-tx) order-idx) err-order-index-out-of-bounds)))
-    (fee (mul-down amount (get-peg-in-fee)))
+    (fee (mul-down amount (contract-call? .peg-data get-peg-in-fee)))
     (amount-net (- amount fee))
     (recipient (try! (decode-order-0-or-fail order-script)))
     (btc-to-btcz-ratio (get-btc-to-btcz-ratio))
     (btcz-to-receive (div-down amount-net btc-to-btcz-ratio))
   )
-		(asserts! (not (is-peg-in-paused)) err-paused)
-    (asserts! (not (get-peg-in-sent-or-default tx output-idx)) err-already-sent)
-    (asserts! (is-peg-in-address-approved peg-in-address) err-peg-in-address-not-found)
+		(asserts! (not (contract-call? .peg-data is-peg-in-paused)) err-paused)
+    (asserts! (not (contract-call? .btc-registry get-peg-in-sent-or-default tx output-idx)) err-already-sent)
+    (asserts! (contract-call? .btc-registry is-peg-in-address-approved peg-in-address) err-peg-in-address-not-found)
     (asserts! (> amount-net u0) err-invalid-amount)
 
     (try! (set-total-btc (+ (get-total-btc) amount-net)))
@@ -74,12 +74,12 @@
       requested-at-burn-height: burn-block-height,
     })
   )
-		(asserts! (not (is-peg-out-paused)) err-paused)
+		(asserts! (not (contract-call? .peg-data is-peg-out-paused)) err-paused)
     (try! (contract-call? .token-btc burn btcz-amount sender))
     (try! (set-total-btc (- (get-total-btc) redeemeable-btc)))
 
     (try! (set-withdrawal next-nonce withdraw-data))
-    (try! (set-withdrawal-nonce next-nonce))
+    (try! (contract-call? .stacking-data set-withdrawal-nonce next-nonce))
 
     (print { action: "init-withdraw", data: { withdraw-data: withdraw-data, nonce: next-nonce } })
     (ok next-nonce)
@@ -89,7 +89,7 @@
 ;; called by protocol
 (define-public (finalize-withdraw (withdrawal-id uint))
   (let (
-    (withdraw-data (unwrap! (get-withdrawal-or-fail withdrawal-id) err-withdrawal-does-not-exist))
+    (withdraw-data (unwrap! (contract-call? .stacking-data get-withdrawal-or-fail withdrawal-id) err-withdrawal-does-not-exist))
   )
     (try! (is-contract-owner))
     (asserts! (not (get finalized withdraw-data)) err-already-sent)
@@ -125,7 +125,7 @@
 )
 
 (define-read-only (get-next-withdrawal-nonce)
-  (+ (get-withdrawal-nonce) u1))
+  (+ (contract-call? .stacking-data get-withdrawal-nonce) u1))
 
 (define-read-only (get-redeemable-btc-by-amount (btcz-amount uint))
   (mul-down btcz-amount (get-btc-to-btcz-ratio)))
@@ -171,36 +171,17 @@
 )
 
 ;; stacking data
-(define-read-only (is-peg-in-paused)
-	(contract-call? .peg-data is-peg-in-paused))
-(define-read-only (is-peg-out-paused)
-	(contract-call? .peg-data is-peg-out-paused))
-
-(define-read-only (get-peg-in-fee)
-	(contract-call? .peg-data get-peg-in-fee))
 (define-read-only (get-peg-out-fee)
 	(contract-call? .peg-data get-peg-out-fee))
 (define-read-only (get-peg-out-gas-fee)
 	(contract-call? .peg-data get-peg-out-gas-fee))
 
-(define-read-only (is-peg-in-address-approved (address (buff 128)))
-	(contract-call? .btc-registry is-peg-in-address-approved address))
-(define-read-only (get-peg-in-sent-or-default (tx (buff 4096)) (output uint))
-	(contract-call? .btc-registry get-peg-in-sent-or-default tx output))
-
-(define-read-only (get-withdrawal-or-fail (id uint))
-  (contract-call? .stacking-data get-withdrawal-or-fail id))
-
 ;; btc data
 (define-read-only (get-total-btc)
 	(contract-call? .stacking-data get-total-btc))
-(define-read-only (get-withdrawal-nonce)
-	(contract-call? .stacking-data get-withdrawal-nonce))
 
 (define-private (set-total-btc (total-btc uint))
 	(contract-call? .stacking-data set-total-btc total-btc))
-(define-private (set-withdrawal-nonce (withdrawal-nonce uint))
-	(contract-call? .stacking-data set-withdrawal-nonce withdrawal-nonce))
 (define-private (set-withdrawal
   (withdrawal-id uint)
   (new-withdrawal {
