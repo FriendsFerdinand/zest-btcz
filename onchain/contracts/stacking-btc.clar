@@ -137,8 +137,30 @@
 (define-read-only (get-redeemable-btc-by-amount (btc-amount uint))
   (mul-down btc-amount (get-btc-to-sbtc-ratio)))
 
+(define-read-only (get-redeemable-btc-by-amount-after-fees (btc-amount uint))
+  (let (
+    (redeemeable-btc (mul-down btc-amount (get-btc-to-sbtc-ratio)))
+    (fee (mul-down redeemeable-btc (get-peg-out-fee)))
+    (gas-fee (get-peg-out-gas-fee))
+    (amount-net (- redeemeable-btc fee gas-fee))
+  )
+    amount-net
+  )
+)
+
 (define-read-only (get-redeemable-btc (user principal))
   (mul-down (unwrap-panic (contract-call? .token-btc get-balance user)) (get-btc-to-sbtc-ratio)))
+
+(define-read-only (get-redeemable-btc-after-fees (user principal))
+  (let (
+    (redeemeable-btc (mul-down (unwrap-panic (contract-call? .token-btc get-balance user)) (get-btc-to-sbtc-ratio)))
+    (fee (mul-down redeemeable-btc (get-peg-out-fee)))
+    (gas-fee (get-peg-out-gas-fee))
+    (amount-net (- redeemeable-btc fee gas-fee))
+  )
+    amount-net
+  )
+)
 
 (define-read-only (is-contract-owner)
 	(ok (asserts! (is-eq (var-get contract-owner) tx-sender) err-unauthorised)))

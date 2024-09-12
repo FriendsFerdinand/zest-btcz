@@ -684,6 +684,23 @@ describe("Withdrawals", () => {
         .get(`.${lstTokenContractName}.${lstTokenName}`)!
         .get(address1)
     ).toBe(100000n);
+
+    callResponse = simnet.callReadOnlyFn(
+      "stacking-btc",
+      "get-redeemable-btc-by-amount",
+      [Cl.uint(100000)],
+      deployerAddress
+    );
+    expect(callResponse.result).toBeUint(100000);
+
+    callResponse = simnet.callReadOnlyFn(
+      "stacking-btc",
+      "get-redeemable-btc-by-amount-after-fees",
+      [Cl.uint(100000)],
+      deployerAddress
+    );
+    expect(callResponse.result).toBeUint(99500);
+
     callResponse = simnet.callPublicFn(
       stackingLogicContractName,
       "init-withdraw",
