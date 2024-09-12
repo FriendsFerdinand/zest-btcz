@@ -6,18 +6,18 @@
 (define-fungible-token token-btcz)
 (define-data-var contract-owner principal tx-sender)
 (define-map approved-contracts principal bool)
-(define-data-var token-name (string-ascii 32) "BTCz")
-(define-data-var token-symbol (string-ascii 10) "BTCz")
+(define-constant token-name "BTCz")
+(define-constant token-symbol "BTCz")
+(define-constant token-decimals u8)
 (define-data-var token-uri (optional (string-utf8 256)) (some u""))
-(define-data-var token-decimals uint u8)
 
 ;; token data
 (define-read-only (get-name)
-	(ok (var-get token-name)))
+	(ok token-name))
 (define-read-only (get-symbol)
-	(ok (var-get token-symbol)))
+	(ok token-symbol))
 (define-read-only (get-decimals)
-	(ok (var-get token-decimals)))
+	(ok token-decimals))
 (define-read-only (get-token-uri)
 	(ok (var-get token-uri)))
 
@@ -25,19 +25,7 @@
 	(ok (ft-get-balance token-btcz who)))
 (define-read-only (get-total-supply)
 	(ok (ft-get-supply token-btcz)))
-;; token data setter
-(define-public (set-name (new-name (string-ascii 32)))
-	(begin
-		(try! (check-is-owner))
-		(ok (var-set token-name new-name))))
-(define-public (set-symbol (new-symbol (string-ascii 10)))
-	(begin
-		(try! (check-is-owner))
-		(ok (var-set token-symbol new-symbol))))
-(define-public (set-decimals (new-decimals uint))
-	(begin
-		(try! (check-is-owner))
-		(ok (var-set token-decimals new-decimals))))
+
 (define-public (set-token-uri (new-uri (optional (string-utf8 256))))
 	(begin
 		(try! (check-is-owner))
