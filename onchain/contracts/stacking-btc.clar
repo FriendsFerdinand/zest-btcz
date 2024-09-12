@@ -240,7 +240,7 @@
 	))
 
 (define-read-only (verify-mined (tx (buff 4096)) (block { header: (buff 80), height: uint }) (proof { tx-index: uint, hashes: (list 14 (buff 32)), tree-depth: uint }))
-	(if (is-eq chain-id u1)
+	(if is-in-mainnet
 		(let (
 				(response (if (try! (contract-call? .clarity-bitcoin-v1-02 is-segwit-tx tx))
 					(contract-call? .clarity-bitcoin-v1-02 was-segwit-tx-mined? block tx proof)
