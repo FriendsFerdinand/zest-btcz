@@ -20,8 +20,7 @@
 	(block { header: (buff 80), height: uint })
 	(proof { tx-index: uint, hashes: (list 14 (buff 32)), tree-depth: uint })
 	(output-idx uint)
-  (order-idx uint)
-  )
+  (order-idx uint))
   (let (
     (common-check (try! (verify-mined tx block proof)))
     (parsed-tx (try! (extract-tx-ins-outs tx)))
@@ -35,14 +34,14 @@
     (btc-to-btcz-ratio (get-btc-to-btcz-ratio))
     (btcz-to-receive (div-down amount-net btc-to-btcz-ratio))
   )
-		(asserts! (not (contract-call? .peg-data is-peg-in-paused)) err-paused)
+    (asserts! (not (contract-call? .peg-data is-peg-in-paused)) err-paused)
     (asserts! (not (contract-call? .btc-registry get-peg-in-sent-or-default tx output-idx)) err-already-sent)
     (asserts! (contract-call? .btc-registry is-peg-in-address-approved peg-in-address) err-peg-in-address-not-found)
     (asserts! (> amount-net u0) err-invalid-amount)
 
     (try! (set-total-btc (+ (get-total-btc) amount-net)))
 
-		(try! (contract-call? .btc-registry set-peg-in-sent tx output-idx true))
+    (try! (contract-call? .btc-registry set-peg-in-sent tx output-idx true))
     (try! (contract-call? .token-btc mint btcz-to-receive recipient))
 
     (print { action: "deposit", data: { tx-id: (get-txid tx), tx: tx, btcz-to-receive: btcz-to-receive, fee: fee, amount-net: amount-net, recipient: recipient, peg-in-address: peg-in-address, amount: amount } })
@@ -74,7 +73,7 @@
       requested-at-burn-height: burn-block-height,
     })
   )
-		(asserts! (not (contract-call? .peg-data is-peg-out-paused)) err-paused)
+    (asserts! (not (contract-call? .peg-data is-peg-out-paused)) err-paused)
     (try! (contract-call? .token-btc burn btcz-amount sender))
     (try! (set-total-btc (- (get-total-btc) redeemeable-btc)))
 
@@ -93,7 +92,7 @@
   )
     (try! (is-contract-owner))
     (asserts! (not (get finalized withdraw-data)) err-already-sent)
-    
+
     (try! (set-withdrawal withdrawal-id (merge withdraw-data { finalized: true })))
     (print { action: "finalize-withdraw", data: { withdraw-data: withdraw-data, withdrawal-id: withdrawal-id, finalize-height: burn-block-height } })
     (ok true)
@@ -156,32 +155,31 @@
 )
 
 (define-read-only (is-contract-owner)
-	(ok (asserts! (is-eq (var-get contract-owner) tx-sender) err-unauthorised)))
+  (ok (asserts! (is-eq (var-get contract-owner) tx-sender) err-unauthorised)))
 
 (define-public (set-contract-owner (new-contract-owner principal))
-	(begin
-		(try! (is-contract-owner))
+  (begin
+    (try! (is-contract-owner))
     (print { action: "set-contract-owner", data: { new-contract-owner: new-contract-owner } })
-		(ok (var-set contract-owner new-contract-owner))))
+    (ok (var-set contract-owner new-contract-owner))))
 
 (define-read-only (mul-down (a uint) (b uint))
-	(/ (* a b) ONE_8))
+  (/ (* a b) ONE_8))
 (define-read-only (div-down (a uint) (b uint))
-  (/ (* a ONE_8) b)
-)
+  (/ (* a ONE_8) b))
 
 ;; stacking data
 (define-read-only (get-peg-out-fee)
-	(contract-call? .peg-data get-peg-out-fee))
+  (contract-call? .peg-data get-peg-out-fee))
 (define-read-only (get-peg-out-gas-fee)
-	(contract-call? .peg-data get-peg-out-gas-fee))
+  (contract-call? .peg-data get-peg-out-gas-fee))
 
 ;; btc data
 (define-read-only (get-total-btc)
-	(contract-call? .stacking-data get-total-btc))
+  (contract-call? .stacking-data get-total-btc))
 
 (define-private (set-total-btc (total-btc uint))
-	(contract-call? .stacking-data set-total-btc total-btc))
+  (contract-call? .stacking-data set-total-btc total-btc))
 (define-private (set-withdrawal
   (withdrawal-id uint)
   (new-withdrawal {
@@ -195,41 +193,40 @@
     requested-at: uint,
     requested-at-burn-height: uint
   }))
-	(contract-call? .stacking-data set-withdrawal withdrawal-id new-withdrawal)
+  (contract-call? .stacking-data set-withdrawal withdrawal-id new-withdrawal)
 )
 
 ;; bitcoin parsing functions
 (define-read-only (extract-tx-ins-outs (tx (buff 4096)))
-	(if (try! (contract-call? .clarity-bitcoin-v1-02 is-segwit-tx tx))
-		(let (
-				(parsed-tx (unwrap! (contract-call? .clarity-bitcoin-v1-02 parse-wtx tx) err-invalid-tx)))
-			(ok { ins: (get ins parsed-tx), outs: (get outs parsed-tx) }))
-		(let (
-				(parsed-tx (unwrap! (contract-call? .clarity-bitcoin-v1-02 parse-tx tx) err-invalid-tx)))
-			(ok { ins: (get ins parsed-tx), outs: (get outs parsed-tx) }))
-	))
+  (if (try! (contract-call? .clarity-bitcoin-v1-02 is-segwit-tx tx))
+    (let (
+      (parsed-tx (unwrap! (contract-call? .clarity-bitcoin-v1-02 parse-wtx tx) err-invalid-tx)))
+      (ok { ins: (get ins parsed-tx), outs: (get outs parsed-tx) }))
+    (let (
+      (parsed-tx (unwrap! (contract-call? .clarity-bitcoin-v1-02 parse-tx tx) err-invalid-tx)))
+      (ok { ins: (get ins parsed-tx), outs: (get outs parsed-tx) }))
+  ))
 
 (define-read-only (get-txid (tx (buff 4096)))
-	(if (try! (contract-call? .clarity-bitcoin-v1-02 is-segwit-tx tx))
-		(ok (contract-call? .clarity-bitcoin-v1-02 get-segwit-txid tx))
-		(ok (contract-call? .clarity-bitcoin-v1-02 get-txid tx))
-	))
+  (if (try! (contract-call? .clarity-bitcoin-v1-02 is-segwit-tx tx))
+    (ok (contract-call? .clarity-bitcoin-v1-02 get-segwit-txid tx))
+    (ok (contract-call? .clarity-bitcoin-v1-02 get-txid tx))
+  ))
 
 (define-read-only (verify-mined (tx (buff 4096)) (block { header: (buff 80), height: uint }) (proof { tx-index: uint, hashes: (list 14 (buff 32)), tree-depth: uint }))
-	(if is-in-mainnet
-		(let (
-				(response (if (try! (contract-call? .clarity-bitcoin-v1-02 is-segwit-tx tx))
-					(contract-call? .clarity-bitcoin-v1-02 was-segwit-tx-mined? block tx proof)
-					(contract-call? .clarity-bitcoin-v1-02 was-tx-mined? block tx proof))
-				))
-			(if (or (is-err response) (not (unwrap-panic response)))
-				err-bitcoin-tx-not-mined
-				(ok true)
-			))
-		(ok true))) ;; if not mainnet, assume verified
+  (if is-in-mainnet
+    (let (
+      (response (if (try! (contract-call? .clarity-bitcoin-v1-02 is-segwit-tx tx))
+        (contract-call? .clarity-bitcoin-v1-02 was-segwit-tx-mined? block tx proof)
+        (contract-call? .clarity-bitcoin-v1-02 was-tx-mined? block tx proof))))
+      (if (or (is-err response) (not (unwrap-panic response)))
+        err-bitcoin-tx-not-mined
+        (ok true)
+      ))
+    (ok true))) ;; if not mainnet, assume verified
 
 ;; data output parse helpers
 (define-read-only (decode-order-0-or-fail (order-script (buff 128)))
-	(let (
+  (let (
     (op-code (unwrap! (slice? order-script u1 u2) err-invalid-order-script)))
     (ok (unwrap! (from-consensus-buff? principal (unwrap-panic (slice? order-script (if (< op-code 0x4c) u2 u3) (len order-script)))) err-invalid-input))))
