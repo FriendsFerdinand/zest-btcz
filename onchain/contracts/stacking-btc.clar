@@ -31,8 +31,8 @@
     (fee (mul-down amount (get-peg-in-fee)))
     (amount-net (- amount fee))
     (recipient (try! (decode-order-0-or-fail order-script)))
-    (btc-to-sbtc-ratio (get-btc-to-sbtc-ratio))
-    (btcz-to-receive (div-down amount-net btc-to-sbtc-ratio))
+    (btc-to-btcz-ratio (get-btc-to-btcz-ratio))
+    (btcz-to-receive (div-down amount-net btc-to-btcz-ratio))
     (sender recipient)
   )
 		(asserts! (not (is-peg-in-paused)) err-paused)
@@ -56,8 +56,8 @@
   )
   (let (
     (sender tx-sender)
-    (btc-to-sbtc-ratio (get-btc-to-sbtc-ratio))
-    (redeemeable-btc (mul-down btcz-amount btc-to-sbtc-ratio))
+    (btc-to-btcz-ratio (get-btc-to-btcz-ratio))
+    (redeemeable-btc (mul-down btcz-amount btc-to-btcz-ratio))
     (fee (mul-down redeemeable-btc (get-peg-out-fee)))
     (gas-fee (get-peg-out-gas-fee))
     (check-amount (asserts! (> redeemeable-btc (+ fee gas-fee)) err-invalid-amount))
@@ -113,14 +113,14 @@
   )
 )
 
-(define-read-only (get-btc-to-sbtc-ratio)
+(define-read-only (get-btc-to-btcz-ratio)
   (let (
     (btc-amount (get-total-btc))
-    (sbtc-supply (unwrap-panic (contract-call? .token-btc get-total-supply)))
+    (btcz-supply (unwrap-panic (contract-call? .token-btc get-total-supply)))
   )
-    (if (is-eq sbtc-supply u0)
+    (if (is-eq btcz-supply u0)
       u100000000
-      (div-down btc-amount sbtc-supply)
+      (div-down btc-amount btcz-supply)
     )
   )
 )
@@ -129,11 +129,11 @@
   (+ (get-withdrawal-nonce) u1))
 
 (define-read-only (get-redeemable-btc-by-amount (btc-amount uint))
-  (mul-down btc-amount (get-btc-to-sbtc-ratio)))
+  (mul-down btc-amount (get-btc-to-btcz-ratio)))
 
 (define-read-only (get-redeemable-btc-by-amount-after-fees (btc-amount uint))
   (let (
-    (redeemeable-btc (mul-down btc-amount (get-btc-to-sbtc-ratio)))
+    (redeemeable-btc (mul-down btc-amount (get-btc-to-btcz-ratio)))
     (fee (mul-down redeemeable-btc (get-peg-out-fee)))
     (gas-fee (get-peg-out-gas-fee))
     (amount-net (- redeemeable-btc fee gas-fee))
@@ -143,11 +143,11 @@
 )
 
 (define-read-only (get-redeemable-btc (user principal))
-  (mul-down (unwrap-panic (contract-call? .token-btc get-balance user)) (get-btc-to-sbtc-ratio)))
+  (mul-down (unwrap-panic (contract-call? .token-btc get-balance user)) (get-btc-to-btcz-ratio)))
 
 (define-read-only (get-redeemable-btc-after-fees (user principal))
   (let (
-    (redeemeable-btc (mul-down (unwrap-panic (contract-call? .token-btc get-balance user)) (get-btc-to-sbtc-ratio)))
+    (redeemeable-btc (mul-down (unwrap-panic (contract-call? .token-btc get-balance user)) (get-btc-to-btcz-ratio)))
     (fee (mul-down redeemeable-btc (get-peg-out-fee)))
     (gas-fee (get-peg-out-gas-fee))
     (amount-net (- redeemeable-btc fee gas-fee))
