@@ -1,5 +1,8 @@
 (define-constant err-unauthorised (err u4000))
 (define-constant err-withdrawal-not-found (err u4001))
+(define-constant err-invalid-fee (err u4002))
+
+(define-constant ONE_8 u100000000)
 
 (define-data-var contract-owner principal tx-sender)
 (define-map approved-operators principal bool)
@@ -58,6 +61,7 @@
 (define-public (set-commission (new-commission uint))
 	(begin
 		(try! (is-contract-owner))
+    (asserts! (< new-commission ONE_8) err-invalid-fee)
 		(ok (var-set commission new-commission))))
 (define-public (set-commission-total (new-commission-total uint))
 	(begin

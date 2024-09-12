@@ -13,6 +13,7 @@ import {
   feeDataContractName,
   lstTokenContractName,
   lstTokenName,
+  stackingDataContractName,
   stackingLogicContractName,
 } from "./config";
 import { mulBps } from "./utils";
@@ -86,7 +87,6 @@ describe("Setting params", () => {
     );
   });
   it("Check set-peg-in-fee and set-peg-out-fee can't be set higher than ONE", () => {
-    let tx = generatePegInTx(BigInt(100000), pegInOutscript, address1);
     const fee = 1_000_000;
     // get initial fee
     let callResponse = simnet.callReadOnlyFn(
@@ -142,6 +142,51 @@ describe("Setting params", () => {
     callResponse = simnet.callPublicFn(
       feeDataContractName,
       "set-peg-out-fee",
+      [Cl.uint(ONE + 1)],
+      deployerAddress
+    );
+    expect(callResponse.result).toHaveClarityType(ClarityType.ResponseErr);
+  });
+  it("Check set-commission can't be set higher than ONE", () => {
+    const fee = 1_000_000;
+    // get initial fee
+    let callResponse = simnet.callReadOnlyFn(
+      stackingDataContractName,
+      "get-commission",
+      [],
+      deployerAddress
+    );
+    expect(callResponse.result).toBeUint(0);
+
+    // change fee
+    callResponse = simnet.callPublicFn(
+      stackingDataContractName,
+      "set-commission",
+      [Cl.uint(fee)],
+      deployerAddress
+    );
+    expect(callResponse.result).toHaveClarityType(ClarityType.ResponseOk);
+
+    // Verify fee was changed
+    callResponse = simnet.callReadOnlyFn(
+      stackingDataContractName,
+      "get-commission",
+      [],
+      deployerAddress
+    );
+    expect(callResponse.result).toBeUint(fee);
+
+    // verify fee can't be set to ONE or (ONE + 1)
+    callResponse = simnet.callPublicFn(
+      stackingDataContractName,
+      "set-commission",
+      [Cl.uint(ONE)],
+      deployerAddress
+    );
+    expect(callResponse.result).toHaveClarityType(ClarityType.ResponseErr);
+    callResponse = simnet.callPublicFn(
+      stackingDataContractName,
+      "set-commission",
       [Cl.uint(ONE + 1)],
       deployerAddress
     );
