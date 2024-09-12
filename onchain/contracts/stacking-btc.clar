@@ -189,8 +189,6 @@
 	(contract-call? .fee-data get-peg-out-fee))
 (define-read-only (get-peg-out-gas-fee)
 	(contract-call? .fee-data get-peg-out-gas-fee))
-(define-read-only (get-fee-address)
-	(contract-call? .fee-data get-fee-address))
 
 (define-read-only (is-peg-in-address-approved (address (buff 128)))
 	(contract-call? .btc-registry is-peg-in-address-approved address))

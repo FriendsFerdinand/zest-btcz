@@ -4,7 +4,6 @@
 (define-constant ONE_8 u100000000)
 
 (define-data-var contract-owner principal tx-sender)
-(define-data-var fee-address principal tx-sender)
 (define-data-var peg-in-paused bool true)
 (define-data-var peg-out-paused bool true)
 ;; 8 decimals
@@ -22,8 +21,6 @@
 	(var-get peg-out-fee))
 (define-read-only (get-peg-out-gas-fee)
 	(var-get peg-out-gas-fee))
-(define-read-only (get-fee-address)
-	(var-get fee-address))
 
 (define-read-only (is-contract-owner)
 	(ok (asserts! (is-eq (var-get contract-owner) tx-sender) err-unauthorised)))
@@ -32,10 +29,7 @@
 	(begin
 		(try! (is-contract-owner))
 		(ok (var-set contract-owner new-contract-owner))))
-(define-public (set-fee-address (new-fee-address principal))
-	(begin
-		(try! (is-contract-owner))
-		(ok (var-set fee-address new-fee-address))))
+
 (define-public (pause-peg-in (paused bool))
 	(begin
 		(try! (is-contract-owner))
