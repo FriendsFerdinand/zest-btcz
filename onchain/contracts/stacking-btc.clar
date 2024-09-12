@@ -117,7 +117,7 @@
     (btcz-supply (unwrap-panic (contract-call? .token-btc get-total-supply)))
   )
     (if (is-eq btcz-supply u0)
-      u100000000
+      ONE_8
       (div-down btc-amount btcz-supply)
     )
   )
