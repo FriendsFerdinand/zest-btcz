@@ -1,4 +1,7 @@
 (define-constant err-unauthorised (err u3000))
+(define-constant err-invalid-fee (err u3001))
+
+(define-constant ONE_8 u100000000)
 
 (define-data-var contract-owner principal tx-sender)
 (define-data-var fee-address principal tx-sender)
@@ -44,10 +47,12 @@
 (define-public (set-peg-in-fee (fee uint))
 	(begin
 		(try! (is-contract-owner))
+    (asserts! (< fee ONE_8) err-invalid-fee)
 		(ok (var-set peg-in-fee fee))))
 (define-public (set-peg-out-fee (fee uint))
 	(begin
 		(try! (is-contract-owner))
+    (asserts! (< fee ONE_8) err-invalid-fee)
 		(ok (var-set peg-out-fee fee))))
 (define-public (set-peg-out-gas-fee (fee uint))
 	(begin
