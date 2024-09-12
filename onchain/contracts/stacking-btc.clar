@@ -103,12 +103,12 @@
 
 (define-public (add-rewards (btc-amount uint))
   (let (
-    (total-rewards (+ (get-total-btc) btc-amount))
+    (new-total-btc (+ (get-total-btc) btc-amount))
   )
     (try! (is-contract-owner))
 
-    (try! (set-total-btc total-rewards))
-    (print { action: "add-rewards", data: { total-rewards: total-rewards } })
+    (try! (set-total-btc new-total-btc))
+    (print { action: "add-rewards", data: { new-total-btc: new-total-btc, btc-amount: btc-amount } })
     (ok true)
   )
 )
