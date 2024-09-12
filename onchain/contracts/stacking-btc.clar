@@ -9,6 +9,9 @@
 (define-constant err-invalid-input (err u6008))
 (define-constant err-tx-mined-before-request (err u6009))
 (define-constant err-withdrawal-does-not-exist (err u6010))
+(define-constant err-output-index-out-of-bounds (err u6011))
+(define-constant err-order-index-out-of-bounds (err u6012))
+(define-constant err-invalid-order-script (err u6013))
 
 (define-constant ONE_8 u100000000)
 
@@ -24,10 +27,10 @@
   (let (
     (common-check (try! (verify-mined tx block proof)))
     (parsed-tx (try! (extract-tx-ins-outs tx)))
-    (output (unwrap! (element-at (get outs parsed-tx) output-idx) err-invalid-tx))
+    (output (unwrap! (element-at (get outs parsed-tx) output-idx) err-output-index-out-of-bounds))
     (amount (get value output))
     (peg-in-address (get scriptPubKey output))
-    (order-script (get scriptPubKey (unwrap-panic (element-at? (get outs parsed-tx) order-idx))))
+    (order-script (get scriptPubKey (unwrap! (element-at? (get outs parsed-tx) order-idx) err-order-index-out-of-bounds)))
     (fee (mul-down amount (get-peg-in-fee)))
     (amount-net (- amount fee))
     (recipient (try! (decode-order-0-or-fail order-script)))
@@ -251,7 +254,7 @@
 ;; data output parse helpers
 (define-read-only (decode-order-0-or-fail (order-script (buff 128)))
 	(let (
-    (op-code (unwrap-panic (slice? order-script u1 u2))))
+    (op-code (unwrap! (slice? order-script u1 u2) err-invalid-order-script)))
     (ok (unwrap! (from-consensus-buff? principal (unwrap-panic (slice? order-script (if (< op-code 0x4c) u2 u3) (len order-script)))) err-invalid-input))))
 
 (define-read-only (create-order-0-or-fail (order principal))
