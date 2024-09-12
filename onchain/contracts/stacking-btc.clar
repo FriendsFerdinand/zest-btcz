@@ -45,7 +45,7 @@
 		(try! (contract-call? .btc-registry set-peg-in-sent tx output-idx true))
     (try! (contract-call? .token-btc mint btcz-to-receive sender))
 
-    (print { action: "deposit", data: { tx-id: (get-txid tx), tx: tx, btcz-to-receive: btcz-to-receive } })
+    (print { action: "deposit", data: { tx-id: (get-txid tx), tx: tx, btcz-to-receive: btcz-to-receive, fee: fee, amount-net: amount-net, recipient: recipient } })
     (ok { order-script: order-script })
   )
 )
@@ -128,12 +128,12 @@
 (define-read-only (get-next-withdrawal-nonce)
   (+ (get-withdrawal-nonce) u1))
 
-(define-read-only (get-redeemable-btc-by-amount (btc-amount uint))
-  (mul-down btc-amount (get-btc-to-btcz-ratio)))
+(define-read-only (get-redeemable-btc-by-amount (btcz-amount uint))
+  (mul-down btcz-amount (get-btc-to-btcz-ratio)))
 
-(define-read-only (get-redeemable-btc-by-amount-after-fees (btc-amount uint))
+(define-read-only (get-redeemable-btc-by-amount-after-fees (btcz-amount uint))
   (let (
-    (redeemeable-btc (mul-down btc-amount (get-btc-to-btcz-ratio)))
+    (redeemeable-btc (mul-down btcz-amount (get-btc-to-btcz-ratio)))
     (fee (mul-down redeemeable-btc (get-peg-out-fee)))
     (gas-fee (get-peg-out-gas-fee))
     (amount-net (- redeemeable-btc fee gas-fee))
