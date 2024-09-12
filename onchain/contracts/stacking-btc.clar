@@ -11,7 +11,7 @@
 (define-constant err-order-index-out-of-bounds (err u6010))
 (define-constant err-invalid-order-script (err u6011))
 
-(define-constant ONE_8 u100000000)
+(define-constant one-8 u100000000)
 
 (define-data-var contract-owner principal tx-sender)
 
@@ -117,7 +117,7 @@
     (btcz-supply (unwrap-panic (contract-call? .token-btc get-total-supply)))
   )
     (if (is-eq btcz-supply u0)
-      ONE_8
+      one-8
       (div-down btc-amount btcz-supply)
     )
   )
@@ -164,10 +164,10 @@
     (ok (var-set contract-owner new-contract-owner))))
 
 (define-read-only (mul-down (a uint) (b uint))
-  (/ (* a b) ONE_8))
+  (/ (* a b) one-8))
 
 (define-read-only (div-down (a uint) (b uint))
-  (/ (* a ONE_8) b))
+  (/ (* a one-8) b))
 
 ;; stacking data
 (define-read-only (get-peg-out-fee)
