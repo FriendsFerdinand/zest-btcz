@@ -165,12 +165,14 @@
 
 (define-read-only (mul-down (a uint) (b uint))
   (/ (* a b) ONE_8))
+
 (define-read-only (div-down (a uint) (b uint))
   (/ (* a ONE_8) b))
 
 ;; stacking data
 (define-read-only (get-peg-out-fee)
   (contract-call? .peg-data get-peg-out-fee))
+
 (define-read-only (get-peg-out-gas-fee)
   (contract-call? .peg-data get-peg-out-gas-fee))
 
@@ -180,6 +182,7 @@
 
 (define-private (set-total-btc (total-btc uint))
   (contract-call? .stacking-data set-total-btc total-btc))
+
 (define-private (set-withdrawal
   (withdrawal-id uint)
   (new-withdrawal {
