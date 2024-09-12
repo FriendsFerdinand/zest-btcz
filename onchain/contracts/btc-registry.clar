@@ -23,17 +23,21 @@
 (define-public (approve-operator (operator principal) (approved bool))
 	(begin
 		(try! (is-contract-owner))
+    (print { action: "approve-operator", data: { operator: operator, approved: approved } })
 		(ok (map-set approved-operators operator approved))))
 (define-public (set-contract-owner (new-contract-owner principal))
 	(begin
 		(try! (is-contract-owner))
+    (print { action: "set-contract-owner", data: { new-contract-owner: new-contract-owner } })
 		(ok (var-set contract-owner new-contract-owner))))
 (define-public (approve-peg-in-address (address (buff 128)) (approved bool))
 	(begin
 		(try! (is-contract-owner))
+    (print { action: "approve-peg-in-address", data: { address: address, approved: approved } })
 		(ok (map-set approved-peg-in-address address approved))))
 
 (define-public (set-peg-in-sent (tx (buff 4096)) (output uint) (sent bool))
 	(begin
 		(try! (is-approved-operator))
+    (print { action: "set-peg-in-sent", data: { tx: tx, output: output, sent: sent } })
 		(ok (map-set peg-in-sent { tx: tx, output: output } sent))))

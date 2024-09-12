@@ -47,21 +47,25 @@
 (define-public (set-contract-owner (new-contract-owner principal))
 	(begin
 		(try! (is-contract-owner))
+    (print { action: "set-contract-owner", data: { new-contract-owner: new-contract-owner } })
 		(ok (var-set contract-owner new-contract-owner))))
 
 (define-public (approve-operator (operator principal) (approved bool))
 	(begin
 		(try! (is-contract-owner))
+    (print { action: "approve-operator", data: { operator: operator, approved: approved } })
 		(ok (map-set approved-operators operator approved))))
 
 
 (define-public (set-total-btc (new-total-btc uint))
 	(begin
 		(try! (is-approved-operator))
+    (print { action: "set-total-btc", data: { new-total-btc: new-total-btc } })
 		(ok (var-set total-btc new-total-btc))))
 (define-public (set-withdrawal-nonce (new-withdrawal-nonce uint))
 	(begin
 		(try! (is-approved-operator))
+    (print { action: "set-withdrawal-nonce", data: { new-withdrawal-nonce: new-withdrawal-nonce } })
 		(ok (var-set withdrawal-nonce new-withdrawal-nonce))))
 
 (define-public (set-withdrawal
@@ -78,9 +82,11 @@
     requested-at-burn-height: uint }))
 	(begin
 		(try! (is-approved-operator))
+    (print { action: "set-withdrawal", data: { withdrawal-id: withdrawal-id, new-withdrawal: new-withdrawal } })
 		(ok (map-set withdrawals withdrawal-id new-withdrawal))))
 
 (define-public (delete-withdrawal (withdrawal-id uint))
 	(begin
 		(try! (is-approved-operator))
+    (print { action: "delete-withdrawal", data: { withdrawal-id: withdrawal-id } })
 		(ok (map-delete withdrawals withdrawal-id))))

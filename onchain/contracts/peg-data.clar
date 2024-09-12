@@ -28,27 +28,33 @@
 (define-public (set-contract-owner (new-contract-owner principal))
 	(begin
 		(try! (is-contract-owner))
+    (print { action: "set-contract-owner", data: { new-contract-owner: new-contract-owner } })
 		(ok (var-set contract-owner new-contract-owner))))
 
 (define-public (pause-peg-in (paused bool))
 	(begin
 		(try! (is-contract-owner))
+    (print { action: "pause-peg-in", data: { paused: paused } })
 		(ok (var-set peg-in-paused paused))))
 (define-public (pause-peg-out (paused bool))
 	(begin
 		(try! (is-contract-owner))
+    (print { action: "pause-peg-out", data: { paused: paused } })
 		(ok (var-set peg-out-paused paused))))
 (define-public (set-peg-in-fee (fee uint))
 	(begin
 		(try! (is-contract-owner))
     (asserts! (< fee ONE_8) err-invalid-fee)
+    (print { action: "set-peg-in-fee", data: { fee: fee } })
 		(ok (var-set peg-in-fee fee))))
 (define-public (set-peg-out-fee (fee uint))
 	(begin
 		(try! (is-contract-owner))
     (asserts! (< fee ONE_8) err-invalid-fee)
+    (print { action: "set-peg-out-fee", data: { fee: fee } })
 		(ok (var-set peg-out-fee fee))))
 (define-public (set-peg-out-gas-fee (fee uint))
 	(begin
 		(try! (is-contract-owner))
+    (print { action: "set-peg-out-gas-fee", data: { fee: fee } })
 		(ok (var-set peg-out-gas-fee fee))))
