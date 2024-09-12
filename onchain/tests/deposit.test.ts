@@ -237,18 +237,11 @@ describe("Deposits", () => {
     );
     expect(callResponse.result).toBeUint(pegInAmountWOFees * 2n);
   });
-  it("Deposit and account for commission", () => {
+  it("Deposit and account for rewards", () => {
     const pegInAmount = 100000n;
     const rewards = 10000n;
-    const commissionWOFees = BigInt(rewards - mulBps(rewards, 500_000n));
-    let callResponse = simnet.callPublicFn(
-      "stacking-data",
-      "set-commission",
-      [Cl.uint(500_000n)],
-      deployerAddress
-    );
     let tx = generatePegInTx(BigInt(100000), pegInOutscript, address1);
-    callResponse = simnet.callPublicFn(
+    let callResponse = simnet.callPublicFn(
       stackingLogicContractName,
       "deposit",
       [
@@ -314,7 +307,7 @@ describe("Deposits", () => {
       [],
       deployerAddress
     );
-    expect(callResponse.result).toBeUint(pegInAmount * 2n + commissionWOFees);
+    expect(callResponse.result).toBeUint(pegInAmount * 2n + rewards);
   });
   it("Deposit to address with a maximum contract name of 54", () => {
     let tx = generatePegInTx(

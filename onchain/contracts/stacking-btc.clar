@@ -104,17 +104,12 @@
 
 (define-public (add-rewards (btc-amount uint))
   (let (
-    (commission-amount (mul-down btc-amount (get-commission)))
-    (rewards (- btc-amount commission-amount))
-    (rewards-left (- rewards commission-amount))
-    (total-rewards (+ (get-total-btc) rewards))
-    (final-commission (+ commission-amount (get-commission-total)))
+    (total-rewards (+ (get-total-btc) btc-amount))
   )
     (try! (is-contract-owner))
-    
-    (and (> commission-amount u0) (try! (set-commission-total final-commission)))
+
     (try! (set-total-btc total-rewards))
-    (print { action: "add-rewards", data: { final-commission: final-commission, total-rewards: total-rewards } })
+    (print { action: "add-rewards", data: { total-rewards: total-rewards } })
     (ok true)
   )
 )
@@ -201,15 +196,9 @@
 ;; btc data
 (define-read-only (get-total-btc)
 	(contract-call? .stacking-data get-total-btc))
-(define-read-only (get-commission)
-	(contract-call? .stacking-data get-commission))
-(define-read-only (get-commission-total)
-	(contract-call? .stacking-data get-commission-total))
 (define-read-only (get-withdrawal-nonce)
 	(contract-call? .stacking-data get-withdrawal-nonce))
 
-(define-private (set-commission-total (commission-total uint))
-	(contract-call? .stacking-data set-commission-total commission-total))
 (define-private (set-total-btc (total-btc uint))
 	(contract-call? .stacking-data set-total-btc total-btc))
 (define-private (set-withdrawal-nonce (withdrawal-nonce uint))

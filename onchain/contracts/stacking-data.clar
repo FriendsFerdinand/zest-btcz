@@ -30,10 +30,7 @@
 
 (define-read-only (get-total-btc)
 	(var-get total-btc))
-(define-read-only (get-commission)
-	(var-get commission))
-(define-read-only (get-commission-total)
-	(var-get commission-total))
+
 (define-read-only (get-withdrawal-nonce)
 	(var-get withdrawal-nonce))
 
@@ -58,15 +55,7 @@
 		(try! (is-contract-owner))
 		(ok (map-set approved-operators operator approved))))
 
-(define-public (set-commission (new-commission uint))
-	(begin
-		(try! (is-contract-owner))
-    (asserts! (< new-commission ONE_8) err-invalid-fee)
-		(ok (var-set commission new-commission))))
-(define-public (set-commission-total (new-commission-total uint))
-	(begin
-		(try! (is-approved-operator))
-		(ok (var-set commission-total new-commission-total))))
+
 (define-public (set-total-btc (new-total-btc uint))
 	(begin
 		(try! (is-approved-operator))

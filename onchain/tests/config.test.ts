@@ -147,49 +147,4 @@ describe("Setting params", () => {
     );
     expect(callResponse.result).toHaveClarityType(ClarityType.ResponseErr);
   });
-  it("Check set-commission can't be set higher than ONE", () => {
-    const fee = 1_000_000;
-    // get initial fee
-    let callResponse = simnet.callReadOnlyFn(
-      stackingDataContractName,
-      "get-commission",
-      [],
-      deployerAddress
-    );
-    expect(callResponse.result).toBeUint(0);
-
-    // change fee
-    callResponse = simnet.callPublicFn(
-      stackingDataContractName,
-      "set-commission",
-      [Cl.uint(fee)],
-      deployerAddress
-    );
-    expect(callResponse.result).toHaveClarityType(ClarityType.ResponseOk);
-
-    // Verify fee was changed
-    callResponse = simnet.callReadOnlyFn(
-      stackingDataContractName,
-      "get-commission",
-      [],
-      deployerAddress
-    );
-    expect(callResponse.result).toBeUint(fee);
-
-    // verify fee can't be set to ONE or (ONE + 1)
-    callResponse = simnet.callPublicFn(
-      stackingDataContractName,
-      "set-commission",
-      [Cl.uint(ONE)],
-      deployerAddress
-    );
-    expect(callResponse.result).toHaveClarityType(ClarityType.ResponseErr);
-    callResponse = simnet.callPublicFn(
-      stackingDataContractName,
-      "set-commission",
-      [Cl.uint(ONE + 1)],
-      deployerAddress
-    );
-    expect(callResponse.result).toHaveClarityType(ClarityType.ResponseErr);
-  });
 });
