@@ -248,7 +248,7 @@ describe("Withdrawals", () => {
       [Cl.uint(1)],
       deployerAddress
     );
-    expect(callResponse.result).toBeErr(Cl.uint(1005));
+    expect(callResponse.result).toBeErr(Cl.uint(6005));
     // check withdrawal request is deleted
     callResponse = simnet.callReadOnlyFn(
       "stacking-btc",
@@ -256,7 +256,6 @@ describe("Withdrawals", () => {
       [Cl.uint(1)],
       deployerAddress
     );
-    // expect(callResponse.result).toBeErr(Cl.uint(1002));
     expect(cvToValue(callResponse.result).value["finalized"].value).toBe(true);
     callResponse = simnet.callReadOnlyFn(
       "stacking-btc",
@@ -265,10 +264,6 @@ describe("Withdrawals", () => {
       deployerAddress
     );
     expect(callResponse.result).toBeUint(0);
-    // console.log(Cl.prettyPrint(callResponse.result));
-    // console.log(
-    //   simnet.getAssetsMap().get(`.${lstTokenContractName}.${lstTokenName}`)
-    // );
   });
   it("Withdraw with a 2 users and one receives half", () => {
     let tx = generatePegInTx(BigInt(100000), pegInOutscript, address1);

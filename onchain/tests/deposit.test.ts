@@ -168,7 +168,7 @@ describe("Deposits", () => {
       ],
       address1
     );
-    expect(callResponse.result).toBeErr(Cl.uint(1002));
+    expect(callResponse.result).toBeErr(Cl.uint(6002));
   });
   it("Deposit and account peg in fees", () => {
     const pegInAmount = 100000n;
