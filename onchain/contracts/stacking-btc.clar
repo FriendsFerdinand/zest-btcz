@@ -252,6 +252,3 @@
 	(let (
     (op-code (unwrap! (slice? order-script u1 u2) err-invalid-order-script)))
     (ok (unwrap! (from-consensus-buff? principal (unwrap-panic (slice? order-script (if (< op-code 0x4c) u2 u3) (len order-script)))) err-invalid-input))))
-
-(define-read-only (create-order-0-or-fail (order principal))
-	(ok (unwrap! (to-consensus-buff? order) err-invalid-input)))
