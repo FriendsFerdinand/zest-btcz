@@ -59,8 +59,7 @@
   )
   (let (
     (sender tx-sender)
-    (btc-to-btcz-ratio (get-btc-to-btcz-ratio))
-    (redeemeable-btc (mul-down btcz-amount btc-to-btcz-ratio))
+    (redeemeable-btc (get-redeemable-btc-by-amount btcz-amount))
     (fee (mul-down redeemeable-btc (get-peg-out-fee)))
     (gas-fee (get-peg-out-gas-fee))
     (check-amount (asserts! (> redeemeable-btc (+ fee gas-fee)) err-invalid-amount))
