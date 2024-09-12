@@ -30,12 +30,12 @@
     (order-script (get scriptPubKey (unwrap! (element-at? (get outs parsed-tx) order-idx) err-order-index-out-of-bounds)))
     (fee (mul-down amount (contract-call? .peg-data get-peg-in-fee)))
     (amount-net (- amount fee))
-    (recipient (try! (decode-order-0-or-fail order-script)))
+    (recipient (try! (decode-order-0 order-script)))
     (btc-to-btcz-ratio (get-btc-to-btcz-ratio))
     (btcz-to-receive (div-down amount-net btc-to-btcz-ratio))
   )
     (asserts! (not (contract-call? .peg-data is-peg-in-paused)) err-paused)
-    (asserts! (not (contract-call? .btc-registry get-peg-in-sent-or-default tx output-idx)) err-already-sent)
+    (asserts! (not (contract-call? .btc-registry get-peg-in-sent tx output-idx)) err-already-sent)
     (asserts! (contract-call? .btc-registry is-peg-in-address-approved peg-in-address) err-peg-in-address-not-found)
     (asserts! (> amount-net u0) err-invalid-amount)
 
@@ -88,7 +88,7 @@
 ;; called by protocol
 (define-public (finalize-withdraw (withdrawal-id uint))
   (let (
-    (withdraw-data (unwrap! (contract-call? .stacking-data get-withdrawal-or-fail withdrawal-id) err-withdrawal-does-not-exist))
+    (withdraw-data (unwrap! (contract-call? .stacking-data get-withdrawal withdrawal-id) err-withdrawal-does-not-exist))
   )
     (try! (is-contract-owner))
     (asserts! (not (get finalized withdraw-data)) err-already-sent)
@@ -226,7 +226,7 @@
     (ok true))) ;; if not mainnet, assume verified
 
 ;; data output parse helpers
-(define-read-only (decode-order-0-or-fail (order-script (buff 128)))
+(define-read-only (decode-order-0 (order-script (buff 128)))
   (let (
     (op-code (unwrap! (slice? order-script u1 u2) err-invalid-order-script)))
     (ok (unwrap! (from-consensus-buff? principal (unwrap-panic (slice? order-script (if (< op-code 0x4c) u2 u3) (len order-script)))) err-invalid-input))))

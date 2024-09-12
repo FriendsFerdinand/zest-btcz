@@ -8,17 +8,17 @@
 ;; peg-in data
 (define-read-only (is-peg-in-address-approved (address (buff 128)))
 	(default-to false (map-get? approved-peg-in-address address)))
-(define-read-only (get-peg-in-sent-or-default (tx (buff 4096)) (output uint))
+(define-read-only (get-peg-in-sent (tx (buff 4096)) (output uint))
 	(default-to false (map-get? peg-in-sent { tx: tx, output: output })))
 
 ;; permission data
-(define-read-only (get-approved-operator-or-default (operator principal))
+(define-read-only (get-approved-operator (operator principal))
 	(default-to false (map-get? approved-operators operator)))
 (define-read-only (is-contract-owner)
 	(ok (asserts! (is-eq (var-get contract-owner) tx-sender) err-unauthorised)))
 
 (define-read-only (is-approved-operator)
-	(ok (asserts! (or (get-approved-operator-or-default contract-caller) (is-ok (is-contract-owner))) err-unauthorised)))
+	(ok (asserts! (or (get-approved-operator contract-caller) (is-ok (is-contract-owner))) err-unauthorised)))
 
 (define-public (approve-operator (operator principal) (approved bool))
 	(begin

@@ -142,7 +142,7 @@ describe("Withdrawals", () => {
 
     callResponse = simnet.callReadOnlyFn(
       stackingDataContractName,
-      "get-withdrawal-or-fail",
+      "get-withdrawal",
       [Cl.uint(1)],
       deployerAddress
     );
@@ -160,7 +160,7 @@ describe("Withdrawals", () => {
     );
     callResponse = simnet.callReadOnlyFn(
       stackingDataContractName,
-      "get-withdrawal-or-fail",
+      "get-withdrawal",
       [Cl.uint(1)],
       deployerAddress
     );
@@ -226,7 +226,7 @@ describe("Withdrawals", () => {
 
     callResponse = simnet.callReadOnlyFn(
       stackingDataContractName,
-      "get-withdrawal-or-fail",
+      "get-withdrawal",
       [Cl.uint(1)],
       deployerAddress
     );
@@ -253,7 +253,7 @@ describe("Withdrawals", () => {
     // check withdrawal request is deleted
     callResponse = simnet.callReadOnlyFn(
       stackingDataContractName,
-      "get-withdrawal-or-fail",
+      "get-withdrawal",
       [Cl.uint(1)],
       deployerAddress
     );
@@ -348,7 +348,7 @@ describe("Withdrawals", () => {
     // );
     callResponse = simnet.callReadOnlyFn(
       stackingDataContractName,
-      "get-withdrawal-or-fail",
+      "get-withdrawal",
       [Cl.uint(1)],
       deployerAddress
     );
@@ -360,7 +360,7 @@ describe("Withdrawals", () => {
     // check second withdrawal
     callResponse = simnet.callReadOnlyFn(
       stackingDataContractName,
-      "get-withdrawal-or-fail",
+      "get-withdrawal",
       [Cl.uint(2)],
       deployerAddress
     );
@@ -468,7 +468,7 @@ describe("Withdrawals", () => {
     );
     callResponse = simnet.callReadOnlyFn(
       stackingDataContractName,
-      "get-withdrawal-or-fail",
+      "get-withdrawal",
       [Cl.uint(1)],
       deployerAddress
     );
@@ -480,7 +480,7 @@ describe("Withdrawals", () => {
     // check second withdrawal
     callResponse = simnet.callReadOnlyFn(
       stackingDataContractName,
-      "get-withdrawal-or-fail",
+      "get-withdrawal",
       [Cl.uint(2)],
       deployerAddress
     );
@@ -579,7 +579,7 @@ describe("Withdrawals", () => {
     );
     callResponse = simnet.callReadOnlyFn(
       stackingDataContractName,
-      "get-withdrawal-or-fail",
+      "get-withdrawal",
       [Cl.uint(1)],
       deployerAddress
     );
@@ -625,7 +625,7 @@ describe("Withdrawals", () => {
     );
     callResponse = simnet.callReadOnlyFn(
       stackingDataContractName,
-      "get-withdrawal-or-fail",
+      "get-withdrawal",
       [Cl.uint(2)],
       deployerAddress
     );
@@ -715,7 +715,7 @@ describe("Withdrawals", () => {
 
     callResponse = simnet.callReadOnlyFn(
       stackingDataContractName,
-      "get-withdrawal-or-fail",
+      "get-withdrawal",
       [Cl.uint(1)],
       deployerAddress
     );
@@ -735,7 +735,7 @@ describe("Withdrawals", () => {
     );
     callResponse = simnet.callReadOnlyFn(
       stackingDataContractName,
-      "get-withdrawal-or-fail",
+      "get-withdrawal",
       [Cl.uint(1)],
       deployerAddress
     );
@@ -809,7 +809,7 @@ describe("Withdrawals", () => {
 
     callResponse = simnet.callReadOnlyFn(
       stackingDataContractName,
-      "get-withdrawal-or-fail",
+      "get-withdrawal",
       [Cl.uint(1)],
       deployerAddress
     );
@@ -829,7 +829,7 @@ describe("Withdrawals", () => {
     );
     callResponse = simnet.callReadOnlyFn(
       stackingDataContractName,
-      "get-withdrawal-or-fail",
+      "get-withdrawal",
       [Cl.uint(1)],
       deployerAddress
     );
