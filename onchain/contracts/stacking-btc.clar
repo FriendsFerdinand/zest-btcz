@@ -128,12 +128,12 @@
 (define-read-only (get-next-withdrawal-nonce)
   (+ (get-withdrawal-nonce) u1))
 
-(define-read-only (get-redeemable-btc-by-amount (btc-amount uint))
-  (mul-down btc-amount (get-btc-to-btcz-ratio)))
+(define-read-only (get-redeemable-btc-by-amount (btcz-amount uint))
+  (mul-down btcz-amount (get-btc-to-btcz-ratio)))
 
-(define-read-only (get-redeemable-btc-by-amount-after-fees (btc-amount uint))
+(define-read-only (get-redeemable-btc-by-amount-after-fees (btcz-amount uint))
   (let (
-    (redeemeable-btc (mul-down btc-amount (get-btc-to-btcz-ratio)))
+    (redeemeable-btc (mul-down btcz-amount (get-btc-to-btcz-ratio)))
     (fee (mul-down redeemeable-btc (get-peg-out-fee)))
     (gas-fee (get-peg-out-gas-fee))
     (amount-net (- redeemeable-btc fee gas-fee))
