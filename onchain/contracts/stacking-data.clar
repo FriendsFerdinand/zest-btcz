@@ -1,4 +1,4 @@
-(define-constant err-unauthorised (err u4000))
+(define-constant err-unauthorized (err u4000))
 (define-constant err-withdrawal-not-found (err u4001))
 (define-constant err-invalid-fee (err u4002))
 
@@ -35,13 +35,13 @@
   (ok (unwrap! (map-get? withdrawals withdrawal-id) err-withdrawal-not-found)))
 
 (define-read-only (is-contract-owner)
-  (ok (asserts! (is-eq (var-get contract-owner) tx-sender) err-unauthorised)))
+  (ok (asserts! (is-eq (var-get contract-owner) tx-sender) err-unauthorized)))
 
 (define-read-only (get-approved-operator (operator principal))
   (default-to false (map-get? approved-operators operator)))
 
 (define-read-only (is-approved-operator)
-  (ok (asserts! (or (get-approved-operator contract-caller) (is-ok (is-contract-owner))) err-unauthorised)))
+  (ok (asserts! (or (get-approved-operator contract-caller) (is-ok (is-contract-owner))) err-unauthorized)))
 
 
 (define-public (set-contract-owner (new-contract-owner principal))
