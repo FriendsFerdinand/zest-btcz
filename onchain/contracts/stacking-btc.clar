@@ -1,4 +1,4 @@
-(define-constant err-unauthorised (err u6000))
+(define-constant err-unauthorized (err u6000))
 (define-constant err-paused (err u6001))
 (define-constant err-peg-in-address-not-found (err u6002))
 (define-constant err-invalid-amount (err u6003))
@@ -157,7 +157,7 @@
 )
 
 (define-read-only (is-contract-owner)
-  (ok (asserts! (is-eq (var-get contract-owner) tx-sender) err-unauthorised)))
+  (ok (asserts! (is-eq (var-get contract-owner) tx-sender) err-unauthorized)))
 
 (define-public (set-contract-owner (new-contract-owner principal))
   (begin

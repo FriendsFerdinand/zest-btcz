@@ -1,4 +1,4 @@
-(define-constant err-unauthorised (err u2000))
+(define-constant err-unauthorized (err u2000))
 
 (define-data-var contract-owner principal tx-sender)
 (define-map approved-operators principal bool)
@@ -17,10 +17,10 @@
   (default-to false (map-get? approved-operators operator)))
 
 (define-read-only (is-contract-owner)
-	(ok (asserts! (is-eq (var-get contract-owner) tx-sender) err-unauthorised)))
+	(ok (asserts! (is-eq (var-get contract-owner) tx-sender) err-unauthorized)))
 
 (define-read-only (is-approved-operator)
-	(ok (asserts! (or (get-approved-operator contract-caller) (is-ok (is-contract-owner))) err-unauthorised)))
+	(ok (asserts! (or (get-approved-operator contract-caller) (is-ok (is-contract-owner))) err-unauthorized)))
 
 (define-public (approve-operator (operator principal) (approved bool))
 	(begin
