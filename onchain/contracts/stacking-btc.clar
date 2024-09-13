@@ -45,7 +45,7 @@
 		(try! (contract-call? .btc-registry set-peg-in-sent tx output-idx true))
     (try! (contract-call? .token-btc mint btcz-to-receive sender))
 
-    (print { action: "deposit", data: { tx-id: (get-txid tx), tx: tx, btcz-to-receive: btcz-to-receive } })
+    (print { action: "deposit", data: { tx-id: (get-txid tx), tx: tx, btcz-to-receive: btcz-to-receive, fee: fee, amount-net: amount-net, recipient: recipient } })
     (ok { order-script: order-script })
   )
 )
