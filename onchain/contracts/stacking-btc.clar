@@ -56,7 +56,7 @@
   (btcz-amount uint)
   )
   (let (
-    (sender tx-sender)
+    (sender contract-caller)
     (redeemable-btc (get-redeemable-btc-by-amount btcz-amount))
     (fee (mul-down redeemable-btc (get-peg-out-fee)))
     (gas-fee (get-peg-out-gas-fee))
@@ -157,7 +157,7 @@
 )
 
 (define-read-only (is-contract-owner)
-  (ok (asserts! (is-eq (var-get contract-owner) tx-sender) err-unauthorized)))
+  (ok (asserts! (is-eq (var-get contract-owner) contract-caller) err-unauthorized)))
 
 (define-public (set-contract-owner (new-contract-owner principal))
   (begin

@@ -41,7 +41,7 @@
   (ok (var-get contract-owner)))
 
 (define-private (check-is-owner)
-  (ok (asserts! (is-eq tx-sender (var-get contract-owner)) err-not-authorized)))
+  (ok (asserts! (is-eq contract-caller (var-get contract-owner)) err-not-authorized)))
 
 (define-private (check-is-approved)
   (ok (asserts! (default-to false (map-get? approved-contracts contract-caller)) err-not-authorized)))
