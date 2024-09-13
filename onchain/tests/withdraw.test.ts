@@ -10,6 +10,7 @@ import { generatePegInTx } from "./bitcoin";
 import * as btc from "@scure/btc-signer";
 import { hex } from "@scure/base";
 import {
+  EXTRA_DECIMALS,
   lstTokenContractName,
   lstTokenName,
   stackingDataContractName,
@@ -94,6 +95,7 @@ describe("Withdrawals", () => {
     );
   });
   it("Withdraw with no rewards", () => {
+    const pegInAmount = 100000n;
     let tx = generatePegInTx(BigInt(100000), pegInOutscript, address1);
     let callResponse = simnet.callPublicFn(
       stackingLogicContractName,
@@ -119,7 +121,7 @@ describe("Withdrawals", () => {
         .getAssetsMap()
         .get(`.${lstTokenContractName}.${lstTokenName}`)!
         .get(address1)
-    ).toBe(100000n);
+    ).toBe(pegInAmount * EXTRA_DECIMALS);
     callResponse = simnet.callPublicFn(
       stackingLogicContractName,
       "init-withdraw",
@@ -127,11 +129,10 @@ describe("Withdrawals", () => {
         Cl.bufferFromHex(
           "0000000000000000000000000000000000000000000000000000000000000000"
         ),
-        Cl.uint(100000),
+        Cl.uint(pegInAmount * EXTRA_DECIMALS),
       ],
       address1
     );
-
     // console.log(Cl.prettyPrint(callResponse.result));
     expect(
       simnet
@@ -174,6 +175,7 @@ describe("Withdrawals", () => {
     expect(callResponse.result).toBeUint(0);
   });
   it("Withdraw with a single user", () => {
+    const pegInsats = 100000n;
     let tx = generatePegInTx(BigInt(100000), pegInOutscript, address1);
     let callResponse = simnet.callPublicFn(
       stackingLogicContractName,
@@ -199,7 +201,7 @@ describe("Withdrawals", () => {
         .getAssetsMap()
         .get(`.${lstTokenContractName}.${lstTokenName}`)!
         .get(address1)
-    ).toBe(100000n);
+    ).toBe(pegInsats * EXTRA_DECIMALS);
     callResponse = simnet.callPublicFn(
       "stacking-btc",
       "add-rewards",
@@ -213,7 +215,7 @@ describe("Withdrawals", () => {
         Cl.bufferFromHex(
           "0000000000000000000000000000000000000000000000000000000000000000"
         ),
-        Cl.uint(100000),
+        Cl.uint(pegInsats * EXTRA_DECIMALS),
       ],
       address1
     );
@@ -267,7 +269,8 @@ describe("Withdrawals", () => {
     expect(callResponse.result).toBeUint(0);
   });
   it("Withdraw with a 2 users and one receives half", () => {
-    let tx = generatePegInTx(BigInt(100000), pegInOutscript, address1);
+    const pegInSats = 100000n;
+    let tx = generatePegInTx(BigInt(pegInSats), pegInOutscript, address1);
     let callResponse = simnet.callPublicFn(
       stackingLogicContractName,
       "deposit",
@@ -287,7 +290,7 @@ describe("Withdrawals", () => {
       ],
       address1
     );
-    tx = generatePegInTx(BigInt(100000), pegInOutscript, address2);
+    tx = generatePegInTx(BigInt(pegInSats), pegInOutscript, address2);
     callResponse = simnet.callPublicFn(
       stackingLogicContractName,
       "deposit",
@@ -314,11 +317,6 @@ describe("Withdrawals", () => {
       [Cl.uint(10000)],
       deployerAddress
     );
-
-    // console.log(
-    //   simnet.getAssetsMap().get(`.${lstTokenContractName}.${lstTokenName}`)!
-    // );
-
     callResponse = simnet.callPublicFn(
       stackingLogicContractName,
       "init-withdraw",
@@ -326,7 +324,7 @@ describe("Withdrawals", () => {
         Cl.bufferFromHex(
           "0000000000000000000000000000000000000000000000000000000000000000"
         ),
-        Cl.uint(100000),
+        Cl.uint(pegInSats * EXTRA_DECIMALS),
       ],
       address1
     );
@@ -338,7 +336,7 @@ describe("Withdrawals", () => {
         Cl.bufferFromHex(
           "0000000000000000000000000000000000000000000000000000000000000000"
         ),
-        Cl.uint(100000),
+        Cl.uint(pegInSats * EXTRA_DECIMALS),
       ],
       address2
     );
@@ -393,7 +391,8 @@ describe("Withdrawals", () => {
   });
 
   it("Withdraw with 2 users, add rewards after, 1st user does not get diluted after 2nd deposit. 2nd user gets the same amount", () => {
-    let tx = generatePegInTx(BigInt(100000), pegInOutscript, address1);
+    const pegInSats = 100000n;
+    let tx = generatePegInTx(BigInt(pegInSats), pegInOutscript, address1);
     let callResponse = simnet.callPublicFn(
       stackingLogicContractName,
       "deposit",
@@ -421,7 +420,7 @@ describe("Withdrawals", () => {
       deployerAddress
     );
 
-    tx = generatePegInTx(BigInt(100000), pegInOutscript, address2);
+    tx = generatePegInTx(BigInt(pegInSats), pegInOutscript, address2);
     callResponse = simnet.callPublicFn(
       stackingLogicContractName,
       "deposit",
@@ -448,7 +447,7 @@ describe("Withdrawals", () => {
         Cl.bufferFromHex(
           "0000000000000000000000000000000000000000000000000000000000000000"
         ),
-        Cl.uint(100000),
+        Cl.uint(pegInSats * EXTRA_DECIMALS),
       ],
       address1
     );
@@ -462,7 +461,7 @@ describe("Withdrawals", () => {
         Cl.bufferFromHex(
           "0000000000000000000000000000000000000000000000000000000000000000"
         ),
-        Cl.uint(90909),
+        Cl.uint(909090909n),
       ],
       address2
     );
@@ -518,7 +517,8 @@ describe("Withdrawals", () => {
     // ).toBe(0n);
   });
   it("A user withdraws their share, withdraws, the other user gets all the rewards.", () => {
-    let tx = generatePegInTx(BigInt(100000), pegInOutscript, address1);
+    const pegInSats = 100000n;
+    let tx = generatePegInTx(BigInt(pegInSats), pegInOutscript, address1);
     let callResponse = simnet.callPublicFn(
       stackingLogicContractName,
       "deposit",
@@ -538,7 +538,7 @@ describe("Withdrawals", () => {
       ],
       address1
     );
-    tx = generatePegInTx(BigInt(100000), pegInOutscript, address2);
+    tx = generatePegInTx(BigInt(pegInSats), pegInOutscript, address2);
     callResponse = simnet.callPublicFn(
       stackingLogicContractName,
       "deposit",
@@ -573,7 +573,7 @@ describe("Withdrawals", () => {
         Cl.bufferFromHex(
           "0000000000000000000000000000000000000000000000000000000000000000"
         ),
-        Cl.uint(100000),
+        Cl.uint(pegInSats * EXTRA_DECIMALS),
       ],
       address1
     );
@@ -619,7 +619,7 @@ describe("Withdrawals", () => {
         Cl.bufferFromHex(
           "0000000000000000000000000000000000000000000000000000000000000000"
         ),
-        Cl.uint(100000),
+        Cl.uint(pegInSats * EXTRA_DECIMALS),
       ],
       address2
     );
@@ -637,6 +637,7 @@ describe("Withdrawals", () => {
   });
   it("Withdraw, with peg-out-fees", () => {
     const pegOutAmount = 100000n;
+    const pegInSats = 100000n;
     // const rewards = 10000n;
     const pegOutFees = 500_000n;
     const pegOutWOFees = BigInt(
@@ -646,11 +647,11 @@ describe("Withdrawals", () => {
     let callResponse = simnet.callPublicFn(
       "peg-data",
       "set-peg-out-fee",
-      [Cl.uint(500_000n)],
+      [Cl.uint(5_000_000_000n)],
       deployerAddress
     );
 
-    let tx = generatePegInTx(BigInt(100000), pegInOutscript, address1);
+    let tx = generatePegInTx(BigInt(pegInSats), pegInOutscript, address1);
     callResponse = simnet.callPublicFn(
       stackingLogicContractName,
       "deposit",
@@ -675,20 +676,20 @@ describe("Withdrawals", () => {
         .getAssetsMap()
         .get(`.${lstTokenContractName}.${lstTokenName}`)!
         .get(address1)
-    ).toBe(100000n);
+    ).toBe(pegInSats * EXTRA_DECIMALS);
 
     callResponse = simnet.callReadOnlyFn(
       "stacking-btc",
       "get-redeemable-btc-by-amount",
-      [Cl.uint(100000)],
+      [Cl.uint(pegInSats * EXTRA_DECIMALS)],
       deployerAddress
     );
-    expect(callResponse.result).toBeUint(100000);
+    expect(callResponse.result).toBeUint(pegInSats);
 
     callResponse = simnet.callReadOnlyFn(
       "stacking-btc",
       "get-redeemable-btc-by-amount-after-fees",
-      [Cl.uint(100000)],
+      [Cl.uint(pegInSats * EXTRA_DECIMALS)],
       deployerAddress
     );
     expect(callResponse.result).toBeUint(99500);
@@ -700,7 +701,7 @@ describe("Withdrawals", () => {
         Cl.bufferFromHex(
           "0000000000000000000000000000000000000000000000000000000000000000"
         ),
-        Cl.uint(100000),
+        Cl.uint(pegInSats * EXTRA_DECIMALS),
       ],
       address1
     );
@@ -750,6 +751,7 @@ describe("Withdrawals", () => {
   });
   it("Withdraw, with peg-out-gas-fees", () => {
     const pegOutAmount = 100000n;
+    const pegInAmount = 100000n;
     const pegOutFees = 10000n;
     // const rewards = 10000n;
     const pegOutWOFees = pegOutAmount - pegOutFees;
@@ -761,7 +763,7 @@ describe("Withdrawals", () => {
       deployerAddress
     );
 
-    let tx = generatePegInTx(BigInt(100000), pegInOutscript, address1);
+    let tx = generatePegInTx(BigInt(pegInAmount), pegInOutscript, address1);
     callResponse = simnet.callPublicFn(
       stackingLogicContractName,
       "deposit",
@@ -786,7 +788,7 @@ describe("Withdrawals", () => {
         .getAssetsMap()
         .get(`.${lstTokenContractName}.${lstTokenName}`)!
         .get(address1)
-    ).toBe(100000n);
+    ).toBe(pegInAmount * EXTRA_DECIMALS);
     callResponse = simnet.callPublicFn(
       stackingLogicContractName,
       "init-withdraw",
@@ -794,7 +796,7 @@ describe("Withdrawals", () => {
         Cl.bufferFromHex(
           "0000000000000000000000000000000000000000000000000000000000000000"
         ),
-        Cl.uint(100000),
+        Cl.uint(pegInAmount * EXTRA_DECIMALS),
       ],
       address1
     );
