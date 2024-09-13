@@ -17,7 +17,7 @@
   (default-to false (map-get? approved-operators operator)))
 
 (define-read-only (is-contract-owner)
-	(ok (asserts! (is-eq (var-get contract-owner) tx-sender) err-unauthorized)))
+	(ok (asserts! (is-eq (var-get contract-owner) contract-caller) err-unauthorized)))
 
 (define-read-only (is-approved-operator)
 	(ok (asserts! (or (get-approved-operator contract-caller) (is-ok (is-contract-owner))) err-unauthorized)))

@@ -35,7 +35,7 @@
   (ok (unwrap! (map-get? withdrawals withdrawal-id) err-withdrawal-not-found)))
 
 (define-read-only (is-contract-owner)
-  (ok (asserts! (is-eq (var-get contract-owner) tx-sender) err-unauthorized)))
+  (ok (asserts! (is-eq (var-get contract-owner) contract-caller) err-unauthorized)))
 
 (define-read-only (get-approved-operator (operator principal))
   (default-to false (map-get? approved-operators operator)))
