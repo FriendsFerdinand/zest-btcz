@@ -27,7 +27,7 @@ const btcAddress1 = "bc1q0xcqpzrky6eff2g52qdye53xkk9jxkvrh6yhyw";
 const pegInScript = btc.Address().decode(btcAddress1);
 const pegInOutscript = hex.encode(btc.OutScript.encode(pegInScript));
 
-const ONE = 100000000;
+const ONE12 = 1_000_000_000_000;
 
 describe("Setting params", () => {
   beforeEach(() => {
@@ -87,7 +87,7 @@ describe("Setting params", () => {
     );
   });
   it("Check set-peg-in-fee and set-peg-out-fee can't be set higher than ONE", () => {
-    const fee = 1_000_000;
+    const fee = 10_000_000_000;
     // get initial fee
     let callResponse = simnet.callReadOnlyFn(
       feeDataContractName,
@@ -119,14 +119,14 @@ describe("Setting params", () => {
     callResponse = simnet.callPublicFn(
       feeDataContractName,
       "set-peg-in-fee",
-      [Cl.uint(ONE)],
+      [Cl.uint(ONE12)],
       deployerAddress
     );
     expect(callResponse.result).toHaveClarityType(ClarityType.ResponseErr);
     callResponse = simnet.callPublicFn(
       feeDataContractName,
       "set-peg-in-fee",
-      [Cl.uint(ONE + 1)],
+      [Cl.uint(ONE12 + 1)],
       deployerAddress
     );
     expect(callResponse.result).toHaveClarityType(ClarityType.ResponseErr);
@@ -135,14 +135,14 @@ describe("Setting params", () => {
     callResponse = simnet.callPublicFn(
       feeDataContractName,
       "set-peg-out-fee",
-      [Cl.uint(ONE)],
+      [Cl.uint(ONE12)],
       deployerAddress
     );
     expect(callResponse.result).toHaveClarityType(ClarityType.ResponseErr);
     callResponse = simnet.callPublicFn(
       feeDataContractName,
       "set-peg-out-fee",
-      [Cl.uint(ONE + 1)],
+      [Cl.uint(ONE12 + 1)],
       deployerAddress
     );
     expect(callResponse.result).toHaveClarityType(ClarityType.ResponseErr);
