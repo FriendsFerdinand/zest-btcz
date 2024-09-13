@@ -11,6 +11,8 @@
 (define-constant err-order-index-out-of-bounds (err u6010))
 (define-constant err-invalid-order-script (err u6011))
 
+(define-constant success (ok true))
+
 (define-constant one-8 u100000000)
 
 (define-data-var contract-owner principal tx-sender)
@@ -55,11 +57,11 @@
   )
   (let (
     (sender tx-sender)
-    (redeemeable-btc (get-redeemable-btc-by-amount btcz-amount))
-    (fee (mul-down redeemeable-btc (get-peg-out-fee)))
+    (redeemable-btc (get-redeemable-btc-by-amount btcz-amount))
+    (fee (mul-down redeemable-btc (get-peg-out-fee)))
     (gas-fee (get-peg-out-gas-fee))
-    (check-amount (asserts! (> redeemeable-btc (+ fee gas-fee)) err-invalid-amount))
-    (amount-net (- redeemeable-btc fee gas-fee))
+    (check-amount (asserts! (> redeemable-btc (+ fee gas-fee)) err-invalid-amount))
+    (amount-net (- redeemable-btc fee gas-fee))
     (next-nonce (get-next-withdrawal-nonce))
     (withdraw-data {
       btc-amount: amount-net,
@@ -75,7 +77,7 @@
   )
     (asserts! (not (contract-call? .peg-data is-peg-out-paused)) err-paused)
     (try! (contract-call? .token-btc burn btcz-amount sender))
-    (try! (set-total-btc (- (get-total-btc) redeemeable-btc)))
+    (try! (set-total-btc (- (get-total-btc) redeemable-btc)))
 
     (try! (set-withdrawal next-nonce withdraw-data))
     (try! (contract-call? .stacking-data set-withdrawal-nonce next-nonce))
@@ -95,7 +97,7 @@
 
     (try! (set-withdrawal withdrawal-id (merge withdraw-data { finalized: true })))
     (print { action: "finalize-withdraw", data: { withdraw-data: withdraw-data, withdrawal-id: withdrawal-id, finalize-height: burn-block-height } })
-    (ok true)
+    success
   )
 )
 
@@ -107,7 +109,7 @@
 
     (try! (set-total-btc new-total-btc))
     (print { action: "add-rewards", data: { new-total-btc: new-total-btc, btc-amount: btc-amount } })
-    (ok true)
+    success
   )
 )
 
@@ -224,9 +226,9 @@
         (contract-call? .clarity-bitcoin-v1-02 was-tx-mined? block tx proof))))
       (if (or (is-err response) (not (unwrap-panic response)))
         err-bitcoin-tx-not-mined
-        (ok true)
+        success
       ))
-    (ok true))) ;; if not mainnet, assume verified
+    success)) ;; if not mainnet, assume verified
 
 ;; data output parse helpers
 (define-read-only (decode-order-0 (order-script (buff 128)))

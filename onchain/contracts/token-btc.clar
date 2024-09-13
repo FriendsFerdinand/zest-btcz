@@ -1,5 +1,7 @@
 (define-constant err-not-authorized (err u5000))
 
+(define-constant success (ok true))
+
 (impl-trait .ft-trait.ft-trait)
 (define-fungible-token token-btcz)
 (define-data-var contract-owner principal tx-sender)
@@ -63,7 +65,7 @@
     (asserts! (is-eq sender tx-sender) err-not-authorized)
     (try! (ft-transfer? token-btcz amount sender recipient))
     (match memo to-print (print to-print) 0x)
-    (ok true)))
+    success))
 
 (define-public (mint (amount uint) (recipient principal))
   (begin
