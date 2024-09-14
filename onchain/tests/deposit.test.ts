@@ -10,11 +10,12 @@ import { generatePegInTx } from "./bitcoin";
 import * as btc from "@scure/btc-signer";
 import { hex } from "@scure/base";
 import {
+  EXTRA_DECIMALS,
   lstTokenContractName,
   lstTokenName,
   stackingLogicContractName,
 } from "./config";
-import { mulBps } from "./utils";
+import { mulBps, mulFraction } from "./utils";
 
 const accounts = simnet.getAccounts();
 const deployerAddress = accounts.get("deployer")!;
@@ -108,7 +109,7 @@ describe("Deposits", () => {
         .getAssetsMap()
         .get(`.${lstTokenContractName}.${lstTokenName}`)!
         .get(address1)
-    ).toBe(100000n);
+    ).toBe(100000n * EXTRA_DECIMALS);
 
     tx = generatePegInTx(
       BigInt(100000),
@@ -140,7 +141,7 @@ describe("Deposits", () => {
         .getAssetsMap()
         .get(`.${lstTokenContractName}.${lstTokenName}`)!
         .get(`${address1}.owner-contract`)
-    ).toBe(100000n);
+    ).toBe(100000n * EXTRA_DECIMALS);
   });
   it("Deposit to wrong address", () => {
     const wrongOutscript = hex.encode(
@@ -171,17 +172,20 @@ describe("Deposits", () => {
     expect(callResponse.result).toBeErr(Cl.uint(6002));
   });
   it("Deposit and account peg in fees", () => {
-    const pegInAmount = 100000n;
-    const pegInAmountWOFees = BigInt(
+    const pegInAmount = 100000n * EXTRA_DECIMALS;
+    const pegInAmountWOFees =
+      BigInt(pegInAmount - mulFraction(pegInAmount, 5_000_000_000n)) *
+      EXTRA_DECIMALS;
+    const pegInAmountWOFeesSats = BigInt(
       pegInAmount - mulBps(pegInAmount, 500_000n)
     );
     let callResponse = simnet.callPublicFn(
       "peg-data",
       "set-peg-in-fee",
-      [Cl.uint(500_000n)],
+      [Cl.uint(5_000_000_000n)],
       deployerAddress
     );
-    let tx = generatePegInTx(BigInt(100000), pegInOutscript, address1);
+    let tx = generatePegInTx(BigInt(pegInAmount), pegInOutscript, address1);
     callResponse = simnet.callPublicFn(
       stackingLogicContractName,
       "deposit",
@@ -208,7 +212,7 @@ describe("Deposits", () => {
         .get(address1)
     ).toBe(pegInAmountWOFees);
 
-    tx = generatePegInTx(BigInt(100000), pegInOutscript, address1);
+    tx = generatePegInTx(BigInt(pegInAmount), pegInOutscript, address1);
     callResponse = simnet.callPublicFn(
       stackingLogicContractName,
       "deposit",
@@ -235,12 +239,12 @@ describe("Deposits", () => {
       [],
       deployerAddress
     );
-    expect(callResponse.result).toBeUint(pegInAmountWOFees * 2n);
+    expect(callResponse.result).toBeUint(pegInAmountWOFeesSats * 2n);
   });
   it("Deposit and account for rewards", () => {
     const pegInAmount = 100000n;
     const rewards = 10000n;
-    let tx = generatePegInTx(BigInt(100000), pegInOutscript, address1);
+    let tx = generatePegInTx(BigInt(pegInAmount), pegInOutscript, address1);
     let callResponse = simnet.callPublicFn(
       stackingLogicContractName,
       "deposit",
@@ -265,7 +269,7 @@ describe("Deposits", () => {
         .getAssetsMap()
         .get(`.${lstTokenContractName}.${lstTokenName}`)!
         .get(address1)
-    ).toBe(pegInAmount);
+    ).toBe(pegInAmount * EXTRA_DECIMALS);
 
     tx = generatePegInTx(BigInt(pegInAmount), pegInOutscript, address1);
     callResponse = simnet.callPublicFn(
@@ -308,6 +312,64 @@ describe("Deposits", () => {
       deployerAddress
     );
     expect(callResponse.result).toBeUint(pegInAmount * 2n + rewards);
+  });
+  it("Deposit and check for rounding errors", () => {
+    const pegInAmount = 100000n;
+    const rewards = 10000n;
+    const one_btc = 100_000_000n;
+    let tx = generatePegInTx(BigInt(one_btc), pegInOutscript, address1);
+    let callResponse = simnet.callPublicFn(
+      stackingLogicContractName,
+      "deposit",
+      [
+        Cl.bufferFromHex(tx),
+        Cl.tuple({
+          header: Cl.bufferFromHex(""),
+          height: Cl.uint(0),
+        }),
+        Cl.tuple({
+          "tx-index": Cl.uint(0),
+          hashes: Cl.list([]),
+          "tree-depth": Cl.uint(0),
+        }),
+        Cl.uint(0),
+        Cl.uint(1),
+      ],
+      address1
+    );
+    callResponse = simnet.callPublicFn(
+      "stacking-btc",
+      "add-rewards",
+      [Cl.uint(rewards)],
+      deployerAddress
+    );
+    tx = generatePegInTx(BigInt(pegInAmount), pegInOutscript, address1);
+    callResponse = simnet.callPublicFn(
+      stackingLogicContractName,
+      "deposit",
+      [
+        Cl.bufferFromHex(tx),
+        Cl.tuple({
+          header: Cl.bufferFromHex(""),
+          height: Cl.uint(0),
+        }),
+        Cl.tuple({
+          "tx-index": Cl.uint(0),
+          hashes: Cl.list([]),
+          "tree-depth": Cl.uint(0),
+        }),
+        Cl.uint(0),
+        Cl.uint(1),
+      ],
+      address1
+    );
+    callResponse = simnet.callReadOnlyFn(
+      "stacking-btc",
+      "get-redeemable-btc-by-amount",
+      [Cl.uint(1_000_000_000_000)],
+      deployerAddress
+    );
+    expect(callResponse.result).toBeUint(100010000);
   });
   it("Deposit to address with a maximum contract name of 54", () => {
     let tx = generatePegInTx(

@@ -8,7 +8,7 @@
 (define-map approved-contracts principal bool)
 (define-constant token-name "BTCz")
 (define-constant token-symbol "BTCz")
-(define-constant token-decimals u8)
+(define-constant token-decimals u12)
 (define-data-var token-uri (optional (string-utf8 256)) (some u""))
 
 ;; token data
