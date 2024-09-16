@@ -10,6 +10,7 @@
 (define-constant err-output-index-out-of-bounds (err u6009))
 (define-constant err-order-index-out-of-bounds (err u6010))
 (define-constant err-invalid-order-script (err u6011))
+(define-constant err-reading-varint (err u6012))
 
 (define-constant success (ok true))
 
@@ -234,4 +235,4 @@
 (define-read-only (decode-order-0 (order-script (buff 128)))
   (let (
     (op-code (unwrap! (slice? order-script u1 u2) err-invalid-order-script)))
-    (ok (unwrap! (from-consensus-buff? principal (unwrap-panic (slice? order-script (if (< op-code 0x4c) u2 u3) (len order-script)))) err-invalid-input))))
+    (ok (unwrap! (from-consensus-buff? principal (unwrap! (slice? order-script (if (< op-code 0x4c) u2 u3) (len order-script)) err-reading-varint)) err-invalid-input))))
