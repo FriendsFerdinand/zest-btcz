@@ -691,7 +691,7 @@ describe("Withdrawals", () => {
       [Cl.uint(100000)],
       deployerAddress
     );
-    expect(callResponse.result).toBeUint(99500);
+    expect(callResponse.result).toBeOk(Cl.uint(99500));
 
     callResponse = simnet.callPublicFn(
       stackingLogicContractName,

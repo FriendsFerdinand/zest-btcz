@@ -137,9 +137,10 @@
     (redeemeable-btc (mul-down btcz-amount (get-btc-to-btcz-ratio)))
     (fee (mul-down redeemeable-btc (get-peg-out-fee)))
     (gas-fee (get-peg-out-gas-fee))
+    (check-amount (asserts! (> redeemeable-btc (+ fee gas-fee)) err-invalid-amount))
     (amount-net (- redeemeable-btc fee gas-fee))
   )
-    amount-net
+    (ok amount-net)
   )
 )
 
