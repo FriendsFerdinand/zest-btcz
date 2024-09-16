@@ -134,11 +134,11 @@
 
 (define-read-only (get-redeemable-btc-by-amount-after-fees (btcz-amount uint))
   (let (
-    (redeemeable-btc (get-redeemable-btc-by-amount btcz-amount))
-    (fee (mul-down redeemeable-btc (get-peg-out-fee)))
+    (redeemable-btc (get-redeemable-btc-by-amount btcz-amount))
+    (fee (mul-down redeemable-btc (get-peg-out-fee)))
     (gas-fee (get-peg-out-gas-fee))
-    (check-amount (asserts! (> redeemeable-btc (+ fee gas-fee)) err-invalid-amount))
-    (amount-net (- redeemeable-btc fee gas-fee))
+    (check-amount (asserts! (> redeemable-btc (+ fee gas-fee)) err-invalid-amount))
+    (amount-net (- redeemable-btc fee gas-fee))
   )
     (ok amount-net)
   )
