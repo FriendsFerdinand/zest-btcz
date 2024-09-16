@@ -134,7 +134,7 @@
 
 (define-read-only (get-redeemable-btc-by-amount-after-fees (btcz-amount uint))
   (let (
-    (redeemeable-btc (mul-down btcz-amount (get-btc-to-btcz-ratio)))
+    (redeemeable-btc (get-redeemable-btc-by-amount btcz-amount))
     (fee (mul-down redeemeable-btc (get-peg-out-fee)))
     (gas-fee (get-peg-out-gas-fee))
     (check-amount (asserts! (> redeemeable-btc (+ fee gas-fee)) err-invalid-amount))
