@@ -5,12 +5,7 @@
 (define-data-var contract-owner principal tx-sender)
 (define-map approved-operators principal bool)
 
-;; OWNER DATA
-;; 8 decimals commission
-(define-data-var commission uint u0)
-
 ;; PROGRAM DATA
-(define-data-var commission-total uint u0)
 (define-data-var total-btc uint u0)
 (define-data-var withdrawal-nonce uint u0)
 (define-map withdrawals uint {
