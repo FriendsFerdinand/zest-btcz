@@ -1,7 +1,7 @@
 (define-constant err-unauthorized (err u3000))
 (define-constant err-invalid-fee (err u3001))
 
-(define-constant one-8 u100000000)
+(define-constant one-12 u1000000000000)
 
 (define-data-var contract-owner principal tx-sender)
 (define-data-var peg-in-paused bool true)
@@ -50,14 +50,14 @@
 (define-public (set-peg-in-fee (fee uint))
 	(begin
 		(try! (is-contract-owner))
-		(asserts! (< fee one-8) err-invalid-fee)
+		(asserts! (< fee one-12) err-invalid-fee)
 		(print { action: "set-peg-in-fee", data: { fee: fee } })
 		(ok (var-set peg-in-fee fee))))
 
 (define-public (set-peg-out-fee (fee uint))
 	(begin
 		(try! (is-contract-owner))
-		(asserts! (< fee one-8) err-invalid-fee)
+		(asserts! (< fee one-12) err-invalid-fee)
 		(print { action: "set-peg-out-fee", data: { fee: fee } })
 		(ok (var-set peg-out-fee fee))))
 
