@@ -66,7 +66,7 @@
 					target-index
 					(unwrap-panic (element-at? hash-input (- u31 target-index)))))
 			(- u31 target-index)
-			(unwrap-panic (element-at? hash-input  target-index)))))
+			(unwrap-panic (element-at? hash-input target-index)))))
 (define-read-only (reverse-buff32 (input (buff 32)))
 	(fold inner-reverse
 		(list u31 u30 u29 u28 u27 u26 u25 u24 u23 u22 u21 u20 u19 u18 u17 u16)

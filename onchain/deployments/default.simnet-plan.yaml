@@ -60,14 +60,14 @@ plan:
             path: contracts/clarity-bitcoin-v1-02.clar
             clarity-version: 2
         - emulated-contract-publish:
-            contract-name: fee-data
-            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/fee-data.clar
-            clarity-version: 2
-        - emulated-contract-publish:
             contract-name: ft-trait
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
             path: contracts/ft-trait.clar
+            clarity-version: 2
+        - emulated-contract-publish:
+            contract-name: peg-data
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/peg-data.clar
             clarity-version: 2
         - emulated-contract-publish:
             contract-name: stacking-data

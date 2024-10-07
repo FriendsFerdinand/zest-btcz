@@ -1,1 +1,1 @@
-# zest-sbtc
+# zest-btcz

@@ -10,8 +10,10 @@ import { generatePegInTx } from "./bitcoin";
 import * as btc from "@scure/btc-signer";
 import { hex } from "@scure/base";
 import {
+  EXTRA_DECIMALS,
   lstTokenContractName,
   lstTokenName,
+  stackingDataContractName,
   stackingLogicContractName,
   stackingVaultContractName,
 } from "./config";
@@ -29,13 +31,13 @@ const pegInOutscript = hex.encode(btc.OutScript.encode(pegInScript));
 describe("Withdrawals", () => {
   beforeEach(() => {
     let callResponse = simnet.callPublicFn(
-      "fee-data",
+      "peg-data",
       "pause-peg-in",
       [Cl.bool(false)],
       deployerAddress
     );
     callResponse = simnet.callPublicFn(
-      "fee-data",
+      "peg-data",
       "pause-peg-out",
       [Cl.bool(false)],
       deployerAddress
@@ -93,7 +95,9 @@ describe("Withdrawals", () => {
     );
   });
   it("Withdraw with no rewards", () => {
-    let tx = generatePegInTx(BigInt(100000), pegInOutscript, address1);
+    const pegInAmountSats = 100000n;
+    const pegInAmountBtcz = pegInAmountSats * EXTRA_DECIMALS;
+    let tx = generatePegInTx(BigInt(pegInAmountSats), pegInOutscript, address1);
     let callResponse = simnet.callPublicFn(
       stackingLogicContractName,
       "deposit",
@@ -118,7 +122,7 @@ describe("Withdrawals", () => {
         .getAssetsMap()
         .get(`.${lstTokenContractName}.${lstTokenName}`)!
         .get(address1)
-    ).toBe(100000n);
+    ).toBe(pegInAmountBtcz);
     callResponse = simnet.callPublicFn(
       stackingLogicContractName,
       "init-withdraw",
@@ -126,7 +130,7 @@ describe("Withdrawals", () => {
         Cl.bufferFromHex(
           "0000000000000000000000000000000000000000000000000000000000000000"
         ),
-        Cl.uint(100000),
+        Cl.uint(pegInAmountBtcz),
       ],
       address1
     );
@@ -140,8 +144,8 @@ describe("Withdrawals", () => {
     ).toBe(0n);
 
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
-      "get-withdrawal-or-fail",
+      stackingDataContractName,
+      "get-withdrawal",
       [Cl.uint(1)],
       deployerAddress
     );
@@ -158,14 +162,14 @@ describe("Withdrawals", () => {
       deployerAddress
     );
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
-      "get-withdrawal-or-fail",
+      stackingDataContractName,
+      "get-withdrawal",
       [Cl.uint(1)],
       deployerAddress
     );
     expect(cvToValue(callResponse.result).value["finalized"].value).toBe(true);
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
+      stackingDataContractName,
       "get-total-btc",
       [],
       deployerAddress
@@ -173,7 +177,10 @@ describe("Withdrawals", () => {
     expect(callResponse.result).toBeUint(0);
   });
   it("Withdraw with a single user", () => {
-    let tx = generatePegInTx(BigInt(100000), pegInOutscript, address1);
+    const pegInAmountSats = 100000n;
+    const pegInAmountBtcz = pegInAmountSats * EXTRA_DECIMALS;
+    const rewards = 10000;
+    let tx = generatePegInTx(BigInt(pegInAmountSats), pegInOutscript, address1);
     let callResponse = simnet.callPublicFn(
       stackingLogicContractName,
       "deposit",
@@ -198,11 +205,11 @@ describe("Withdrawals", () => {
         .getAssetsMap()
         .get(`.${lstTokenContractName}.${lstTokenName}`)!
         .get(address1)
-    ).toBe(100000n);
+    ).toBe(pegInAmountBtcz);
     callResponse = simnet.callPublicFn(
       "stacking-btc",
       "add-rewards",
-      [Cl.uint(10000)],
+      [Cl.uint(rewards)],
       deployerAddress
     );
     callResponse = simnet.callPublicFn(
@@ -212,7 +219,7 @@ describe("Withdrawals", () => {
         Cl.bufferFromHex(
           "0000000000000000000000000000000000000000000000000000000000000000"
         ),
-        Cl.uint(100000),
+        Cl.uint(pegInAmountBtcz),
       ],
       address1
     );
@@ -224,8 +231,8 @@ describe("Withdrawals", () => {
     ).toBe(0n);
 
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
-      "get-withdrawal-or-fail",
+      stackingDataContractName,
+      "get-withdrawal",
       [Cl.uint(1)],
       deployerAddress
     );
@@ -248,30 +255,28 @@ describe("Withdrawals", () => {
       [Cl.uint(1)],
       deployerAddress
     );
-    expect(callResponse.result).toBeErr(Cl.uint(1005));
+    expect(callResponse.result).toBeErr(Cl.uint(6005));
     // check withdrawal request is deleted
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
-      "get-withdrawal-or-fail",
+      stackingDataContractName,
+      "get-withdrawal",
       [Cl.uint(1)],
       deployerAddress
     );
-    // expect(callResponse.result).toBeErr(Cl.uint(1002));
     expect(cvToValue(callResponse.result).value["finalized"].value).toBe(true);
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
+      stackingDataContractName,
       "get-total-btc",
       [],
       deployerAddress
     );
     expect(callResponse.result).toBeUint(0);
-    // console.log(Cl.prettyPrint(callResponse.result));
-    // console.log(
-    //   simnet.getAssetsMap().get(`.${lstTokenContractName}.${lstTokenName}`)
-    // );
   });
   it("Withdraw with a 2 users and one receives half", () => {
-    let tx = generatePegInTx(BigInt(100000), pegInOutscript, address1);
+    const pegInAmountSats = 100000n;
+    const pegInAmountBtcz = pegInAmountSats * EXTRA_DECIMALS;
+    const rewards = 10000;
+    let tx = generatePegInTx(BigInt(pegInAmountSats), pegInOutscript, address1);
     let callResponse = simnet.callPublicFn(
       stackingLogicContractName,
       "deposit",
@@ -291,7 +296,7 @@ describe("Withdrawals", () => {
       ],
       address1
     );
-    tx = generatePegInTx(BigInt(100000), pegInOutscript, address2);
+    tx = generatePegInTx(BigInt(pegInAmountSats), pegInOutscript, address2);
     callResponse = simnet.callPublicFn(
       stackingLogicContractName,
       "deposit",
@@ -315,7 +320,7 @@ describe("Withdrawals", () => {
     callResponse = simnet.callPublicFn(
       "stacking-btc",
       "add-rewards",
-      [Cl.uint(10000)],
+      [Cl.uint(rewards)],
       deployerAddress
     );
 
@@ -330,7 +335,7 @@ describe("Withdrawals", () => {
         Cl.bufferFromHex(
           "0000000000000000000000000000000000000000000000000000000000000000"
         ),
-        Cl.uint(100000),
+        Cl.uint(pegInAmountBtcz),
       ],
       address1
     );
@@ -342,7 +347,7 @@ describe("Withdrawals", () => {
         Cl.bufferFromHex(
           "0000000000000000000000000000000000000000000000000000000000000000"
         ),
-        Cl.uint(100000),
+        Cl.uint(pegInAmountBtcz),
       ],
       address2
     );
@@ -351,8 +356,8 @@ describe("Withdrawals", () => {
     //   simnet.getAssetsMap().get(`.${lstTokenContractName}.${lstTokenName}`)!
     // );
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
-      "get-withdrawal-or-fail",
+      stackingDataContractName,
+      "get-withdrawal",
       [Cl.uint(1)],
       deployerAddress
     );
@@ -363,8 +368,8 @@ describe("Withdrawals", () => {
     expect(cvToValue(callResponse.result).value["gas-fee"].value).toBe("0");
     // check second withdrawal
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
-      "get-withdrawal-or-fail",
+      stackingDataContractName,
+      "get-withdrawal",
       [Cl.uint(2)],
       deployerAddress
     );
@@ -388,7 +393,7 @@ describe("Withdrawals", () => {
     );
     expect(callResponse.result).toHaveClarityType(ClarityType.ResponseOk);
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
+      stackingDataContractName,
       "get-total-btc",
       [],
       deployerAddress
@@ -397,7 +402,10 @@ describe("Withdrawals", () => {
   });
 
   it("Withdraw with 2 users, add rewards after, 1st user does not get diluted after 2nd deposit. 2nd user gets the same amount", () => {
-    let tx = generatePegInTx(BigInt(100000), pegInOutscript, address1);
+    const pegInAmountSats = 100000n;
+    const pegInAmountBtcz = pegInAmountSats * EXTRA_DECIMALS;
+    const rewards = 10000;
+    let tx = generatePegInTx(BigInt(pegInAmountSats), pegInOutscript, address1);
     let callResponse = simnet.callPublicFn(
       stackingLogicContractName,
       "deposit",
@@ -421,11 +429,11 @@ describe("Withdrawals", () => {
     callResponse = simnet.callPublicFn(
       "stacking-btc",
       "add-rewards",
-      [Cl.uint(10000)],
+      [Cl.uint(rewards)],
       deployerAddress
     );
 
-    tx = generatePegInTx(BigInt(100000), pegInOutscript, address2);
+    tx = generatePegInTx(BigInt(pegInAmountSats), pegInOutscript, address2);
     callResponse = simnet.callPublicFn(
       stackingLogicContractName,
       "deposit",
@@ -452,13 +460,14 @@ describe("Withdrawals", () => {
         Cl.bufferFromHex(
           "0000000000000000000000000000000000000000000000000000000000000000"
         ),
-        Cl.uint(100000),
+        Cl.uint(pegInAmountBtcz),
       ],
       address1
     );
-    // console.log(
-    //   simnet.getAssetsMap().get(`.${lstTokenContractName}.${lstTokenName}`)!
-    // );
+    const btczAmounts2 = simnet
+      .getAssetsMap()
+      .get(`.${lstTokenContractName}.${lstTokenName}`)!
+      .get(address2)!;
     callResponse = simnet.callPublicFn(
       stackingLogicContractName,
       "init-withdraw",
@@ -466,13 +475,13 @@ describe("Withdrawals", () => {
         Cl.bufferFromHex(
           "0000000000000000000000000000000000000000000000000000000000000000"
         ),
-        Cl.uint(90909),
+        Cl.uint(btczAmounts2),
       ],
       address2
     );
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
-      "get-withdrawal-or-fail",
+      stackingDataContractName,
+      "get-withdrawal",
       [Cl.uint(1)],
       deployerAddress
     );
@@ -483,8 +492,8 @@ describe("Withdrawals", () => {
     expect(cvToValue(callResponse.result).value["gas-fee"].value).toBe("0");
     // check second withdrawal
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
-      "get-withdrawal-or-fail",
+      stackingDataContractName,
+      "get-withdrawal",
       [Cl.uint(2)],
       deployerAddress
     );
@@ -508,7 +517,7 @@ describe("Withdrawals", () => {
     );
     expect(callResponse.result).toHaveClarityType(ClarityType.ResponseOk);
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
+      stackingDataContractName,
       "get-total-btc",
       [],
       deployerAddress
@@ -522,7 +531,10 @@ describe("Withdrawals", () => {
     // ).toBe(0n);
   });
   it("A user withdraws their share, withdraws, the other user gets all the rewards.", () => {
-    let tx = generatePegInTx(BigInt(100000), pegInOutscript, address1);
+    const pegInAmountSats = 100000n;
+    const pegInAmountBtcz = pegInAmountSats * EXTRA_DECIMALS;
+    const rewards = 10000;
+    let tx = generatePegInTx(BigInt(pegInAmountSats), pegInOutscript, address1);
     let callResponse = simnet.callPublicFn(
       stackingLogicContractName,
       "deposit",
@@ -542,7 +554,7 @@ describe("Withdrawals", () => {
       ],
       address1
     );
-    tx = generatePegInTx(BigInt(100000), pegInOutscript, address2);
+    tx = generatePegInTx(BigInt(pegInAmountSats), pegInOutscript, address2);
     callResponse = simnet.callPublicFn(
       stackingLogicContractName,
       "deposit",
@@ -566,7 +578,7 @@ describe("Withdrawals", () => {
     callResponse = simnet.callPublicFn(
       "stacking-btc",
       "add-rewards",
-      [Cl.uint(10000)],
+      [Cl.uint(rewards)],
       deployerAddress
     );
 
@@ -577,13 +589,13 @@ describe("Withdrawals", () => {
         Cl.bufferFromHex(
           "0000000000000000000000000000000000000000000000000000000000000000"
         ),
-        Cl.uint(100000),
+        Cl.uint(pegInAmountBtcz),
       ],
       address1
     );
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
-      "get-withdrawal-or-fail",
+      stackingDataContractName,
+      "get-withdrawal",
       [Cl.uint(1)],
       deployerAddress
     );
@@ -623,17 +635,13 @@ describe("Withdrawals", () => {
         Cl.bufferFromHex(
           "0000000000000000000000000000000000000000000000000000000000000000"
         ),
-        Cl.uint(100000),
+        Cl.uint(pegInAmountBtcz),
       ],
       address2
     );
-    // console.log(Cl.prettyPrint(callResponse.result));
-    // console.log(
-    //   simnet.getAssetsMap().get(`.${lstTokenContractName}.${lstTokenName}`)!
-    // );
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
-      "get-withdrawal-or-fail",
+      stackingDataContractName,
+      "get-withdrawal",
       [Cl.uint(2)],
       deployerAddress
     );
@@ -644,21 +652,25 @@ describe("Withdrawals", () => {
     expect(cvToValue(callResponse.result).value["gas-fee"].value).toBe("0");
   });
   it("Withdraw, with peg-out-fees", () => {
+    const pegInAmountSats = 100000n;
+    const pegInAmountBtcz = pegInAmountSats * EXTRA_DECIMALS;
+    const rewards = 10000;
     const pegOutAmount = 100000n;
     // const rewards = 10000n;
-    const pegOutFees = 500_000n;
-    const pegOutWOFees = BigInt(
-      pegOutAmount - mulBps(pegOutAmount, pegOutFees)
+    const pegOutFees = 5_000_000_000n;
+    const pegOutbps = 500n;
+    const pegOutWOFeesSats = BigInt(
+      pegOutAmount - mulBps(pegOutAmount, pegOutbps)
     );
 
     let callResponse = simnet.callPublicFn(
-      "fee-data",
+      "peg-data",
       "set-peg-out-fee",
-      [Cl.uint(500_000n)],
+      [Cl.uint(pegOutFees)],
       deployerAddress
     );
 
-    let tx = generatePegInTx(BigInt(100000), pegInOutscript, address1);
+    let tx = generatePegInTx(BigInt(pegInAmountSats), pegInOutscript, address1);
     callResponse = simnet.callPublicFn(
       stackingLogicContractName,
       "deposit",
@@ -683,7 +695,24 @@ describe("Withdrawals", () => {
         .getAssetsMap()
         .get(`.${lstTokenContractName}.${lstTokenName}`)!
         .get(address1)
-    ).toBe(100000n);
+    ).toBe(pegInAmountBtcz);
+
+    callResponse = simnet.callReadOnlyFn(
+      "stacking-btc",
+      "get-redeemable-btc-by-amount",
+      [Cl.uint(100000n * EXTRA_DECIMALS)],
+      deployerAddress
+    );
+    expect(callResponse.result).toBeUint(100000);
+
+    callResponse = simnet.callReadOnlyFn(
+      "stacking-btc",
+      "get-redeemable-btc-by-amount-after-fees",
+      [Cl.uint(100000n * EXTRA_DECIMALS)],
+      deployerAddress
+    );
+    expect(callResponse.result).toBeOk(Cl.uint(99500));
+
     callResponse = simnet.callPublicFn(
       stackingLogicContractName,
       "init-withdraw",
@@ -691,7 +720,7 @@ describe("Withdrawals", () => {
         Cl.bufferFromHex(
           "0000000000000000000000000000000000000000000000000000000000000000"
         ),
-        Cl.uint(100000),
+        Cl.uint(pegInAmountBtcz),
       ],
       address1
     );
@@ -705,16 +734,16 @@ describe("Withdrawals", () => {
     ).toBe(0n);
 
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
-      "get-withdrawal-or-fail",
+      stackingDataContractName,
+      "get-withdrawal",
       [Cl.uint(1)],
       deployerAddress
     );
     expect(cvToValue(callResponse.result).value["btc-amount"].value).toBe(
-      `${pegOutWOFees}`
+      `${pegOutWOFeesSats}`
     );
     expect(cvToValue(callResponse.result).value["fee"].value).toBe(
-      `${mulBps(pegOutAmount, pegOutFees)}`
+      `${mulBps(pegOutAmount, pegOutbps)}`
     );
     expect(cvToValue(callResponse.result).value["gas-fee"].value).toBe("0");
 
@@ -725,14 +754,14 @@ describe("Withdrawals", () => {
       deployerAddress
     );
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
-      "get-withdrawal-or-fail",
+      stackingDataContractName,
+      "get-withdrawal",
       [Cl.uint(1)],
       deployerAddress
     );
     expect(cvToValue(callResponse.result).value["finalized"].value).toBe(true);
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
+      stackingDataContractName,
       "get-total-btc",
       [],
       deployerAddress
@@ -741,18 +770,20 @@ describe("Withdrawals", () => {
   });
   it("Withdraw, with peg-out-gas-fees", () => {
     const pegOutAmount = 100000n;
+    const pegInSats = 100000n;
+    const pegInAmountBtcz = pegInSats * EXTRA_DECIMALS;
     const pegOutFees = 10000n;
     // const rewards = 10000n;
     const pegOutWOFees = pegOutAmount - pegOutFees;
 
     let callResponse = simnet.callPublicFn(
-      "fee-data",
+      "peg-data",
       "set-peg-out-gas-fee",
       [Cl.uint(pegOutFees)],
       deployerAddress
     );
 
-    let tx = generatePegInTx(BigInt(100000), pegInOutscript, address1);
+    let tx = generatePegInTx(BigInt(pegInSats), pegInOutscript, address1);
     callResponse = simnet.callPublicFn(
       stackingLogicContractName,
       "deposit",
@@ -777,7 +808,7 @@ describe("Withdrawals", () => {
         .getAssetsMap()
         .get(`.${lstTokenContractName}.${lstTokenName}`)!
         .get(address1)
-    ).toBe(100000n);
+    ).toBe(pegInAmountBtcz);
     callResponse = simnet.callPublicFn(
       stackingLogicContractName,
       "init-withdraw",
@@ -785,7 +816,7 @@ describe("Withdrawals", () => {
         Cl.bufferFromHex(
           "0000000000000000000000000000000000000000000000000000000000000000"
         ),
-        Cl.uint(100000),
+        Cl.uint(pegInAmountBtcz),
       ],
       address1
     );
@@ -799,8 +830,8 @@ describe("Withdrawals", () => {
     ).toBe(0n);
 
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
-      "get-withdrawal-or-fail",
+      stackingDataContractName,
+      "get-withdrawal",
       [Cl.uint(1)],
       deployerAddress
     );
@@ -819,14 +850,14 @@ describe("Withdrawals", () => {
       deployerAddress
     );
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
-      "get-withdrawal-or-fail",
+      stackingDataContractName,
+      "get-withdrawal",
       [Cl.uint(1)],
       deployerAddress
     );
     expect(cvToValue(callResponse.result).value["finalized"].value).toBe(true);
     callResponse = simnet.callReadOnlyFn(
-      "stacking-btc",
+      stackingDataContractName,
       "get-total-btc",
       [],
       deployerAddress
