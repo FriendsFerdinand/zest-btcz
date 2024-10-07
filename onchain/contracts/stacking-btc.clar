@@ -14,7 +14,8 @@
 
 (define-constant success (ok true))
 
-(define-constant one-8 u100000000)
+(define-constant one-12 u1000000000000)
+(define-constant sats-to-precision u10000)
 
 (define-data-var contract-owner principal tx-sender)
 
@@ -31,11 +32,11 @@
 		(amount (get value output))
 		(peg-in-address (get scriptPubKey output))
 		(order-script (get scriptPubKey (unwrap! (element-at? (get outs parsed-tx) order-idx) err-order-index-out-of-bounds)))
-		(fee (mul-down amount (contract-call? .peg-data get-peg-in-fee)))
+		(fee (mul-sats-with-ratio-to-sats amount (contract-call? .peg-data get-peg-in-fee)))
 		(amount-net (- amount fee))
 		(recipient (try! (decode-order-0 order-script)))
 		(btc-to-btcz-ratio (get-btc-to-btcz-ratio))
-		(btcz-to-receive (div-down amount-net btc-to-btcz-ratio))
+		(btcz-to-receive (div-sats-with-ratio amount-net btc-to-btcz-ratio))
 	)
 		(asserts! (not (contract-call? .peg-data is-peg-in-paused)) err-paused)
 		(asserts! (not (contract-call? .btc-registry get-peg-in-sent tx output-idx)) err-already-sent)
@@ -59,7 +60,7 @@
 	(let (
 		(sender contract-caller)
 		(redeemable-btc (get-redeemable-btc-by-amount btcz-amount))
-		(fee (mul-down redeemable-btc (get-peg-out-fee)))
+		(fee (mul-sats-with-ratio-to-sats redeemable-btc (get-peg-out-fee)))
 		(gas-fee (get-peg-out-gas-fee))
 		(check-amount (asserts! (> redeemable-btc (+ fee gas-fee)) err-invalid-amount))
 		(amount-net (- redeemable-btc fee gas-fee))
@@ -120,8 +121,8 @@
 		(btcz-supply (unwrap-panic (contract-call? .token-btc get-total-supply)))
 	)
 		(if (is-eq btcz-supply u0)
-			one-8
-			(div-down btc-amount btcz-supply)
+			one-12
+			(div-sats-with-ratio btc-amount btcz-supply)
 		)
 	)
 )
@@ -130,12 +131,12 @@
 	(+ (contract-call? .stacking-data get-withdrawal-nonce) u1))
 
 (define-read-only (get-redeemable-btc-by-amount (btcz-amount uint))
-	(mul-down btcz-amount (get-btc-to-btcz-ratio)))
+	(mul-btcz-with-ratio-to-sats btcz-amount (get-btc-to-btcz-ratio)))
 
 (define-read-only (get-redeemable-btc-by-amount-after-fees (btcz-amount uint))
 	(let (
 		(redeemable-btc (get-redeemable-btc-by-amount btcz-amount))
-		(fee (mul-down redeemable-btc (get-peg-out-fee)))
+		(fee (mul-sats-with-ratio-to-sats redeemable-btc (get-peg-out-fee)))
 		(gas-fee (get-peg-out-gas-fee))
 		(check-amount (asserts! (> redeemable-btc (+ fee gas-fee)) err-invalid-amount))
 		(amount-net (- redeemable-btc fee gas-fee))
@@ -161,11 +162,20 @@
 		(print { action: "set-contract-owner", data: { new-contract-owner: new-contract-owner } })
 		(ok (var-set contract-owner new-contract-owner))))
 
-(define-read-only (mul-down (a uint) (b uint))
-	(/ (* a b) one-8))
+(define-read-only (mul-sats-with-ratio (sats uint) (ratio uint))
+	(/ (* (* sats sats-to-precision) ratio) one-12))
 
-(define-read-only (div-down (a uint) (b uint))
-	(/ (* a one-8) b))
+(define-read-only (mul-sats-with-ratio-to-sats (sats uint) (ratio uint))
+	(/ (* sats ratio) one-12))
+
+(define-read-only (mul-btcz-with-ratio-to-sats (btcz uint) (ratio uint))
+	(/ (/ (* btcz ratio) one-12) sats-to-precision))
+
+(define-read-only (div-sats-with-ratio (sats uint) (ratio uint))
+	(/ (* (* sats sats-to-precision) one-12) ratio))
+
+(define-read-only (div-sats-with-ratio-to-sats (sats uint) (ratio uint))
+	(/ (* sats one-12) ratio))
 
 ;; stacking data
 (define-read-only (get-peg-out-fee)
